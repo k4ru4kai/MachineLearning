@@ -1,0 +1,26 @@
+
+========================================
+REPORT ESPERIMENTO: Reacher6_20251130_084829
+DATA: 2025-11-30 08:52:29
+========================================
+
+ROBOT: Reacher6
+R2 SCORE: 0.440145
+
+CONFIGURAZIONE:
+- Architettura: [512, 512, 256]
+- Dropout: True (Rate 0.1)
+- Epoche Max: 300
+- Batch Size: 64
+- Learning Rate: 0.0005
+- Input Features: 18 (Feature Eng. applicato)
+
+RISULTATI TRAINING:
+- Epoche effettive: 43
+- Loss Finale (Train): 0.490847
+- Loss Finale (Val): 0.561815
+
+FILE GENERATI:
+- Modello: results/model_Reacher6_20251130_084829_R2_0.440.h5
+- Grafico: results/plot_Reacher6_20251130_084829.png
+========================================
