@@ -1,0 +1,5 @@
+ROBOT: Reacher4
+DATASET: reacher4_train_1.csv
+CONFIG: [256, 256, 128] (Dropout: True)
+R2 SCORE: 0.70785
+TEMPO: 1m 12s
