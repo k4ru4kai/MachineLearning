@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from dataset import SoccerDataset
-from model1 import RegressionCNN
+from model2 import RegressionCNN
 import time  # <--- NUOVA IMPORTAZIONE
 
 # --- CONFIGURAZIONE ---
@@ -30,7 +30,8 @@ def train():
     
     model = RegressionCNN(num_classes=num_classes).to(device)
     
-    criterion = nn.MSELoss() 
+    #criterion = nn.MSELoss() 
+    criterion = nn.SmoothL1Loss() #usiamo la SmoothLoss piuttosto che la MSE
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
     model.train()

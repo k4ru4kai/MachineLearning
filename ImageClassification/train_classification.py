@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from dataset import SoccerDataset
-from model1 import ClassificationCNN
+from model2 import ClassificationCNN
 import time  # <--- NUOVA IMPORTAZIONE
 
 # --- CONFIGURAZIONE ---

@@ -5,7 +5,7 @@ import random
 import os
 import torch.nn.functional as F
 from dataset import SoccerDataset
-from model1 import ClassificationCNN, RegressionCNN
+from model2 import ClassificationCNN, RegressionCNN
 
 # --- CONFIGURAZIONI ---
 CSV_PATH = 'spqr_dataset/raw/bbx_annotations.csv'
