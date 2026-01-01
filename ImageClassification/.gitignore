@@ -1,0 +1,12 @@
+# Ignora il dataset
+spqr_dataset/
+
+# Ignora i file compilati di Python
+__pycache__/
+*.pyc
+
+# Ignora le cartelle di sistema Mac/Windows
+.DS_Store
+Thumbs.db
+
+
