@@ -1,0 +1,53 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Experimental Setup}{1}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Robots Description}{1}{subsection.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Visual representation of the Reacher robotic arm in the simulation environment.}}{2}{figure.caption.1}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:reacher_robot}{{1}{2}{Visual representation of the Reacher robotic arm in the simulation environment}{figure.caption.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Dataset Specifications}{2}{subsection.2.2}\protected@file@percent }
+\newlabel{tab:datasets}{{\caption@xref {tab:datasets}{ on input line 51}}{2}{Dataset Specifications}{table.caption.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Summary of dataset dimensions and spaces.}}{2}{table.caption.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Dataset Versions}{2}{subsection.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Baseline Evaluation: Linear Regression}{3}{section.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Visual evaluation of the Linear Baseline.}}{3}{figure.caption.3}\protected@file@percent }
+\newlabel{fig:linear_baseline}{{2}{3}{Visual evaluation of the Linear Baseline}{figure.caption.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}First Approach: Feed-Forward Neural Network (MLP)}{4}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Model Architecture}{4}{subsection.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Architecture of the Feed-Forward Neural Network used for the Reacher3 robot.}}{5}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:nn_architecture}{{3}{5}{Architecture of the Feed-Forward Neural Network used for the Reacher3 robot}{figure.caption.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.1}Hidden Activation: ReLU}{5}{subsubsection.4.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.2}Output Activation: Linear}{6}{subsubsection.4.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Loss Function and Optimization}{6}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Loss Function: Mean Squared Error (MSE)}{6}{section*.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Optimizer: Adam}{6}{section*.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Training Strategy}{7}{subsection.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Initial Results}{7}{subsection.4.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Learning curve of the first MLP model. Both training and validation loss decrease steadily, indicating successful learning without immediate overfitting.}}{7}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:learning_curve_initial}{{4}{7}{Learning curve of the first MLP model. Both training and validation loss decrease steadily, indicating successful learning without immediate overfitting}{figure.caption.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Evolution of the Approach}{8}{section.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces XGBoost predictions. The dispersed points illustrate the difficulty of modeling continuous kinematic smoothness with discrete decision trees.}}{9}{figure.caption.11}\protected@file@percent }
+\newlabel{fig:xgboost}{{5}{9}{XGBoost predictions. The dispersed points illustrate the difficulty of modeling continuous kinematic smoothness with discrete decision trees}{figure.caption.11}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Final Solution: Automated Experimental Framework}{9}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Architectural Optimization on Reacher3}{10}{section.7}\protected@file@percent }
+\newlabel{sec:reacher3_optim}{{7}{10}{Architectural Optimization on Reacher3}{section.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Results and Cost-Benefit Analysis}{10}{subsection.7.1}\protected@file@percent }
+\newlabel{tab:reacher3_experiments}{{\caption@xref {tab:reacher3_experiments}{ on input line 226}}{10}{Results and Cost-Benefit Analysis}{table.caption.12}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Ablation study on Reacher3. Increasing complexity yields diminishing returns.}}{10}{table.caption.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Discussion}{10}{subsection.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}Comprehensive Results Analysis}{11}{section.8}\protected@file@percent }
+\newlabel{tab:final_summary}{{\caption@xref {tab:final_summary}{ on input line 255}}{11}{Comprehensive Results Analysis}{table.caption.13}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Best-performing configurations for each robot on Dataset Version 1.}}{11}{table.caption.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}Learning Curves Analysis}{11}{subsection.8.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Learning curve for Reacher3}}{12}{figure.caption.15}\protected@file@percent }
+\newlabel{fig:curve_reacher3}{{6}{12}{Learning curve for Reacher3}{figure.caption.15}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Learning curve for configuration Reacher4.}}{13}{figure.caption.17}\protected@file@percent }
+\newlabel{fig:curve_reacher4}{{7}{13}{Learning curve for configuration Reacher4}{figure.caption.17}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Learning curve for Reacher6.}}{14}{figure.caption.19}\protected@file@percent }
+\newlabel{fig:reacher3_512_256}{{8}{14}{Learning curve for Reacher6}{figure.caption.19}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}Summary}{15}{subsection.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Conclusion}{15}{section.9}\protected@file@percent }
+\gdef \@abspage@last{16}
