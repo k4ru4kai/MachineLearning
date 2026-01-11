@@ -9,7 +9,7 @@ import time  # <--- NUOVA IMPORTAZIONE
 # --- CONFIGURAZIONE ---
 BATCH_SIZE = 32
 LEARNING_RATE = 0.001
-EPOCHS = 10
+EPOCHS = 20
 CSV_PATH = 'spqr_dataset/raw/bbx_annotations.csv'
 IMG_DIR = 'spqr_dataset/images'
 

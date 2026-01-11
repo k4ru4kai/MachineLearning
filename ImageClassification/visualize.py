@@ -51,7 +51,7 @@ def visualize_results():
         return
 
     # 3. Indici casuali
-    indices = random.sample(range(len(ds)), 5)
+    indices = random.sample(range(len(ds)), 20)
     
     for i, idx in enumerate(indices):
         img_tensor, true_label_idx, true_target = ds[idx]
