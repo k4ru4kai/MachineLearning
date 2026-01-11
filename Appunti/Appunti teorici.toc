@@ -1,0 +1,109 @@
+\contentsline {chapter}{\numberline {1}Introduzione al Machine Learning}{4}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Definizione di Machine Learning}{4}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Fattori abilitanti del Machine Learning}{4}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Applicazioni del Machine Learning}{4}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Cos’è un problema di apprendimento}{5}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Funzione ideale}{5}{section.1.5}%
+\contentsline {section}{\numberline {1.6}Funzione valore}{5}{section.1.6}%
+\contentsline {subsection}{\numberline {1.6.1}Rappresentazione approssimata della funzione valore}{6}{subsection.1.6.1}%
+\contentsline {section}{\numberline {1.7}Algoritmo di apprendimento}{6}{section.1.7}%
+\contentsline {section}{\numberline {1.8}Funzione obiettivo e rappresentazione}{7}{section.1.8}%
+\contentsline {section}{\numberline {1.9}Dataset e generalizzazione}{7}{section.1.9}%
+\contentsline {section}{\numberline {1.10}Tipologie di problemi di Machine Learning}{7}{section.1.10}%
+\contentsline {subsection}{\numberline {1.10.1}Supervised Learning}{7}{subsection.1.10.1}%
+\contentsline {subsection}{\numberline {1.10.2}Unsupervised Learning}{7}{subsection.1.10.2}%
+\contentsline {subsection}{\numberline {1.10.3}Reinforcement Learning}{8}{subsection.1.10.3}%
+\contentsline {section}{\numberline {1.11}Ipotesi e spazio delle ipotesi}{8}{section.1.11}%
+\contentsline {section}{\numberline {1.12}Consistenza e Version Space}{8}{section.1.12}%
+\contentsline {section}{\numberline {1.13}Algoritmo List-Then-Eliminate}{9}{section.1.13}%
+\contentsline {subsection}{\numberline {1.13.1}Osservazioni}{9}{subsection.1.13.1}%
+\contentsline {section}{\numberline {1.14}Rappresentazione vs Generalizzazione}{10}{section.1.14}%
+\contentsline {section}{\numberline {1.15}Dati rumorosi}{10}{section.1.15}%
+\contentsline {chapter}{\numberline {2}Performance Evaluation}{12}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Introduzione alla valutazione delle prestazioni}{12}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Errore vero ed errore campionario}{12}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Errore vero}{13}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Errore campionario}{13}{subsection.2.2.2}%
+\contentsline {section}{\numberline {2.3}Intervalli di confidenza}{14}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Stima non distorta e trade-off training/testing}{14}{section.2.4}%
+\contentsline {section}{\numberline {2.5}k-Fold Cross Validation}{14}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}Descrizione dell’algoritmo}{14}{subsection.2.5.1}%
+\contentsline {section}{\numberline {2.6}Overfitting}{15}{section.2.6}%
+\contentsline {section}{\numberline {2.7}Metriche di valutazione}{16}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}Limiti dell’accuratezza}{16}{subsection.2.7.1}%
+\contentsline {subsection}{\numberline {2.7.2}Precision, Recall e F1-score}{16}{subsection.2.7.2}%
+\contentsline {subsection}{\numberline {2.7.3}Metriche derivate e curva ROC}{17}{subsection.2.7.3}%
+\contentsline {subsection}{\numberline {2.7.4}Dipendenza dal dominio applicativo}{17}{subsection.2.7.4}%
+\contentsline {subsection}{\numberline {2.7.5}Matrice di confusione multi-classe}{17}{subsection.2.7.5}%
+\contentsline {section}{\numberline {2.8}Metriche di valutazione per la regressione}{18}{section.2.8}%
+\contentsline {subsection}{\numberline {2.8.1}Metriche percentuali e coefficiente di determinazione}{20}{subsection.2.8.1}%
+\contentsline {subsection}{\numberline {2.8.2}Cross-validation per la regressione}{20}{subsection.2.8.2}%
+\contentsline {chapter}{\numberline {3}Decision Tree}{22}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Definizione}{22}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Struttura del Decision Tree}{22}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}Caratteristiche principali}{23}{subsection.3.1.2}%
+\contentsline {section}{\numberline {3.2}Regole di decisione}{24}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Decision Tree come insieme di regole}{25}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Conversione di un decision tree in regole}{25}{subsection.3.2.2}%
+\contentsline {section}{\numberline {3.3}Algoritmo ID3}{26}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Costruzione del decision tree}{26}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Proprietà dell’algoritmo ID3}{27}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.3}ID3 e regole di decisione}{27}{subsection.3.3.3}%
+\contentsline {section}{\numberline {3.4}Entropia e Information Gain}{27}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Entropia}{28}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}Information Gain}{28}{subsection.3.4.2}%
+\contentsline {subsection}{\numberline {3.4.3}Schema operativo}{29}{subsection.3.4.3}%
+\contentsline {section}{\numberline {3.5}Overfitting nei Decision Tree}{29}{section.3.5}%
+\contentsline {section}{\numberline {3.6}Pruning}{30}{section.3.6}%
+\contentsline {subsection}{\numberline {3.6.1}Pre-pruning}{30}{subsection.3.6.1}%
+\contentsline {subsection}{\numberline {3.6.2}Post-pruning}{31}{subsection.3.6.2}%
+\contentsline {section}{\numberline {3.7}Random Forest}{31}{section.3.7}%
+\contentsline {subsection}{\numberline {3.7.1}Aggregazione delle predizioni}{32}{subsection.3.7.1}%
+\contentsline {subsection}{\numberline {3.7.2}Riduzione dell’overfitting}{32}{subsection.3.7.2}%
+\contentsline {chapter}{\numberline {4}Bayesian Learning}{36}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Motivazione}{36}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Classificazione come stima probabilistica}{36}{section.4.2}%
+\contentsline {section}{\numberline {4.3}ML e MAP}{37}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Maximum Likelihood Classification}{37}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Maximum A Posteriori Classification}{37}{subsection.4.3.2}%
+\contentsline {section}{\numberline {4.4}Bayes Optimal Classifier}{38}{section.4.4}%
+\contentsline {subsubsection}{Definizione formale}{38}{section*.37}%
+\contentsline {section}{\numberline {4.5}Naive Bayes Classifier}{39}{section.4.5}%
+\contentsline {subsection}{\numberline {4.5.1}Definizione}{39}{subsection.4.5.1}%
+\contentsline {subsection}{\numberline {4.5.2}Formulazione formale}{40}{subsection.4.5.2}%
+\contentsline {subsubsection}{Algoritmo Naive Bayes}{40}{section*.40}%
+\contentsline {subsection}{\numberline {4.5.3}Stima delle probabilità}{41}{subsection.4.5.3}%
+\contentsline {subsubsection}{Esempio}{41}{section*.42}%
+\contentsline {chapter}{\numberline {5}Probabilistic Models for Classification}{45}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Modelli probabilistici generativi}{45}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}Caso gaussiano con covarianza condivisa}{45}{subsection.5.1.1}%
+\contentsline {subsection}{\numberline {5.1.2}Stima dei parametri tramite Maximum Likelihood}{46}{subsection.5.1.2}%
+\contentsline {subsection}{\numberline {5.1.3}Estensione a K classi}{46}{subsection.5.1.3}%
+\contentsline {subsection}{\numberline {5.1.4}Gaussian Naive Bayes}{46}{subsection.5.1.4}%
+\contentsline {section}{\numberline {5.2}Modelli probabilistici discriminativi}{46}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Logistic Regression}{47}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}Regressione logistica multi-classe}{47}{subsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.2.3}Generalizzazione e spazio delle feature}{47}{subsection.5.2.3}%
+\contentsline {chapter}{\numberline {6}Modelli lineari per la classificazione}{50}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Dati linearmente separabili}{50}{section.6.1}%
+\contentsline {subsubsection}{Interpretazione geometrica}{50}{section*.46}%
+\contentsline {subsection}{\numberline {6.1.1}Dati non linearmente separabili}{51}{subsection.6.1.1}%
+\contentsline {section}{\numberline {6.2}Linear Discriminant Function}{51}{section.6.2}%
+\contentsline {subsection}{\numberline {6.2.1}Regola di decisione}{51}{subsection.6.2.1}%
+\contentsline {subsubsection}{Interpretazione geometrica}{52}{section*.49}%
+\contentsline {section}{\numberline {6.3}Learning di funzioni discriminanti lineari}{53}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Least Squares per la classificazione}{53}{section.6.4}%
+\contentsline {subsection}{\numberline {6.4.1}Definizione del problema}{53}{subsection.6.4.1}%
+\contentsline {subsection}{\numberline {6.4.2}Funzione di costo}{54}{subsection.6.4.2}%
+\contentsline {subsection}{\numberline {6.4.3}Soluzione ottima}{54}{subsection.6.4.3}%
+\contentsline {subsection}{\numberline {6.4.4}Regola di classificazione}{55}{subsection.6.4.4}%
+\contentsline {subsection}{\numberline {6.4.5}Sensibilità agli outlier}{55}{subsection.6.4.5}%
+\contentsline {subsubsection}{NOTA BENE:}{56}{section*.52}%
+\contentsline {section}{\numberline {6.5}Perceptron}{56}{section.6.5}%
+\contentsline {subsection}{\numberline {6.5.1}Definizione del problema}{56}{subsection.6.5.1}%
+\contentsline {subsection}{\numberline {6.5.2}Modello del Perceptron}{56}{subsection.6.5.2}%
+\contentsline {subsection}{\numberline {6.5.3}Perceptron Learning Rule}{57}{subsection.6.5.3}%
+\contentsline {subsection}{\numberline {6.5.4}Algoritmo del Perceptron}{58}{subsection.6.5.4}%
+\contentsline {subsubsection}{Esempio di applicazione}{58}{section*.54}%
+\contentsline {subsubsection}{Visualizzazione dell’algoritmo del Perceptron}{59}{section*.55}%
+\contentsline {subsection}{\numberline {6.5.5}Interpretazione neurale}{60}{subsection.6.5.5}%
