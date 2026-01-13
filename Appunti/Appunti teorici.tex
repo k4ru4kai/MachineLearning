@@ -13,6 +13,9 @@
 \usepackage{fancyvrb}
 \usepackage{pgfplots}
 \usepackage{ragged2e} %Per poter giustificare il testo
+\usepackage{amsthm}  %Per i teoremi
+
+\newtheorem{theorem}{Teorema} %Definire i teoremi
 
 \captionsetup{font=it} %Tutte le didascalie delle immagini in corsivo
 
@@ -42,8 +45,6 @@
 
 \tableofcontents
 \clearpage
-
-
 
 \chapter{Introduzione al Machine Learning}
 
@@ -2076,7 +2077,7 @@ le istanze vengono proiettate nello spazio \( \Phi \) e l’apprendimento avvien
 Questo approccio consente di aumentare la capacità espressiva del modello senza modificarne la struttura probabilistica.
 
 \newpage
-\section*{RIEPILOGO}
+\section{RIEPILOGO}
 
 \begin{tcolorbox}[
     colback=green!10,
@@ -2666,6 +2667,2487 @@ Il neurone calcola una combinazione lineare degli input:
 \sum_{i=0}^{d} w_i x_i
 \]
 e applica una funzione di attivazione a soglia che restituisce l’etichetta di classe.
+
+\section{Fisher's Linear Discriminant}
+
+Il \textbf{Fisher’s Linear Discriminant} è un metodo di classificazione lineare basato su un criterio statistico.
+A differenza del Perceptron e del Least Squares, che si basano rispettivamente sugli errori di classificazione e sull’errore quadratico, il metodo di Fisher mira a massimizzare la separazione tra le classi in termini di distribuzione dei dati.
+
+\subsubsection{Impostazione del problema}
+
+Si consideri un problema di classificazione binaria con due classi:
+\[
+\mathcal{C}_1 \quad \text{e} \quad \mathcal{C}_2
+\]
+
+Ciascun esempio \( x \in \mathbb{R}^d \) viene proiettato su una retta mediante una funzione lineare:
+
+\[
+\highlight{
+y = w^T x}
+\]
+
+L’obiettivo è determinare il vettore \( w \) tale che, dopo la proiezione, le due classi risultino il più possibile separate.
+
+L’idea centrale del Fisher’s Linear Discriminant consiste nel trovare una direzione di proiezione che:
+\begin{itemize}
+    \item massimizzi la distanza tra le medie delle classi proiettate;
+    \item minimizzi la dispersione interna a ciascuna classe.
+\end{itemize}
+
+In questo modo, le classi risultano ben separate lungo la direzione di proiezione scelta.
+
+\subsection{Medie delle classi}
+
+Siano:
+\[
+\mu_1 = \frac{1}{N_1} \sum_{x \in \mathcal{C}_1} x,
+\qquad
+\mu_2 = \frac{1}{N_2} \sum_{x \in \mathcal{C}_2} x
+\]
+
+le medie dei dati appartenenti alle due classi nello spazio originale.
+Dopo la proiezione sulla direzione \( w \), le medie diventano:
+\[
+m_1 = w^T \mu_1,
+\qquad
+m_2 = w^T \mu_2
+\]
+
+\subsection{Varianza intra-classe}
+
+La dispersione dei dati di ciascuna classe dopo la proiezione è misurata dalla varianza:
+\[
+s_i^2 = \sum_{x \in \mathcal{C}_i} (w^T x - m_i)^2, \quad i = 1,2
+\]
+
+La varianza totale intra-classe è definita come:
+\[
+s_w^2 = s_1^2 + s_2^2
+\]
+
+\subsection{Criterio di Fisher}
+
+Il criterio di Fisher è definito come il rapporto tra la distanza quadratica tra le medie proiettate e la varianza intra-classe:
+
+\[
+\highlight{
+J(w) = \frac{(m_1 - m_2)^2}{s_w^2}}
+\]
+
+Il problema di apprendimento consiste nel trovare il vettore \( w \) che massimizza tale criterio.
+
+\subsubsection{Forma matriciale}
+
+Introducendo le matrici di dispersione intra-classe:
+\[
+S_i = \sum_{x \in \mathcal{C}_i} (x - \mu_i)(x - \mu_i)^T,
+\quad i = 1,2
+\]
+
+e la matrice di dispersione totale:
+\[
+S_W = S_1 + S_2,
+\]
+
+il criterio di Fisher può essere riscritto come:
+
+\[
+\highlight{
+J(w) = \frac{w^T (\mu_1 - \mu_2)(\mu_1 - \mu_2)^T w}{w^T S_W w}}
+\]
+
+\subsubsection{Interpretazione geometrica del criterio di Fisher}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{fisher_mean_difference.png}
+\caption{\textit{Proiezione lungo la direzione della differenza delle medie. La dispersione intra-classe non è considerata.}}
+\end{figure}
+
+Questa prima figura mostra una proiezione dei dati lungo la direzione che unisce le medie delle due classi.
+Questa scelta massimizza la distanza tra le medie proiettate, ma non tiene conto della dispersione interna delle classi.
+
+Se una classe presenta un’elevata varianza lungo tale direzione, le distribuzioni proiettate possono sovrapporsi significativamente, riducendo la capacità discriminante.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{fisher_optimal_projection.png}
+\caption{\textit{Proiezione secondo il Fisher Linear Discriminant. La dispersione intra-classe viene tenuta in conto.}}
+\end{figure}
+
+Questa seconda figura invece illustra la soluzione del Fisher Linear Discriminant.
+L’introduzione della matrice di dispersione intra-classe \( S_W \) consente di penalizzare le direzioni caratterizzate da elevata varianza.
+
+La direzione di proiezione risultante massimizza la separazione tra le classi tenendo conto sia della distanza tra le medie sia della compattezza delle distribuzioni.
+
+\subsubsection{Soluzione ottima}
+
+Massimizzando il criterio di Fisher, si ottiene che il vettore ottimo è proporzionale a:
+
+\[
+\highlight{
+w \propto S_W^{-1} (\mu_1 - \mu_2)}
+\]
+
+Questa direzione massimizza la separazione tra le classi dopo la proiezione.
+
+\subsubsection{Regola di classificazione}
+
+Una volta determinata la direzione \( w \), un nuovo esempio \( x \) viene classificato proiettandolo su \( w \) e confrontando il risultato con una soglia \( \theta \):
+\[
+\text{classe}(x) =
+\begin{cases}
+\mathcal{C}_1 & \text{se } w^T x \ge \theta \\
+\mathcal{C}_2 & \text{altrimenti}
+\end{cases}
+\]
+
+La soglia può essere scelta, ad esempio, come il punto medio tra le medie proiettate delle due classi.
+
+\subsection{Support Vector Machine}
+
+Le \textbf{Support Vector Machine (SVM)} sono una classe di algoritmi di apprendimento supervisionato per la classificazione (e regressione), basati sulla costruzione di un iperpiano di decisione ottimale.
+
+Come nel caso del Perceptron e del Fisher Linear Discriminant, anche le SVM costruiscono una funzione discriminante lineare della forma:
+
+\[
+g(x) = w^T x + b
+\]
+
+Tuttavia, mentre il Perceptron si limita a correggere gli errori di classificazione e il metodo di Fisher massimizza una misura statistica di separazione, le SVM introducono un criterio geometrico esplicito basato sul margine.
+
+Il margine di un iperpiano di decisione è definito come la distanza minima tra l’iperpiano stesso e i punti del dataset più vicini ad esso.
+
+L’idea alla base delle SVM è che un iperpiano con margine massimo presenti migliori proprietà di generalizzazione, risultando meno sensibile al rumore e alle variazioni nei dati di training.
+
+
+\subsection{Formulazione formale}
+
+Si consideri un problema di classificazione binaria con un dataset di training
+\[
+\mathcal{D} = \{(x_i, y_i)\}_{i=1}^{N},
+\]
+dove \( x_i \in \mathbb{R}^d \) rappresenta il vettore delle feature e \( y_i \in \{-1,+1\} \) l’etichetta di classe.
+
+L’obiettivo delle Support Vector Machine è apprendere una funzione discriminante lineare della forma
+\[
+f(x) = w^T x + b,
+\]
+in grado di separare correttamente le due classi mediante un iperpiano di decisione definito dall’equazione
+\[
+w^T x + b = 0.
+\]
+
+Un punto \( x \) viene classificato in base al segno della funzione discriminante:
+\[
+\text{classe}(x) = \text{sign}(w^T x + b).
+\]
+
+La distanza geometrica di un punto \( x_i \) dall’iperpiano di decisione è data da
+\[
+\frac{|w^T x_i + b|}{\|w\|}.
+\]
+Il margine di classificazione è definito come la distanza minima tra l’iperpiano e i punti del dataset.
+Le Support Vector Machine cercano l’iperpiano che massimizza tale margine.
+
+Nel caso di dati linearmente separabili, è possibile imporre i vincoli di separazione
+\[
+y_i (w^T x_i + b) \geq 1, \quad \forall i = 1,\dots,N.
+\]
+Questa scelta fissa la scala dei parametri e consente di definire in modo univoco il margine geometrico, che risulta pari a \( \frac{2}{\|w\|} \).
+
+Il problema di apprendimento di una SVM hard-margin può quindi essere formulato come il seguente problema di ottimizzazione convessa:
+\[
+\begin{aligned}
+\min_{w,b} \quad & \frac{1}{2}\|w\|^2 \\
+\text{soggetto a} \quad & y_i (w^T x_i + b) \geq 1, \quad \forall i.
+\end{aligned}
+\]
+
+La funzione obiettivo consiste nella minimizzazione della norma del vettore dei pesi.
+Poiché il margine è inversamente proporzionale a \( \|w\| \), minimizzare \( \|w\|^2 \) equivale a massimizzare il margine di separazione tra le classi.
+
+I punti del dataset che soddisfano il vincolo con uguaglianza,
+\[
+y_i (w^T x_i + b) = 1,
+\]
+sono detti \textbf{support vectors}.
+Essi sono gli unici esempi che contribuiscono direttamente alla determinazione dell’iperpiano ottimale, mentre tutti gli altri punti non influenzano la soluzione finale una volta fissato il margine.
+
+\subsection*{Interpretazione geometrica del margine}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{svm_maximum_margin.png}
+\caption{\textit{Confronto tra diversi iperpiani separatori: a sinistra un iperpiano con margine ridotto, a destra l’iperpiano a margine massimo individuato dalle SVM.}}
+\end{figure}
+
+La figura mostra il principio fondamentale alla base delle Support Vector Machine.
+Nel pannello di sinistra è rappresentato un iperpiano che separa correttamente le due classi, ma presenta un margine ridotto.
+Piccole variazioni nei dati o la presenza di rumore potrebbero compromettere la corretta classificazione.
+
+Nel pannello di destra è invece mostrato l’iperpiano a margine massimo.
+Questo iperpiano massimizza la distanza tra le due classi, risultando più stabile e robusto rispetto a perturbazioni nei dati.
+
+\section{Soft-Margin Support Vector Machine}
+
+Nel caso reale, i dati di training non sono quasi mai perfettamente linearmente separabili.
+La presenza di rumore, outlier o sovrapposizione tra le classi rende impossibile soddisfare rigidamente i vincoli dell’hard-margin SVM.
+Per questo motivo, le Support Vector Machine introducono il concetto di \textbf{soft margin}, che consente alcune violazioni controllate dei vincoli di separazione mantenendo il principio del margine massimo.
+
+Nel soft-margin SVM vengono introdotte delle variabili di slack \( \xi_i \geq 0 \), una per ciascun esempio di training, che misurano il grado di violazione del vincolo di separazione.
+I vincoli diventano quindi:
+\[
+y_i (w^T x_i + b) \geq 1 - \xi_i, \quad \forall i = 1,\dots,N.
+\]
+
+Il significato delle variabili di slack è il seguente:
+un esempio con \( \xi_i = 0 \) è correttamente classificato e si trova al di fuori del margine o esattamente sul margine;
+un esempio con \( 0 < \xi_i < 1 \) è correttamente classificato ma si trova all’interno del margine;
+un esempio con \( \xi_i \geq 1 \) è classificato erroneamente.
+
+Il problema di apprendimento del soft-margin SVM può essere formulato come il seguente problema di ottimizzazione convessa:
+\[
+\begin{aligned}
+\min_{w,b,\xi} \quad & \frac{1}{2}\|w\|^2 + C \sum_{i=1}^{N} \xi_i \\
+\text{soggetto a} \quad & y_i (w^T x_i + b) \geq 1 - \xi_i, \quad \forall i, \\
+& \xi_i \geq 0, \quad \forall i.
+\end{aligned}
+\]
+
+La funzione obiettivo è composta da due termini in competizione tra loro.
+Il termine \( \frac{1}{2}\|w\|^2 \) tende a massimizzare il margine di separazione tra le classi, mentre il termine \( C \sum_i \xi_i \) penalizza le violazioni dei vincoli di separazione.
+Il parametro \( C > 0 \) controlla il compromesso tra l’ampiezza del margine e l’accuratezza sui dati di training.
+
+Valori elevati di \( C \) assegnano un peso maggiore agli errori di classificazione, portando a un margine più stretto ma a un numero ridotto di violazioni.
+Al contrario, valori piccoli di \( C \) consentono margini più ampi, tollerando un numero maggiore di errori sul training set, con potenziali benefici in termini di generalizzazione.
+
+Anche nel caso soft-margin, i support vectors sono costituiti dagli esempi per cui il vincolo è attivo, ovvero quelli che soddisfano:
+\[
+y_i (w^T x_i + b) \leq 1.
+\]
+Questi includono sia i punti sul margine sia quelli che si trovano all’interno del margine o lo violano, e sono gli unici esempi che contribuiscono direttamente alla definizione dell’iperpiano ottimale.
+
+Il soft-margin SVM generalizza l’hard-margin SVM, che può essere visto come un caso particolare ottenuto per \( C \to \infty \).
+Grazie all’introduzione delle variabili di slack, le Support Vector Machine risultano applicabili a problemi reali caratterizzati da rumore e non perfetta separabilità delle classi.
+
+\subsection{Interpretazione geometrica}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{soft_margin_slack.png}
+\caption{\textit{Interpretazione geometrica delle variabili di slack nel soft-margin SVM.}}
+\end{figure}
+
+La figura illustra il significato geometrico delle variabili di slack \( \xi_i \) nel contesto del soft-margin SVM.
+Le tre rette rappresentano, rispettivamente, l’iperpiano di decisione \( w^T x + b = 0 \) e i due margini \( w^T x + b = \pm 1 \).
+
+I punti appartenenti alle due classi sono distribuiti nello spazio delle feature e la loro posizione rispetto ai margini determina il valore della variabile di slack associata.
+Un punto per cui \( 0 < \xi_i \leq 1 \) si trova all’interno del margine, ma sul lato corretto dell’iperpiano di decisione.
+In questo caso il punto è correttamente classificato, ma contribuisce comunque alla penalizzazione nella funzione obiettivo.
+
+Infine, un punto per cui \( \xi_i > 1 \) si trova sul lato sbagliato dell’iperpiano di decisione ed è quindi classificato erroneamente.
+In particolare, quando \( \xi_i = 1 \) il punto giace esattamente sull’iperpiano di decisione, mentre per \( \xi_i > 1 \) la classificazione risulta errata.
+La figura evidenzia come il soft-margin SVM consenta di tollerare violazioni dei vincoli di separazione, penalizzandole in modo controllato attraverso le variabili di slack, anziché imporre una separazione rigida come nel caso dell’hard-margin.
+
+\subsection{Basis Functions e separazione non lineare}
+
+Nei casi reali, i dati non sono spesso linearmente separabili nello spazio originale delle feature.
+In queste situazioni, una funzione discriminante lineare non è sufficiente a descrivere una frontiera di decisione efficace.
+L’idea alla base dell’uso delle \textbf{basis functions} consiste nel trasformare le istanze originali in uno spazio delle feature di dimensione maggiore, nel quale una separazione lineare diventa possibile.
+
+Formalmente, si introduce una mappa non lineare:
+\[
+\phi : \mathbb{R}^d \rightarrow \mathbb{R}^M,
+\]
+che associa a ciascun input \( x \) un nuovo vettore di feature \( \phi(x) \).
+La funzione discriminante assume quindi la forma:
+\[
+f(x) = w^T \phi(x) + b.
+\]
+
+In questo nuovo spazio delle feature, la funzione di decisione rimane lineare rispetto ai parametri \( w \), ma risulta non lineare rispetto alle variabili originali.
+Questo consente di modellare frontiere di decisione complesse nello spazio di input.
+
+Un primo esempio di basis functions è dato dalle \textbf{polynomial basis functions}.
+Nel caso monodimensionale, una trasformazione polinomiale di grado due può essere scritta come:
+\[
+\phi(x) = (1, x, x^2).
+\]
+In questo modo, una funzione lineare nello spazio delle feature corrisponde a una funzione quadratica nello spazio originale.
+
+Un secondo esempio molto utilizzato è rappresentato dalle \textbf{Gaussian basis functions}, definite come:
+\[
+\phi_j(x) = \exp\left( -\frac{\|x - \mu_j\|^2}{2\sigma^2} \right),
+\]
+dove \( \mu_j \) rappresenta il centro della funzione e \( \sigma \) ne controlla l’ampiezza.
+Queste funzioni consentono di modellare regioni locali nello spazio delle feature e risultano particolarmente efficaci in presenza di distribuzioni complesse.
+
+Un’ulteriore classe di trasformazioni è data dalle \textbf{sigmoidal basis functions}, definite come:
+\[
+\phi_j(x) = \tanh(a_j^T x + b_j),
+\]
+che introducono una non linearità simile a quella dei neuroni artificiali.
+
+L’uso esplicito delle basis functions presenta tuttavia un limite pratico: la dimensione dello spazio delle feature può diventare molto elevata o addirittura infinita.
+Le Support Vector Machine superano questo problema attraverso il \textbf{kernel trick}, che consente di calcolare prodotti scalari nello spazio delle feature senza esplicitare la mappa \( \phi(x) \).
+
+In questo modo, le SVM riescono a costruire classificatori non lineari mantenendo una formulazione computazionalmente efficiente e una solida base teorica.
+
+\section{RIEPILOGO}
+
+\begin{tcolorbox}[
+    colback=green!10,
+    colframe=green!50!black,
+    title=Support Vector Machine -- Concetti chiave
+]
+
+Le \textbf{Support Vector Machine (SVM)} sono classificatori supervisionati basati sulla ricerca di un iperpiano di decisione che massimizza il \textbf{margine} tra le classi, migliorando la capacità di generalizzazione.
+
+\medskip
+
+\textbf{Hard-margin SVM}  
+Nel caso di dati linearmente separabili, il problema consiste nel minimizzare:
+\[
+\frac{1}{2}\|w\|^2
+\]
+soggetto ai vincoli:
+\[
+y_i(w^T x_i + b) \geq 1.
+\]
+I punti che soddisfano il vincolo con uguaglianza sono detti \textbf{support vectors} e determinano univocamente l’iperpiano ottimale.
+
+\medskip
+
+\textbf{Soft-margin SVM}  
+Per dati non perfettamente separabili, vengono introdotte le variabili di slack \( \xi_i \geq 0 \) e il problema diventa:
+\[
+\min_{w,b,\xi} \; \frac{1}{2}\|w\|^2 + C \sum_i \xi_i,
+\quad
+y_i(w^T x_i + b) \geq 1 - \xi_i.
+\]
+Il parametro \( C \) regola il compromesso tra ampiezza del margine e penalizzazione degli errori.
+
+\medskip
+
+\textbf{Interpretazione delle variabili di slack}
+\begin{itemize}
+    \item \( \xi_i = 0 \): punto correttamente classificato e fuori dal margine;
+    \item \( 0 < \xi_i \leq 1 \): punto dentro il margine ma sul lato corretto;
+    \item \( \xi_i > 1 \): punto misclassificato.
+\end{itemize}
+
+\medskip
+
+\textbf{Separazione non lineare e basis functions}  
+Quando i dati non sono linearmente separabili nello spazio originale, è possibile applicare una trasformazione non lineare:
+\[
+\phi : \mathbb{R}^d \rightarrow \mathbb{R}^M,
+\quad
+f(x) = w^T \phi(x) + b.
+\]
+Esempi di basis functions includono trasformazioni polinomiali, gaussiane e sigmoidali.
+
+\medskip
+
+In sintesi, le SVM combinano un criterio geometrico solido, una formulazione di ottimizzazione convessa e la possibilità di estendere il modello a separazioni non lineari, rendendole uno dei metodi di riferimento nel machine learning classico.
+
+\end{tcolorbox}
+
+\newpage
+\chapter{Linear Models for Regression}
+
+L’obiettivo della regressione è apprendere una funzione
+
+\[
+\highlight{
+f : \mathcal{X} \subseteq \mathbb{R}^d \rightarrow \mathbb{R}}
+\]
+
+a partire da un insieme di dati
+
+\[
+\highlight{
+\mathcal{D} = \{(x_n, t_n)\}_{n=1}^N,}
+\]
+
+dove $x_n$ rappresenta un vettore di input e $t_n$ il corrispondente valore target reale. I modelli lineari per la regressione assumono che l’output possa essere espresso come combinazione lineare di parametri, eventualmente applicata a trasformazioni non lineari degli input.
+
+\section{Modelli lineari per funzioni lineari}
+
+Nel caso più semplice, il modello è lineare rispetto alle variabili di input:
+
+\[
+\highlight{
+y(x; w) = w_0 + w_1 x_1 + \dots + w_d x_d = w^T x,}
+\]
+
+dove il vettore degli input è esteso con un termine costante
+\[
+x = \begin{bmatrix} 1 & x_1 & \dots & x_d \end{bmatrix}^T,
+\]
+e il vettore dei parametri è
+\[
+w = \begin{bmatrix} w_0 & w_1 & \dots & w_d \end{bmatrix}^T.
+\]
+Questo modello consente, ad esempio, di approssimare una retta nel caso bidimensionale, come nel classico problema di \emph{line fitting}.
+
+Nel caso di una singola variabile di input, il modello lineare assume la forma
+\[
+\highlight{
+y(x; w) = w_0 + w_1 x_1,}
+\]
+che corrisponde geometricamente a una retta nel piano. Come illustrato in Figura~\ref{fig:linear_fit}, i dati osservati non giacciono esattamente sulla retta a causa della presenza di rumore sulle misure. Il problema della regressione consiste quindi nel determinare i parametri $w_0$ e $w_1$ tali da approssimare nel modo migliore possibile i valori target.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{linear_regression_2d.png}
+    \caption{Esempio di regressione lineare bidimensionale. I punti blu rappresentano i valori target osservati, affetti da rumore, mentre la retta rossa corrisponde alla funzione di predizione $y(x;w)=w_0+w_1x_1$ appresa dal modello. I segmenti verticali indicano i residui, ovvero gli errori $t_n - y(x_n;w)$ che vengono minimizzati nel criterio dei minimi quadrati.}
+    \label{fig:linear_fit}
+\end{figure}
+
+Gli scarti verticali tra i punti osservati e la retta di predizione rappresentano i residui del modello. La stima dei parametri tramite il metodo dei minimi quadrati equivale a minimizzare la somma dei quadrati di tali residui, fornendo la soluzione ottima in senso statistico sotto l’ipotesi di rumore gaussiano.
+
+
+\section{Modelli lineari con basis functions}
+
+Per aumentare la flessibilità del modello senza rinunciare alla linearità nei parametri, si introducono le \emph{basis functions}. Il modello assume la forma
+
+\[
+\highlight{
+y(x; w) = \sum_{j=0}^{M} w_j \phi_j(x) = w^T \phi(x),}
+\]
+
+dove $\phi_j(x)$ sono funzioni (in generale non lineari) degli input, con $\phi_0(x) = 1$. Nonostante la possibile non linearità rispetto a $x$, il modello rimane lineare rispetto ai parametri $w$.
+
+Un caso particolarmente rilevante di modelli lineari con basis functions è rappresentato dall’uso di polinomi. In questo contesto, le funzioni base sono definite come
+
+\[
+\highlight{
+\phi_j(x) = x^j,}
+\]
+
+e il modello assume la forma
+
+\[
+\highlight{
+y(x;w) = \sum_{j=0}^{M} w_j x^j.}
+\]
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{polinomial_curve_fitting.png}
+    \caption{Esempio di regressione mediante basis functions polinomiali di diverso grado $M$. I punti blu rappresentano i dati osservati, la curva verde indica la funzione target sottostante, mentre la curva rossa corrisponde alla funzione appresa dal modello. All’aumentare del grado del polinomio cresce la flessibilità del modello, passando da situazioni di underfitting ($M=0,1$) a una buona approssimazione ($M=3$), fino a fenomeni di overfitting ($M=9$).}
+    \label{fig:polynomial_basis}
+\end{figure}
+
+La Figura~\ref{fig:polynomial_basis} mostra come la scelta del grado $M$ influenzi in modo critico il comportamento del modello. Per valori piccoli di $M$, il modello risulta eccessivamente rigido e non è in grado di catturare la struttura dei dati, producendo un’elevata distorsione (bias). Al crescere di $M$, la capacità di approssimazione aumenta e il modello riesce a seguire più fedelmente l’andamento della funzione target.
+
+Tuttavia, per valori elevati di $M$, il modello tende ad adattarsi anche al rumore presente nei dati di training, manifestando oscillazioni non giustificate e una scarsa capacità di generalizzazione. Questo fenomeno prende il nome di overfitting e motiva la necessità di introdurre tecniche di controllo della complessità, come la regularizzazione, discusse nelle sezioni successive.
+
+
+
+Altri esempi di basis functions includono funzioni radiali (RBF), sigmoidi e funzioni $\tanh$, che permettono di modellare strutture più complesse nei dati.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{basis_function_ex.png}
+    \caption{ Visualizzazione grafica di alcuni esempi di basis function.}
+    \label{fig:polynomial_basis}
+\end{figure}
+
+\section{Stima dei parametri: massima verosimiglianza e minimi quadrati}
+
+Si assume che il valore target sia affetto da rumore additivo gaussiano:
+\[
+t = y(x; w) + \varepsilon,
+\qquad \varepsilon \sim \mathcal{N}(0, \beta^{-1}),
+\]
+da cui segue:
+\[
+P(t|x,w,\beta) = \mathcal{N}(t|y(x; w), \beta^{-1}).
+\]
+Assumendo osservazioni indipendenti e identicamente distribuite, la massimizzazione della verosimiglianza equivale alla minimizzazione dell’errore quadratico:
+\[
+E_D(w) = \frac{1}{2} \sum_{n=1}^{N} \left(t_n - w^T \phi(x_n)\right)^2.
+\]
+
+Introducendo la matrice di progetto
+\[
+\Phi =
+\begin{bmatrix}
+\phi_0(x_1) & \dots & \phi_M(x_1) \\
+\vdots & & \vdots \\
+\phi_0(x_N) & \dots & \phi_M(x_N)
+\end{bmatrix},
+\]
+la soluzione in forma chiusa è:
+\[
+w_{ML} = (\Phi^T \Phi)^{-1} \Phi^T t,
+\]
+che coincide con la soluzione ai minimi quadrati ottenuta tramite pseudo-inversa.
+
+\section{Apprendimento sequenziale}
+
+In alternativa alla soluzione analitica, i parametri possono essere appresi in modo incrementale tramite \emph{stochastic gradient descent}:
+\[
+\hat{w} \leftarrow \hat{w} - \eta \nabla E_S,
+\]
+dove $\eta$ è il learning rate e $\nabla E_S$ è una stima del gradiente calcolata su un sottoinsieme casuale dei dati. L’algoritmo converge per valori sufficientemente piccoli di $\eta$.
+
+\subsection{Regolarizzazione}
+
+Per contrastare l’overfitting si introduce un termine di penalizzazione sui parametri:
+\[
+\arg\min_w \; E_D(w) + \lambda E_W(w),
+\]
+con $\lambda > 0$ fattore di regolarizzazione. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.70\textwidth]{regularization_effects.png}
+    \caption{Effetto della regolarizzazione su un modello polinomiale di grado elevato ($M=9$). In alto è mostrata la soluzione non regolarizzata, caratterizzata da forti oscillazioni e overfitting.}
+    \label{fig:regularization_effects}
+\end{figure}
+
+In assenza di penalizzazione sui parametri, un modello polinomiale di grado elevato tende ad adattarsi in modo eccessivo ai dati di training, producendo oscillazioni non giustificate e una scarsa capacità di generalizzazione.
+
+Introducendo un termine di regolarizzazione del tipo
+
+\[
+\highlight{
+E_W(w) = \frac{1}{2} w^T w,}
+\]
+
+la funzione obiettivo diventa
+
+\[
+\highlight{
+E(w) = E_D(w) + \lambda E_W(w),}
+\]
+
+dove il parametro $\lambda$ controlla il compromesso tra fedeltà ai dati e complessità del modello. Per valori piccoli di $\lambda$, la penalizzazione è debole e il comportamento del modello è simile a quello non regolarizzato. All’aumentare di $\lambda$, i coefficienti vengono progressivamente ridotti, limitando le oscillazioni della funzione appresa.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.70\textwidth]{regularization_effects2.png}
+    \caption{Una regolarizzazione debole ($\ln \lambda = -18$), che consente una buona approssimazione della funzione target.}
+    \label{fig:regularization_effects2}
+\end{figure}
+
+Un valore eccessivamente grande di $\lambda$ porta tuttavia a un modello troppo semplice, incapace di catturare la struttura dei dati, evidenziando un fenomeno di underfitting. La scelta del parametro di regolarizzazione risulta quindi cruciale per ottenere buone prestazioni di generalizzazione.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.70\textwidth]{regularization_effects3.png}
+    \caption{Un esempio caso di regolarizzazione forte ($\ln \lambda = 0$), in cui il modello diventa eccessivamente rigido e manifesta underfitting.}
+    \label{fig:regularization_effects3}
+\end{figure}
+
+
+\subsection{Regressione con output multipli}
+
+Nel caso di output vettoriali $y \in \mathbb{R}^K$, il modello diventa:
+\[
+y(x; W) = W^T \phi(x),
+\]
+dove $W$ è una matrice dei parametri. Sotto le stesse ipotesi gaussiane, la stima di massima verosimiglianza è:
+\[
+W_{ML} = (\Phi^T \Phi)^{-1} \Phi^T T.
+\]
+
+\section*{RIEPILOGO}
+
+\begin{tcolorbox}[
+    colback=green!10,
+    colframe=green!50!black,
+    title=\textbf{Linear Models for Regression -- Concetti chiave},
+    fonttitle=\bfseries,
+    sharp corners,
+    boxrule=0.8pt
+]
+
+I modelli lineari per la regressione mirano ad apprendere una funzione
+\[
+f : \mathbb{R}^d \rightarrow \mathbb{R}
+\]
+a partire da un insieme di dati etichettati, assumendo una dipendenza lineare dai parametri.
+
+\medskip
+\textbf{Modello lineare}
+\[
+y(x;w) = w^T x
+\]
+rappresenta il caso più semplice di regressione lineare.
+
+\medskip
+\textbf{Linear Basis Function Models}  
+Introducendo funzioni base $\phi_j(x)$, il modello diventa:
+\[
+y(x;w) = \sum_{j=0}^{M} w_j \phi_j(x) = w^T \phi(x),
+\]
+consentendo di approssimare relazioni non lineari pur mantenendo la linearità nei parametri.
+
+\medskip
+\textbf{Stima dei parametri}  
+Assumendo rumore gaussiano additivo, la massima verosimiglianza conduce alla minimizzazione dell’errore quadratico:
+\[
+E_D(w) = \frac{1}{2} \sum_{n=1}^{N} \left(t_n - w^T \phi(x_n)\right)^2,
+\]
+con soluzione in forma chiusa:
+\[
+w_{ML} = (\Phi^T \Phi)^{-1} \Phi^T t.
+\]
+
+\medskip
+\textbf{Regolarizzazione}  
+Per controllare l’overfitting si introduce una penalizzazione sui parametri:
+\[
+\arg\min_w \; E_D(w) + \lambda \frac{1}{2} w^T w,
+\]
+dove $\lambda$ regola il compromesso tra accuratezza sui dati e complessità del modello.
+
+\medskip
+In sintesi, i modelli lineari per la regressione costituiscono un quadro teorico solido e computazionalmente efficiente, ponendo le basi per tecniche più avanzate di apprendimento supervisionato.
+
+\end{tcolorbox}
+
+\chapter{Kernel Methods}
+
+I metodi kernel rappresentano un’estensione fondamentale dei modelli lineari, consentendo di apprendere funzioni non lineari mantenendo una formulazione matematica elegante e computazionalmente trattabile. L’idea centrale è quella di esprimere il modello esclusivamente in termini di prodotti scalari tra campioni di input, permettendo così di sostituire tali prodotti con funzioni di similarità più generali.
+
+\section{Dai modelli lineari alla formulazione duale}
+
+Consideriamo un modello lineare per la regressione:
+\[
+y(x;w) = w^T x,
+\]
+e una funzione di costo regolarizzata:
+\[
+E(w) = \frac{1}{2}\sum_{n=1}^{N}(w^T x_n - t_n)^2 + \lambda \|w\|^2.
+\]
+La soluzione ottima si ottiene imponendo $\nabla E(w)=0$, da cui segue che il vettore dei pesi può essere espresso come combinazione lineare dei dati di training:
+\[
+w^* = \sum_{n=1}^{N} \alpha_n x_n.
+\]
+Sostituendo nella funzione di predizione, si ottiene:
+
+\[
+\highlight{
+y(x) = \sum_{n=1}^{N} \alpha_n x_n^T x.}
+\]
+
+Questa espressione mostra che la predizione non dipende più esplicitamente dal vettore dei pesi $w$, ma solo da \textbf{quanto l’input $x$ è simile ai dati di training}. Ogni termine $x_n^T x$ misura una similarità, e i coefficienti $\alpha_n$ ne pesano l’importanza.
+
+\section{Gram matrix e formulazione kernelizzata}
+
+Definendo la matrice di Gram:
+
+\[
+\highlight{
+K = XX^T,
+\qquad K_{nm} = x_n^T x_m,}
+\]
+la soluzione diventa:
+
+\[
+\highlight{
+\alpha = (K + \lambda I_N)^{-1} t,
+\qquad
+y(x) = \sum_{n=1}^{N} \alpha_n x_n^T x.}
+\]
+Questa formulazione è detta \emph{duale} e dipende esclusivamente dai prodotti scalari tra dati.
+
+Il modello non “vede” più le coordinate degli input, ma solo \textbf{le relazioni reciproche} tra i punti del dataset. Questo apre la strada a una generalizzazione potente: sostituire il prodotto scalare con una misura di similarità più sofisticata.
+
+\subsection*{Esempio}
+
+Dato un insieme di dati di training $\{x_1,\dots,x_N\}$, la Gram matrix associata a un kernel $k$ è definita come
+\[
+K_{nm} = k(x_n, x_m).
+\]
+
+Consideriamo, ad esempio, tre punti bidimensionali:
+\[
+x_1 = \begin{bmatrix}1 \\ 0\end{bmatrix}, \quad
+x_2 = \begin{bmatrix}0 \\ 1\end{bmatrix}, \quad
+x_3 = \begin{bmatrix}1 \\ 1\end{bmatrix}.
+\]
+Utilizzando il kernel lineare $k(x,x') = x^T x'$, la Gram matrix risulta:
+\[
+K =
+\begin{bmatrix}
+1 & 0 & 1 \\
+0 & 1 & 1 \\
+1 & 1 & 2
+\end{bmatrix}.
+\]
+
+Sostituendo il kernel lineare con un kernel gaussiano
+\[
+k(x,x') = \exp(-\beta \|x-x'\|^2),
+\]
+si ottiene una Gram matrix con la stessa struttura ma valori differenti, che riflettono una diversa nozione di similarità tra i dati.
+
+La Gram matrix codifica quindi tutte le relazioni tra gli esempi del dataset ed è l’unico oggetto necessario per l’apprendimento nei modelli kernelizzati.
+
+
+\section{Kernel functions}
+
+Una \emph{kernel function} è una funzione:
+
+\[
+\highlight{
+k : \mathcal{X} \times \mathcal{X} \rightarrow \mathbb{R},}
+\]
+che misura la similarità tra due input. Il kernel lineare è un caso particolare:
+\[
+k(x,x') = x^T x'.
+\]
+Sostituendo il prodotto scalare con un kernel generico, il modello diventa:
+
+\[
+\highlight{
+y(x) = \sum_{n=1}^{N} \alpha_n k(x_n, x),}
+\]
+con
+
+\[
+\highlight{
+\alpha = (K + \lambda I_N)^{-1} t,
+\quad K_{nm} = k(x_n, x_m).}
+\]
+
+Il kernel può essere visto come un confronto intelligente tra esempi: invece di chiedersi “quanto sono vicini in termini di coordinate?”, il modello si chiede “quanto si assomigliano secondo un certo criterio?”.
+
+\subsection{Kernel trick}
+
+Il \emph{kernel trick} consiste nell’osservare che, se un algoritmo dipende dagli input \textbf{solo tramite prodotti scalari}, questi possono essere sostituiti da kernel:
+
+\[
+\highlight{
+x^T x' \;\longrightarrow\; k(x,x').}
+\]
+
+In molti casi esiste una mappa implicita $\phi(x)$ tale che:
+
+\[
+\highlight{
+k(x,x') = \phi(x)^T \phi(x'),}
+\]
+
+senza che sia necessario conoscere o calcolare esplicitamente $\phi(x)$.
+
+È come lavorare in uno spazio di dimensione molto alta (o infinita) senza mai entrarci davvero. Il kernel fornisce direttamente il risultato finale, evitando il costo computazionale della trasformazione esplicita.
+
+\subsection{Esempio: applicazione concreta del kernel trick}
+
+Consideriamo un semplice dataset di training composto da tre esempi monodimensionali:
+\[
+\mathcal{D} = \{(x_1,t_1),(x_2,t_2),(x_3,t_3)\},
+\quad
+x_1=0,\; x_2=1,\; x_3=2,
+\quad
+t = \begin{bmatrix}1 \\ 0 \\ 1\end{bmatrix}.
+\]
+
+Supponiamo che un modello lineare nello spazio originale non sia sufficiente e scegliamo un kernel gaussiano (RBF):
+\[
+k(x,x') = \exp(-\beta (x-x')^2),
+\]
+con $\beta=1$.
+
+\subsubsection*{Costruzione della Gram matrix}
+
+La Gram matrix $K$ è definita come:
+\[
+K_{nm} = k(x_n,x_m).
+\]
+Calcolando tutte le similarità tra i punti del training, otteniamo:
+\[
+K =
+\begin{bmatrix}
+k(0,0) & k(0,1) & k(0,2) \\
+k(1,0) & k(1,1) & k(1,2) \\
+k(2,0) & k(2,1) & k(2,2)
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 & e^{-1} & e^{-4} \\
+e^{-1} & 1 & e^{-1} \\
+e^{-4} & e^{-1} & 1
+\end{bmatrix}.
+\]
+
+Questa matrice rappresenta completamente il dataset dal punto di vista del modello kernelizzato.
+
+\subsubsection*{Apprendimento}
+
+Nel caso della regressione kernelizzata con regolarizzazione, i coefficienti $\alpha$ si ottengono risolvendo:
+\[
+\alpha = (K + \lambda I)^{-1} t,
+\]
+dove $\lambda > 0$ è il parametro di regolarizzazione. Il modello non utilizza esplicitamente i dati $x_n$, ma solo la matrice $K$ e il vettore dei target $t$.
+
+\subsubsection*{Predizione su un nuovo punto}
+
+Dato un nuovo punto di test $x_* = 0.5$, la predizione è:
+\[
+y(x_*) = \sum_{n=1}^{3} \alpha_n k(x_n,x_*).
+\]
+In particolare:
+\[
+k(0,0.5)=e^{-0.25}, \quad
+k(1,0.5)=e^{-0.25}, \quad
+k(2,0.5)=e^{-2.25}.
+\]
+
+La predizione dipende quindi esclusivamente dalla similarità tra $x_*$ e i punti di training, senza mai calcolare esplicitamente una trasformazione non lineare dello spazio degli input.
+
+\section{Famiglie di kernel}
+
+Tra le famiglie di kernel più utilizzate si trovano:
+\[
+\begin{aligned}
+&\text{Lineare: } && k(x,x') = x^T x' \\
+&\text{Polinomiale: } && k(x,x') = (\beta x^T x' + \gamma)^d \\
+&\text{RBF (Gaussiano): } && k(x,x') = \exp(-\beta \|x-x'\|^2) \\
+&\text{Sigmoide: } && k(x,x') = \tanh(\beta x^T x' + \gamma).
+\end{aligned}
+\]
+
+Ogni kernel introduce una diversa nozione di vicinanza: il kernel RBF, ad esempio, assegna un’influenza locale ai punti, mentre il kernel polinomiale cattura interazioni globali di grado crescente.
+
+\section{Kernelized SVM}
+
+Nel caso delle Support Vector Machine, la soluzione ottima ha la forma:
+
+\[
+\highlight{
+y(x) = \mathrm{sign}\!\left(w_0 + \sum_{n=1}^{N} \alpha_n k(x_n, x)\right),}
+\]
+dove solo i \emph{support vectors} hanno coefficienti $\alpha_n \neq 0$.
+
+La decisione finale dipende solo da pochi esempi critici. Il kernel consente di costruire frontiere di decisione non lineari nello spazio originale, pur mantenendo una formulazione lineare nello spazio implicito.
+
+\subsection{Kernelized SVM per la regressione}
+
+Nel caso regressivo, si introduce la funzione di perdita $\varepsilon$-insensitive e un tubo di tolleranza attorno alla funzione appresa. Solo i punti che violano tale tubo contribuiscono alla soluzione:
+
+\[
+\highlight{
+y(x) = \sum_{n=1}^{N} (\hat{\alpha}_n - \hat{\alpha}'_n) k(x_n, x) + w_0.}
+\]
+
+Il modello ignora piccoli errori e si concentra solo sui punti che forniscono informazione rilevante, ottenendo soluzioni sparse e robuste al rumore.
+
+\subsection*{RIEPILOGO}
+
+\begin{tcolorbox}[
+    colback=green!10,
+    colframe=green!50!black,
+    title=\textbf{Kernel Methods -- Concetti chiave},
+    fonttitle=\bfseries,
+    sharp corners,
+    boxrule=0.8pt
+]
+
+I metodi kernel permettono di estendere i modelli lineari a funzioni non lineari esprimendo il modello esclusivamente in termini di prodotti scalari tra dati.
+
+\medskip
+\textbf{Idea fondamentale}  
+\[
+x^T x' \;\rightarrow\; k(x,x')
+\]
+senza calcolare esplicitamente la trasformazione dello spazio degli input.
+
+\medskip
+\textbf{Kernel trick}  
+Consente di lavorare implicitamente in spazi di dimensione elevata o infinita mantenendo una complessità computazionale gestibile.
+
+\medskip
+\textbf{Kernelized models}  
+\[
+y(x) = \sum_{n=1}^{N} \alpha_n k(x_n, x),
+\]
+con soluzione dipendente solo dalla matrice di Gram.
+
+\medskip
+\textbf{Applicazioni principali}  
+Le SVM kernelizzate rappresentano uno dei metodi più efficaci per classificazione e regressione non lineare, pur richiedendo una attenta selezione degli iperparametri.
+
+\end{tcolorbox}
+
+\chapter{Multiple Learners}
+
+Nei capitoli precedenti abbiamo considerato modelli di apprendimento singoli, progettati per approssimare una funzione obiettivo a partire da un insieme di dati. In questo contesto, la qualità delle prestazioni dipende fortemente dalla scelta del modello, dalla sua complessità e dalla quantità di dati disponibili. Tuttavia, anche modelli ben progettati possono risultare limitati quando affrontano problemi complessi o dati rumorosi.
+
+L’approccio dei \emph{multiple learners}, noto anche come \emph{ensemble learning}, si basa su un’idea diversa: invece di costruire un singolo modello molto complesso, si addestrano più modelli (detti \emph{base learners}) e si combinano le loro predizioni per ottenere un risultato complessivo più accurato e robusto.
+
+Formalmente, si considera un insieme di modelli
+\[
+\{y_1(x), y_2(x), \dots, y_M(x)\},
+\]
+addestrati sullo stesso problema, e una funzione di combinazione che produce la predizione finale a partire dalle singole uscite. I modelli possono essere addestrati in modo indipendente oppure in modo sequenziale, a seconda della strategia adottata.
+
+L’idea alla base dell’ensemble learning è analoga al processo decisionale collettivo: una singola opinione può essere errata o influenzata dal rumore, mentre la combinazione di più punti di vista indipendenti tende a ridurre gli errori individuali. Anche se ciascun modello è relativamente semplice o imperfetto, l’insieme può produrre una decisione più affidabile.
+
+\medskip
+Un aspetto cruciale è che i modelli combinati devono essere in qualche misura \emph{diversi} tra loro. Se tutti i modelli commettono gli stessi errori, la loro combinazione non porta alcun beneficio. Le tecniche di multiple learners mirano quindi a introdurre diversità tra i modelli, sfruttandola per migliorare le prestazioni complessive.
+
+Non è sufficiente avere molti modelli: è importante che ciascun modello “sbagli in modo diverso”. L’ensemble funziona quando gli errori dei singoli modelli si compensano a vicenda, lasciando emergere una predizione più stabile.
+
+\medskip
+Le principali strategie di ensemble learning si distinguono in base a come vengono addestrati e combinati i modelli:
+\begin{itemize}
+    \item combinazione di modelli addestrati in parallelo (ad esempio tramite voting o bagging);
+    \item combinazione di modelli addestrati in sequenza, in cui ogni modello corregge gli errori dei precedenti (boosting).
+\end{itemize}
+
+Queste strategie, pur condividendo l’idea di base, affrontano in modo diverso il compromesso tra bias e varianza e saranno analizzate nel dettaglio nelle sezioni successive.
+
+\section{Voting}
+
+Una delle strategie più semplici per combinare più modelli di apprendimento è il \emph{voting}. L’idea di base consiste nell’addestrare più modelli sullo stesso dataset e combinare le loro predizioni attraverso una media (nel caso di regressione) o una maggioranza (nel caso di classificazione).
+
+Sia dato un insieme di $M$ modelli
+\[
+\{y_1(x), y_2(x), \dots, y_M(x)\},
+\]
+addestrati a partire dallo stesso insieme di dati $\mathcal{D}$. Nel caso della regressione, la predizione combinata è definita come:
+
+\[
+\highlight{
+y_{\text{voting}}(x) = \sum_{m=1}^{M} w_m \, y_m(x),}
+\]
+
+dove $w_m \geq 0$ sono pesi assegnati ai singoli modelli, tali che:
+
+\[
+\highlight{
+\sum_{m=1}^{M} w_m = 1.}
+\]
+
+Nel caso della classificazione, la predizione finale è ottenuta tramite una maggioranza pesata:
+
+\[
+\highlight{
+y_{\text{voting}}(x) =
+\arg\max_{c}
+\sum_{m=1}^{M}
+w_m \, \mathbb{I}(y_m(x) = c),}
+\]
+
+dove $\mathbb{I}(\cdot)$ è la funzione indicatrice.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{voting.png}
+    \caption{Schema concettuale del voting. L’input $x$ viene fornito a più modelli ($d_1, d_2, \dots, d_L$), le cui predizioni vengono combinate tramite una somma pesata per produrre l’output finale $y$.}
+    \label{fig:voting}
+\end{figure}
+
+Come illustrato in Figura~\ref{fig:voting}, ogni modello produce una predizione indipendente a partire dallo stesso input. Le singole uscite vengono poi aggregate da una funzione di combinazione, che può essere vista come un modello lineare nello spazio delle predizioni.
+
+Il voting può essere interpretato come una media delle opinioni di più esperti. Ogni modello fornisce una stima potenzialmente imperfetta, ma combinando più predizioni si riduce l’impatto degli errori individuali. Se i modelli commettono errori non correlati, questi tendono a compensarsi, producendo una predizione complessivamente più stabile.
+
+\medskip
+Nel caso in cui tutti i pesi siano uguali ($w_m = 1/M$), si parla di \emph{uniform voting}. L’introduzione di pesi differenti consente invece di assegnare maggiore importanza ai modelli ritenuti più affidabili.
+
+\paragraph{Osservazione}
+Il voting non modifica i modelli di base né il processo di addestramento: l’intervento avviene esclusivamente a livello di combinazione delle predizioni. Per questo motivo, il voting rappresenta una tecnica semplice, flessibile e facilmente parallelizzabile, ma la sua efficacia dipende fortemente dalla diversità tra i modelli combinati.
+
+\section{Mixture of Experts}
+
+Una generalizzazione del voting è rappresentata dal modello di \emph{mixture of experts}, in cui la combinazione delle predizioni non avviene tramite pesi fissi, ma attraverso una funzione dipendente dall’input.
+
+Siano $d_1(x), d_2(x), \dots, d_L(x)$ un insieme di modelli di base. La predizione finale è definita come:
+\[
+y(x) = \sum_{l=1}^{L} g_l(x)\, d_l(x),
+\]
+dove $g_l(x)$ è una funzione di \emph{gating} tale che:
+\[
+g_l(x) \geq 0, \qquad \sum_{l=1}^{L} g_l(x) = 1.
+\]
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{mixture_of_experts.png}
+    \caption{Schema del modello di mixture of experts. L’input $x$ viene fornito sia ai modelli di base ($d_1, \dots, d_L$) sia alla funzione di gating, che determina dinamicamente i pesi con cui le singole predizioni vengono combinate per produrre l’output finale $y$.}
+    \label{fig:mixture_experts}
+\end{figure}
+
+A differenza del voting, in cui i pesi sono costanti, nel mixture of experts la funzione di gating apprende come selezionare o pesare i diversi modelli in base all’input.
+
+Il mixture of experts può essere visto come un sistema adattivo che, per ogni input, decide quali modelli siano più affidabili. In questo modo, ciascun esperto può specializzarsi in una particolare regione dello spazio degli input, mentre il gating coordina il loro contributo, migliorando la capacità di modellare comportamenti complessi.
+
+\section{Stacking}
+
+Un’ulteriore estensione delle tecniche di ensemble è rappresentata dallo \emph{stacking}, in cui la funzione di combinazione delle predizioni viene essa stessa appresa dai dati.
+
+Siano $d_1(x), d_2(x), \dots, d_L(x)$ un insieme di modelli di base addestrati sullo stesso problema. Nello stacking, le predizioni dei modelli di base costituiscono l’input di un meta–modello $f(\cdot)$, che produce la predizione finale:
+\[
+y(x) = f\big(d_1(x), d_2(x), \dots, d_L(x)\big).
+\]
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{stacking.png}
+    \caption{Schema dello stacking. L’input $x$ viene fornito a più modelli di base ($d_1, d_2, \dots, d_L$), le cui predizioni sono utilizzate come input di un meta–modello $f(\cdot)$ che apprende come combinarle per produrre l’output finale $y$.}
+    \label{fig:stacking}
+\end{figure}
+
+A differenza del voting e del mixture of experts, nello stacking non viene imposta alcuna forma specifica alla funzione di combinazione. Il meta–modello può essere qualsiasi algoritmo di apprendimento supervisionato, come una regressione lineare, una SVM o una rete neurale.
+
+Lo stacking può essere visto come un processo di apprendimento su più livelli: i modelli di base apprendono una prima rappresentazione del problema, mentre il meta–learner apprende come sfruttare al meglio tali rappresentazioni, correggendone sistematicamente gli errori.
+
+\section{Cascading}
+
+Il \emph{cascading} è una tecnica di ensemble in cui i modelli di base sono organizzati in sequenza e interrogati progressivamente in base a un criterio di confidenza. A differenza di altre strategie di combinazione, nel cascading non vengono aggregate più predizioni: l’output finale è fornito da un singolo modello selezionato dinamicamente.
+
+Siano $d_1(x), d_2(x), \dots, d_L(x)$ un insieme di modelli di base e $c_l(x)$ una misura di confidenza associata al modello $d_l$. La predizione finale è definita come:
+\[
+y(x) =
+\begin{cases}
+d_1(x) & \text{se } c_1(x) > \theta_1 \\
+d_2(x) & \text{se } c_2(x) > \theta_2 \\
+\vdots & \\
+d_L(x) & \text{altrimenti}.
+\end{cases}
+\]
+
+Il cascading può essere visto come una strategia decisionale a più stadi: modelli semplici e veloci vengono utilizzati per risolvere i casi facili, mentre modelli più complessi intervengono solo quando necessario. Questo approccio consente di ridurre il costo computazionale medio mantenendo buone prestazioni complessive.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{cascading.png}
+    \caption{Schema del cascading. L’input $x$ viene elaborato da una sequenza di modelli. Ogni modello restituisce una predizione solo se la sua confidenza supera una soglia prefissata; in caso contrario, l’input viene passato al modello successivo.}
+    \label{fig:cascading}
+\end{figure}
+
+\section{Bagging}
+
+Il \emph{bagging} (Bootstrap Aggregating) è una tecnica di ensemble learning progettata per migliorare la stabilità e la capacità di generalizzazione di un modello di apprendimento, riducendone la varianza. A differenza delle strategie viste in precedenza, il bagging introduce diversità tra i modelli non attraverso la combinazione delle predizioni o funzioni adattive, ma tramite la costruzione di differenti insiemi di addestramento.
+
+Dato un dataset di training
+\[
+\mathcal{D} = \{(x_1,t_1), \dots, (x_N,t_N)\},
+\]
+il bagging procede secondo i seguenti passi:
+\begin{enumerate}
+    \item si generano $M$ dataset bootstrap $\mathcal{D}_1, \dots, \mathcal{D}_M$ mediante campionamento casuale con rimpiazzo a partire da $\mathcal{D}$;
+    \item su ciascun dataset $\mathcal{D}_m$ viene addestrato un modello $y_m(x)$;
+    \item le predizioni dei modelli vengono combinate tramite una media (regressione) o una maggioranza (classificazione).
+\end{enumerate}
+
+Nel caso della regressione, la predizione finale è:
+
+\[
+\highlight{
+y_{\text{bagging}}(x) = \frac{1}{M} \sum_{m=1}^{M} y_m(x).}
+\]
+
+Nel caso della classificazione, si utilizza una maggioranza di voto:
+\[
+\highlight{
+y_{\text{bagging}}(x) =
+\arg\max_c
+\sum_{m=1}^{M} \mathbb{I}(y_m(x)=c).}
+\]
+
+Tutti i modelli di base utilizzati nel bagging sono tipicamente dello stesso tipo e vengono addestrati in modo indipendente e parallelo.
+Il bagging sfrutta il fatto che molti modelli di apprendimento, in particolare quelli complessi e flessibili (come alberi di decisione profondi), sono altamente sensibili alle variazioni del dataset di training. Piccole modifiche nei dati possono produrre modelli molto diversi.
+
+Creando molte versioni leggermente diverse del dataset tramite bootstrap, il bagging induce una variabilità artificiale tra i modelli. La media delle loro predizioni tende a cancellare le fluttuazioni dovute al rumore, producendo una stima più stabile.
+
+\medskip
+In termini di decomposizione bias–varianza, il bagging agisce principalmente sulla \emph{varianza} del modello: non riduce significativamente il bias, ma attenua l’overfitting tipico dei modelli ad alta complessità.
+Il bagging è particolarmente efficace quando i modelli di base sono instabili, ovvero quando piccole variazioni nei dati di training producono grandi variazioni nella funzione appresa. In questi casi, l’aggregazione delle predizioni consente di ottenere un miglioramento consistente delle prestazioni di generalizzazione.
+
+\section{Boosting}
+
+Il \emph{boosting} è una tecnica di ensemble learning in cui i modelli di base vengono addestrati in modo sequenziale, assegnando progressivamente maggiore importanza ai campioni difficili da classificare. A differenza del bagging, i modelli non sono indipendenti: ciascun learner è influenzato dalle prestazioni dei precedenti.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.80\textwidth]{boosting.png}
+    \caption{Schema concettuale del boosting. A ogni iterazione $m$, il modello $y_m(x)$ viene addestrato su un dataset pesato $\{w_n^{(m)}\}$. I pesi dei campioni mal classificati vengono aumentati, costringendo i learner successivi a concentrarsi sugli errori precedenti. La predizione finale è una combinazione pesata delle predizioni dei singoli modelli.}
+    \label{fig:boosting}
+\end{figure}
+
+Sia $\mathcal{D}=\{(x_n,t_n)\}_{n=1}^N$ un dataset con etichette $t_n \in \{-1,+1\}$. Il boosting costruisce una sequenza di weak learners $y_1(x), \dots, y_M(x)$, ciascuno addestrato minimizzando un errore pesato. Al termine, le predizioni vengono combinate come:
+
+\[
+\highlight{
+Y_M(x) = \mathrm{sign}\!\left(\sum_{m=1}^{M} \alpha_m\, y_m(x)\right).}
+\]
+
+Il boosting può essere visto come un processo di apprendimento cooperativo: ogni modello cerca di correggere le debolezze dei precedenti, focalizzandosi sui campioni più difficili. Questo meccanismo consente di trasformare un insieme di learner deboli in un classificatore forte.
+
+\subsection{AdaBoost}
+
+AdaBoost (Adaptive Boosting) è uno degli algoritmi di boosting più noti ed efficaci. Il suo obiettivo è costruire un classificatore forte combinando una sequenza di classificatori deboli, ciascuno dei quali viene addestrato ponendo maggiore enfasi sui campioni che risultano difficili da classificare.
+
+Si consideri un dataset di training
+\[
+\mathcal{D} = \{(x_n, t_n)\}_{n=1}^N,
+\quad t_n \in \{-1, +1\}.
+\]
+AdaBoost mantiene una distribuzione di pesi sui campioni, indicata con
+
+\[
+\highlight{
+w_n^{(m)}, \quad n=1,\dots,N,}
+\]
+
+che viene aggiornata a ogni iterazione $m$.
+
+\subsubsection*{Algoritmo AdaBoost}
+
+\begin{enumerate}
+    \item Inizializzare i pesi dei campioni:
+    \[
+    w_n^{(1)} = \frac{1}{N}, \quad n = 1, \dots, N.
+    \]
+
+    \item Per $m = 1, \dots, M$:
+    \begin{enumerate}
+        \item addestrare un weak learner $y_m(x)$ minimizzando l’errore pesato:
+        \[
+        J_m = \sum_{n=1}^{N} w_n^{(m)} \, \mathbb{I}(y_m(x_n) \neq t_n);
+        \]
+        \item calcolare l’errore del classificatore:
+        \[
+        \varepsilon_m =
+        \frac{\sum_{n=1}^{N} w_n^{(m)} \, \mathbb{I}(y_m(x_n) \neq t_n)}
+        {\sum_{n=1}^{N} w_n^{(m)}};
+        \]
+        \item calcolare il peso del classificatore:
+        \[
+        \alpha_m = \ln\!\left(\frac{1-\varepsilon_m}{\varepsilon_m}\right);
+        \]
+        \item aggiornare i pesi dei campioni:
+        \[
+        w_n^{(m+1)} = w_n^{(m)} \exp\!\left(\alpha_m \, \mathbb{I}(y_m(x_n) \neq t_n)\right).
+        \]
+    \end{enumerate}
+\end{enumerate}
+
+La predizione finale è ottenuta come:
+
+\[
+\highlight{
+Y_M(x) = \mathrm{sign}\!\left(\sum_{m=1}^{M} \alpha_m \, y_m(x)\right).}
+\]
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{adaboost_evolution.png}
+    \caption{Evoluzione di AdaBoost al crescere del numero di iterazioni $m$. I cerchi più grandi indicano campioni con peso maggiore. I weak learner successivi si concentrano progressivamente sui punti difficili, producendo una frontiera di decisione sempre più articolata.}
+    \label{fig:adaboost}
+\end{figure}
+
+AdaBoost può essere interpretato come un processo di apprendimento iterativo in cui, a ogni passo, il modello cerca di correggere gli errori commessi in precedenza. I campioni classificati correttamente perdono importanza, mentre quelli sbagliati vengono enfatizzati, costringendo i weak learner successivi a concentrarsi sulle regioni più difficili dello spazio degli input.
+
+Nel corso delle iterazioni, la combinazione pesata dei classificatori produce una frontiera di decisione sempre più complessa, pur partendo da modelli molto semplici.
+
+\subsubsection*{Remarks}
+
+\paragraph{Vantaggi}
+\begin{itemize}
+    \item È semplice da implementare e computazionalmente efficiente.
+    \item Non richiede una conoscenza specifica del weak learner, purché sia leggermente migliore del caso casuale.
+    \item Non necessita di un’accurata scelta di iperparametri (a eccezione del numero di iterazioni $M$).
+    \item Fornisce solide garanzie teoriche e ottime prestazioni empiriche in molti problemi reali.
+    \item Trasforma classificatori deboli in un classificatore forte.
+\end{itemize}
+
+\paragraph{Svantaggi}
+\begin{itemize}
+    \item È sensibile al rumore e agli outlier, che tendono a ricevere pesi sempre più elevati.
+    \item Può degradare le prestazioni in presenza di dati fortemente rumorosi o mal etichettati.
+    \item La performance dipende fortemente dalla qualità dei weak learner.
+    \item Può portare a modelli molto complessi se il numero di iterazioni è elevato.
+\end{itemize}
+
+\newpage
+\section*{RIEPILOGO}
+
+\begin{tcolorbox}[
+    colback=green!10,
+    colframe=green!50!black,
+    title=\textbf{Multiple Learners -- Concetti chiave},
+    fonttitle=\bfseries,
+    sharp corners,
+    boxrule=0.8pt,
+    breakable
+]
+
+L’ensemble learning si basa sull’idea di combinare più modelli di apprendimento (\emph{base learners}) per ottenere prestazioni migliori rispetto a un singolo modello. L’efficacia di questo approccio dipende dalla diversità tra i modelli e dalla strategia di combinazione adottata.
+
+\medskip
+\textbf{Voting}  
+Combina le predizioni di più modelli addestrati sullo stesso dataset mediante una media (regressione) o una maggioranza pesata (classificazione):
+\[
+y(x) = \sum_{m=1}^{M} w_m y_m(x).
+\]
+I pesi sono fissi e indipendenti dall’input.
+
+\medskip
+\textbf{Mixture of Experts}  
+Generalizza il voting introducendo una funzione di \emph{gating} dipendente dall’input:
+\[
+y(x) = \sum_{l=1}^{L} g_l(x)\, d_l(x),
+\]
+consentendo ai modelli di specializzarsi in diverse regioni dello spazio degli input.
+
+\medskip
+\textbf{Stacking}  
+Utilizza un meta–learner per apprendere la funzione di combinazione delle predizioni:
+\[
+y(x) = f(d_1(x), \dots, d_L(x)).
+\]
+La strategia di aggregazione non è imposta, ma appresa dai dati.
+
+\medskip
+\textbf{Cascading}  
+Organizza i modelli in sequenza, utilizzando criteri di confidenza per decidere quale modello fornisce la predizione finale:
+\[
+y(x) = d_l(x) \quad \text{per il primo } l \text{ tale che } c_l(x) > \theta_l.
+\]
+È particolarmente efficace per ridurre il costo computazionale medio.
+
+\medskip
+\textbf{Bagging}  
+Introduce diversità tra i modelli tramite bootstrap del dataset di training. I modelli sono addestrati in parallelo e combinati mediante media o voto:
+\[
+y_{\text{bagging}}(x) = \frac{1}{M} \sum_{m=1}^{M} y_m(x).
+\]
+Agisce principalmente riducendo la varianza.
+
+\medskip
+\textbf{Boosting e AdaBoost}  
+Addestra i modelli in sequenza, ri-pesando i campioni in base agli errori precedenti:
+\[
+Y_M(x) = \mathrm{sign}\!\left(\sum_{m=1}^{M} \alpha_m y_m(x)\right).
+\]
+AdaBoost enfatizza i campioni difficili e mira a ridurre il bias del modello complessivo.
+
+\medskip
+\textbf{Bias--Variance Tradeoff}  
+Le tecniche di ensemble permettono di agire sul compromesso bias–varianza:
+\begin{itemize}
+    \item il bagging riduce principalmente la varianza;
+    \item il boosting riduce principalmente il bias;
+    \item la combinazione di più learner può migliorare la robustezza al rumore.
+\end{itemize}
+
+\medskip
+In sintesi, i multiple learners forniscono un potente insieme di strumenti per migliorare accuratezza, stabilità ed efficienza dei modelli di apprendimento, rappresentando una delle strategie fondamentali del machine learning moderno.
+
+\end{tcolorbox}
+ 
+\chapter{Artificial Neural Networks}
+
+Le \textbf{Artificial Neural Networks (ANN)} sono modelli di apprendimento automatico parametrici progettati per approssimare funzioni complesse.  
+Esse sono note anche con i seguenti nomi:
+\begin{itemize}
+    \item \textit{Neural Networks} (NN)
+    \item \textit{Feedforward Neural Networks} (FNN)
+    \item \textit{Multilayer Perceptrons} (MLP)
+\end{itemize}
+
+Le ANN sono particolarmente adatte a problemi formulabili come associazione tra vettori, ovvero alla stima di una funzione:
+\[
+f : \mathcal{X} \rightarrow \mathcal{Y},
+\]
+dove il codominio può rappresentare:
+\begin{itemize}
+    \item un insieme discreto di classi $\mathcal{Y} = \{C_1, \dots, C_k\}$ (classificazione),
+    \item uno spazio continuo $\mathcal{Y} \subseteq \mathbb{R}^d$ (regressione).
+\end{itemize}
+
+Dato un dataset di addestramento
+\[
+\mathcal{D} = \{(x_n, t_n)\}_{n=1}^{N},
+\]
+l’obiettivo è apprendere una funzione approssimata
+\[
+\hat{f}(x; \theta)
+\]
+parametrizzata da un insieme di parametri $\theta$, tale che:
+\[
+\hat{f}(x_n; \theta) \approx t_n \quad \forall n.
+\]
+
+\section{Feedforward Neural Networks}
+
+Le \textbf{Feedforward Neural Networks} sono ispirate, in modo astratto, alla struttura del cervello biologico, ma \textbf{non costituiscono un modello biologico realistico}.  
+Esse sfruttano solo alcune intuizioni di base, come l’elaborazione distribuita e la composizione di unità semplici.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{neuron.png}
+    \caption{}
+    \label{fig:neuron}
+\end{figure}
+
+In una FNN l’informazione fluisce esclusivamente:
+\[
+\text{input} \;\longrightarrow\; \text{hidden layers} \;\longrightarrow\; \text{output},
+\]
+senza la presenza di cicli o retroazioni.
+
+Formalmente, una rete feedforward implementa una funzione ottenuta come composizione di più trasformazioni elementari:
+\[
+f(x; \theta) = f^{(L)}\bigl(
+f^{(L-1)}(\dots f^{(1)}(x; \theta^{(1)}) \dots ; \theta^{(L-1)})
+; \theta^{(L)}
+\bigr),
+\]
+dove:
+\begin{itemize}
+    \item $f^{(m)}$ rappresenta il livello $m$-esimo della rete,
+    \item $\theta^{(m)}$ indica i parametri allenabili del livello $m$,
+    \item $L$ è la profondità (\textit{depth}) della rete.
+\end{itemize}
+
+Le FNN hanno quindi una struttura a catena (\textit{chain structure}).  
+L’ultimo livello è detto \textbf{output layer}, mentre i livelli intermedi sono detti \textbf{hidden layers}.
+
+Il termine \textbf{Deep Learning} deriva dall’uso di reti con un numero elevato di livelli, ovvero con grande profondità.
+
+\subsection{Perché le FNN}
+
+Le reti feedforward superano alcune limitazioni fondamentali di altri approcci:
+\begin{itemize}
+    \item i \textbf{modelli lineari} non sono in grado di rappresentare interazioni non lineari tra le variabili di input;
+    \item i \textbf{metodi kernel} richiedono la scelta esplicita di un kernel adeguato:
+    \begin{itemize}
+        \item kernel generici (RBF, polinomiali) portano a problemi convessi ma limitati in espressività;
+        \item kernel progettati manualmente sono fortemente dipendenti dall’applicazione.
+    \end{itemize}
+\end{itemize}
+
+Le FNN, invece, apprendono automaticamente:
+\begin{itemize}
+    \item combinazioni complesse di molte funzioni parametriche,
+    \item modelli altamente non lineari nei parametri $\theta$,
+\end{itemize}
+al prezzo di un problema di ottimizzazione \textbf{non convesso}.
+
+Questo compromesso rende le reti neurali estremamente potenti e flessibili per una vasta gamma di problemi di apprendimento automatico.
+
+\subsection{Architettura delle Feedforward Neural Networks}
+
+La progettazione dell’architettura di una Feedforward Neural Network (FNN) è un aspetto cruciale e comprende le seguenti scelte fondamentali:
+\begin{itemize}
+    \item numero di livelli nascosti (\textit{depth});
+    \item numero di unità per ciascun livello (\textit{width});
+    \item tipo di unità e funzioni di attivazione;
+    \item funzione di costo (loss function).
+\end{itemize}
+
+Tali decisioni influenzano direttamente la capacità espressiva del modello, la sua addestrabilità e le prestazioni di generalizzazione.
+
+\subsubsection{Modello generale di una FNN}
+
+Una FNN è composta da più livelli completamente connessi.  
+Dato un livello $i$, l’uscita del livello successivo è definita come:
+
+\[
+\highlight{
+\mathbf{h}_{i+1} = f\left( \mathbf{W}_i^\top \mathbf{h}_i + \mathbf{b}_i \right),}
+\]
+
+dove:
+\begin{itemize}
+    \item $\mathbf{h}_i$ è il vettore delle attivazioni del livello $i$;
+    \item $\mathbf{W}_i$ è la matrice dei pesi;
+    \item $\mathbf{b}_i$ è il vettore dei bias;
+    \item $f(\cdot)$ è una funzione di attivazione non lineare.
+\end{itemize}
+
+Il numero di parametri cresce con la dimensione dei livelli:
+\[
+|\mathbf{W}_i| = (\text{n. input}) \times (\text{n. output}), 
+\qquad
+|\mathbf{b}_i| = (\text{n. output}).
+\]
+
+\section{Profondità e Teorema di Approssimazione Universale}
+
+Una domanda fondamentale nella progettazione delle reti neurali è:
+\begin{quote}
+\textit{Quanti livelli nascosti sono necessari per approssimare una funzione arbitraria?}
+\end{quote}
+
+Il \textbf{Teorema di Approssimazione Universale} fornisce una risposta teorica a questo problema.
+
+Il teorema ci dice che una Feedforward Neural Network con:
+\begin{itemize}
+    \item un singolo livello nascosto,
+    \item un numero sufficiente di unità nascoste,
+    \item una funzione di attivazione non lineare di tipo “squashing” (ad esempio sigmoide),
+    \item un livello di output lineare,
+\end{itemize}
+è in grado di approssimare qualsiasi funzione misurabile di Borel con un errore arbitrariamente piccolo.
+
+Il risultato vale anche per altre funzioni di attivazione non lineari, come la \textbf{ReLU}.
+
+\paragraph{Osservazioni importanti}
+\begin{itemize}
+    \item Il teorema garantisce \textbf{l’esistenza} di una rete capace di approssimare una funzione, ma non fornisce indicazioni su:
+    \begin{itemize}
+        \item il numero di unità necessarie;
+        \item la facilità di addestramento;
+        \item la qualità della generalizzazione.
+    \end{itemize}
+    \item Il numero di unità richieste può crescere in modo \textbf{esponenziale} con la dimensione dell’input.
+\end{itemize}
+
+\subsubsection{Larghezza vs Profondità}
+
+Il teorema di approssimazione universale implica che, in teoria:
+\begin{itemize}
+    \item una rete \textbf{poco profonda ma molto larga} può approssimare qualsiasi funzione;
+\end{itemize}
+tuttavia, nella pratica:
+\begin{itemize}
+    \item reti \textbf{più profonde e più strette} risultano:
+    \begin{itemize}
+        \item più efficienti dal punto di vista parametrico;
+        \item più facili da addestrare;
+        \item migliori in termini di generalizzazione.
+    \end{itemize}
+\end{itemize}
+
+Questo giustifica l’uso di architetture profonde nel \textbf{deep learning}, dove la composizione di molte trasformazioni semplici consente di rappresentare strutture complesse in modo gerarchico.
+
+\subsubsection{Considerazioni pratiche sull’architettura}
+
+Non esistono principi teorici generali per determinare l’architettura ottimale di una FNN.  
+La progettazione è in larga parte \textbf{empirica} e dipende da:
+\begin{itemize}
+    \item tipo di problema;
+    \item dimensione e struttura dei dati;
+    \item capacità computazionali disponibili.
+\end{itemize}
+
+In sintesi, il teorema di approssimazione universale fornisce il fondamento teorico della potenza espressiva delle reti neurali, mentre le architetture profonde ne rappresentano la realizzazione pratica più efficace.
+
+\subsection{Funzioni di attivazione e funzione di costo}
+
+Una rete neurale feedforward definisce una funzione parametrica
+\[
+y = f(x;\theta),
+\]
+ottenuta come composizione di trasformazioni lineari e non lineari.  
+Due elementi fondamentali determinano il comportamento del modello:
+\begin{itemize}
+    \item le \textbf{funzioni di attivazione}, che definiscono la capacità espressiva della rete;
+    \item la \textbf{loss function}, che quantifica l’errore e guida l’apprendimento.
+\end{itemize}
+Le funzioni di attivazione negli strati nascosti introducono non linearità nel modello.  
+In assenza di tali funzioni, anche una rete profonda collasserebbe in una trasformazione lineare equivalente.
+
+Non esistono principi teorici generali per la scelta ottimale della funzione di attivazione negli strati nascosti: la selezione è prevalentemente \textbf{empirica}.
+
+\subsubsection{Rectified Linear Unit (ReLU)}
+La funzione di attivazione più utilizzata è la \textbf{Rectified Linear Unit}:
+
+\[
+\highlight{
+g(\alpha) = \max(0, \alpha).}
+\]
+
+Proprietà principali:
+\begin{itemize}
+    \item semplicità computazionale;
+    \item comportamento lineare per $\alpha > 0$;
+    \item mitigazione del problema del gradiente che svanisce;
+    \item non differenziabilità in $\alpha = 0$, irrilevante nella pratica.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{ReLu.png}
+    \caption{Reappresentazione matematica della ReLu}
+    \label{fig:neuron}
+\end{figure}
+
+
+Le ReLU risultano particolarmente adatte a reti profonde.
+
+\subsubsection{Sigmoide e tangente iperbolica}
+Altre funzioni storicamente utilizzate sono:
+
+\[
+\highlight{
+g(\alpha) = \sigma(\alpha),
+\qquad
+g(\alpha) = \tanh(\alpha),}
+\]
+
+con la relazione:
+
+\[
+\highlight{
+\tanh(\alpha) = 2\sigma(2\alpha) - 1.}
+\]
+
+Entrambe sono funzioni di tipo “squashing” e soffrono di saturazione:
+\begin{itemize}
+    \item per grandi valori di $|\alpha|$ la derivata tende a zero;
+    \item il gradiente si attenua attraversando la rete;
+    \item l’apprendimento basato sul gradiente risulta lento.
+\end{itemize}
+
+La funzione $\tanh$ fornisce gradienti leggermente più grandi rispetto alla sigmoide ed è talvolta preferita in contesti specifici.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{activation_function.png}
+    \caption{Confronto tra le principali funzioni di attivazione e le loro derivate.}
+    \label{fig:neuron}
+\end{figure}
+
+
+
+\subsubsection{Output della rete e interpretazione probabilistica}
+
+Sia $\mathbf{h}$ l’output dell’ultimo strato nascosto.  
+La rete neurale definisce implicitamente una distribuzione condizionata:
+\[
+p(t \mid x, \theta),
+\]
+che dipende dalla forma dell’output e dalla funzione di attivazione utilizzata nell’ultimo strato.
+
+La scelta dell’attivazione di output \textbf{non è indipendente} dalla funzione di costo, ma ne costituisce parte integrante.
+
+\subsection{Loss function e principio di massima verosimiglianza}
+
+L’addestramento della rete consiste nella minimizzazione della loss function:
+\[
+J(\theta) = \mathbb{E}_{x,t \sim \mathcal{D}} \bigl[ - \log p(t \mid x, \theta) \bigr],
+\]
+che deriva dal principio di \textbf{Massima Verosimiglianza (MLE)}.
+
+La forma esplicita della loss dipende dall’ipotesi fatta sulla distribuzione del target.
+
+\paragraph{Regressione}
+Per problemi di regressione si utilizza un output lineare:
+\[
+y = \mathbf{W}^\top \mathbf{h} + \mathbf{b}.
+\]
+
+Assumendo rumore gaussiano:
+\[
+p(t \mid x, \theta) = \mathcal{N}(t \mid y, \beta^{-1}),
+\]
+la massimizzazione della verosimiglianza equivale alla minimizzazione della
+\textbf{Mean Squared Error (MSE)}:
+\[
+J(\theta) =
+\mathbb{E}_{x,t \sim \mathcal{D}}
+\left[
+\frac{1}{2}\lVert t - f(x;\theta) \rVert^2
+\right].
+\]
+
+Le unità di output lineari non saturano, favorendo un apprendimento stabile.
+
+\paragraph{Classificazione binaria}
+Nel caso di classificazione binaria, il target $t \in \{0,1\}$ è modellato come variabile di Bernoulli:
+\[
+y = \sigma(\mathbf{w}^\top \mathbf{h} + b),
+\quad
+p(t \mid x, \theta) = y^t(1-y)^{1-t}.
+\]
+
+La loss function associata è la \textbf{Binary Cross-Entropy}:
+\[
+J(\theta) =
+\mathbb{E}_{x,t \sim \mathcal{D}}
+\bigl[
+- t \log y - (1-t) \log (1-y)
+\bigr].
+\]
+
+\paragraph{Classificazione multiclasse}
+Per problemi di classificazione multiclasse si utilizza la funzione \textbf{softmax}:
+\[
+y_i = \frac{\exp(\alpha_i)}{\sum_j \exp(\alpha_j)},
+\quad
+\alpha_i = \mathbf{w}_i^\top \mathbf{h} + b_i.
+\]
+
+La loss function è la \textbf{Categorical Cross-Entropy}:
+\[
+J(\theta) =
+\mathbb{E}_{x,t \sim \mathcal{D}}
+\left[
+- \sum_{i=1}^{K} \mathbb{I}(t=i)\log y_i
+\right].
+\]
+
+\section{Calcolo del gradiente}
+
+L’addestramento di una rete neurale consiste nella minimizzazione della loss function
+\[
+J(\theta),
+\]
+rispetto ai parametri $\theta$ del modello.  
+Per questo motivo è necessario calcolare il \textbf{gradiente della loss} rispetto a tutti i parametri della rete:
+\[
+\nabla_{\theta} J(\theta).
+\]
+
+\subsubsection{Flusso dell’informazione}
+
+Il funzionamento di una rete neurale può essere descritto attraverso due fasi distinte:
+
+\begin{itemize}
+    \item \textbf{forward pass}: l’informazione fluisce dall’input all’output per calcolare
+    \[
+    y = f(x;\theta)
+    \]
+    e il valore della loss $J(\theta)$;
+    \item \textbf{backward pass}: l’informazione fluisce in senso inverso per calcolare i gradienti della loss rispetto ai parametri.
+\end{itemize}
+
+Il calcolo del gradiente è quindi strettamente legato alla struttura composita della funzione implementata dalla rete.
+
+\subsubsection{Obiettivo del calcolo del gradiente}
+
+Dato un dataset $\mathcal{D}$, l’obiettivo è determinare:
+\[
+\nabla_{\theta} J(\theta) =
+\left(
+\frac{\partial J}{\partial \theta_1},
+\frac{\partial J}{\partial \theta_2},
+\dots
+\right),
+\]
+dove ciascun parametro $\theta_i$ può rappresentare un peso o un bias in uno qualsiasi dei livelli della rete.
+
+Dal punto di vista analitico, il calcolo del gradiente è:
+\begin{itemize}
+    \item concettualmente semplice, poiché basato sulla regola della catena;
+    \item potenzialmente costoso dal punto di vista computazionale se eseguito in modo ingenuo.
+\end{itemize}
+
+\subsubsection{Regola della catena}
+
+La rete neurale è una composizione di funzioni.  
+Nel caso scalare, se:
+\[
+y = g(x),
+\qquad
+z = f(y),
+\]
+la derivata di $z$ rispetto a $x$ è:
+\[
+\frac{dz}{dx} = \frac{dz}{dy} \frac{dy}{dx}.
+\]
+
+Nel caso vettoriale, con:
+\[
+g : \mathbb{R}^m \rightarrow \mathbb{R}^n,
+\qquad
+f : \mathbb{R}^n \rightarrow \mathbb{R},
+\]
+vale:
+\[
+\frac{\partial z}{\partial x_i}
+=
+\sum_{j}
+\frac{\partial z}{\partial y_j}
+\frac{\partial y_j}{\partial x_i},
+\]
+oppure, in notazione compatta:
+\[
+\nabla_x z =
+\left(
+\frac{\partial \mathbf{y}}{\partial \mathbf{x}}
+\right)^{\!\top}
+\nabla_{\mathbf{y}} z,
+\]
+dove $\frac{\partial \mathbf{y}}{\partial \mathbf{x}}$ è la matrice Jacobiana della funzione $g$.
+
+\section{ Back-propagation}
+
+La \textbf{back-propagation} è il meccanismo che rende possibile l’addestramento delle reti neurali profonde.  
+Dal punto di vista concettuale, essa risponde a una domanda fondamentale:
+
+\begin{quote}
+\textit{in che modo ogni singolo parametro della rete contribuisce all’errore finale?}
+\end{quote}
+
+e serve a:
+\begin{itemize}
+    \item calcolare in modo efficiente il gradiente $\nabla_{\theta} J(\theta)$;
+    \item attribuire a ciascun parametro una \textbf{responsabilità} rispetto all’errore;
+    \item rendere applicabili algoritmi di ottimizzazione basati sul gradiente.
+\end{itemize}
+
+Senza back-propagation, il costo computazionale del calcolo del gradiente crescerebbe in modo proibitivo con la profondità della rete.
+
+\subsubsection{Idea concettuale}
+
+La back-propagation si fonda interamente sull’applicazione sistematica della regola della catena a funzioni composte.  
+Una rete neurale può infatti essere vista come una funzione ottenuta dalla composizione di molte trasformazioni elementari, ciascuna delle quali dipende dai parametri di un singolo livello.
+
+Consideriamo una funzione scalare $J$ che dipende da una variabile intermedia $y$, la quale a sua volta dipende da un’altra variabile $x$.  
+In questo caso, la regola della catena afferma che la variazione di $J$ rispetto a $x$ può essere espressa come il prodotto della variazione di $J$ rispetto a $y$ e della variazione di $y$ rispetto a $x$.  
+Questo principio elementare è esattamente ciò che la back-propagation applica in modo ricorsivo lungo l’intera rete.
+
+Nel contesto di una rete neurale, la loss function dipende direttamente dall’output del modello, ma solo indirettamente dai parametri dei livelli più profondi.  
+La back-propagation inizia quindi dal calcolo della derivata della loss rispetto all’output della rete.  
+Questa quantità rappresenta l’errore osservato in uscita e costituisce il punto di partenza per la propagazione all’indietro.
+
+Una volta noto come la loss varia rispetto all’output, la regola della catena permette di determinare come tale variazione dipenda dalle attivazioni dell’ultimo livello nascosto.  
+Questo avviene moltiplicando il gradiente in uscita per la derivata della funzione che mappa le attivazioni nascoste nell’output.  
+Il risultato è una misura di quanto ciascuna attivazione nascosta abbia contribuito all’errore finale.
+
+Lo stesso ragionamento viene poi applicato iterativamente ai livelli precedenti.  
+A ogni passaggio, il gradiente viene trasformato attraverso la derivata della funzione di attivazione del livello corrente e attraverso i pesi che collegano il livello al successivo.  
+In questo modo, l’informazione sull’errore viene trasportata all’indietro lungo la rete, mantenendo una corrispondenza precisa tra ogni parametro e il suo contributo alla loss.
+
+Dal punto di vista matematico, la back-propagation non introduce nuove regole di derivazione, ma organizza l’applicazione della regola della catena in modo efficiente e strutturato.  
+Ogni derivata calcolata in un livello viene riutilizzata per il calcolo delle derivate nei livelli precedenti, evitando computazioni ridondanti.
+
+In sintesi, la back-propagation può essere interpretata come un meccanismo che scompone la derivata globale della loss in una sequenza ordinata di derivate locali, rendendo computazionalmente praticabile il calcolo del gradiente in reti neurali profonde.
+
+
+\subsection{Come si applica operativamente}
+
+L’applicazione della back-propagation avviene sempre in due fasi distinte:
+
+\paragraph{Forward pass}
+\begin{itemize}
+    \item si propaga l’input attraverso la rete;
+    \item si calcolano tutte le attivazioni intermedie;
+    \item si ottiene l’output finale $y$;
+    \item si valuta la loss $J(\theta)$.
+\end{itemize}
+
+Durante il forward pass vengono memorizzate le quantità necessarie al calcolo del gradiente.
+
+\paragraph{Backward pass}
+\begin{itemize}
+    \item si calcola il gradiente della loss rispetto all’output;
+    \item si propaga il gradiente all’indietro attraverso la rete;
+    \item si applica la regola della catena a ogni livello;
+    \item si ottengono le derivate della loss rispetto a pesi e bias.
+\end{itemize}
+
+Ogni livello riceve:
+\begin{itemize}
+    \item l’informazione sull’errore dal livello successivo;
+    \item la combina con la derivata della propria funzione di attivazione;
+    \item produce i gradienti locali dei parametri.
+\end{itemize}
+
+\subsection{Perché è efficiente}
+
+La back-propagation sfrutta:
+\begin{itemize}
+    \item la struttura aciclica del grafo computazionale;
+    \item il riutilizzo delle derivate già calcolate;
+    \item un approccio di programmazione dinamica.
+\end{itemize}
+
+Questo riduce drasticamente il numero di operazioni richieste rispetto a un calcolo diretto delle derivate, rendendo l’addestramento di reti profonde computazionalmente praticabile.
+
+\section{Stochastic Gradient Descent}
+
+Una volta calcolato il gradiente della loss function tramite back-propagation, è necessario un algoritmo che utilizzi tale informazione per aggiornare i parametri della rete.  
+Il metodo di ottimizzazione più semplice e fondamentale è lo \textbf{Stochastic Gradient Descent (SGD)}.
+
+\subsection{Idea di base}
+
+L’obiettivo è minimizzare la funzione di costo
+\[
+J(\theta)
+\]
+aggiornando iterativamente i parametri nella direzione opposta al gradiente:
+
+\[
+\highlight{
+\theta \leftarrow \theta - \eta \nabla_{\theta} J(\theta),}
+\]
+
+dove $\eta > 0$ è il \textbf{learning rate}, che controlla l’ampiezza del passo di aggiornamento.
+
+\subsubsection{Versione stocastica}
+
+Nel contesto delle reti neurali, il gradiente esatto sull’intero dataset è spesso troppo costoso da calcolare.  
+SGD utilizza quindi una stima del gradiente calcolata su un singolo esempio o su un piccolo sottoinsieme di dati (mini-batch).
+
+Dato un mini-batch $\{(x^{(i)}, t^{(i)})\}_{i=1}^{m}$, l’aggiornamento diventa:
+
+\[
+\highlight{
+g = \frac{1}{m} \sum_{i=1}^{m} \nabla_{\theta} L\bigl(f(x^{(i)};\theta), t^{(i)}\bigr),
+\qquad
+\theta \leftarrow \theta - \eta g.}
+\]
+
+Questa approssimazione introduce rumore nel gradiente, ma rende l’addestramento computazionalmente efficiente e scalabile.
+
+\subsubsection{Learning rate}
+
+Il learning rate $\eta$ è un iperparametro critico:
+\begin{itemize}
+    \item valori troppo grandi possono causare instabilità o divergenza;
+    \item valori troppo piccoli rallentano drasticamente la convergenza.
+\end{itemize}
+
+In pratica, $\eta$ può essere mantenuto costante oppure fatto decrescere nel tempo secondo una regola prefissata.
+
+\subsection{SGD con momentum}
+
+Lo \textbf{Stochastic Gradient Descent con momentum} introduce un meccanismo che consente di accelerare la convergenza e di ridurre le oscillazioni tipiche dello SGD standard.
+
+\subsubsection{Motivazione}
+
+Nel caso dello SGD, il gradiente stimato su mini-batch successivi può variare significativamente, soprattutto in presenza di:
+\begin{itemize}
+    \item superfici di costo con valli strette e allungate;
+    \item direzioni con curvature molto diverse.
+\end{itemize}
+
+Questo comportamento può rallentare l’addestramento, causando oscillazioni lungo alcune direzioni e progressi lenti lungo altre.
+
+\subsubsection{Idea del momentum}
+
+Il momentum introduce una variabile ausiliaria, detta \textbf{velocità}, che accumula una media esponenziale dei gradienti passati.  
+L’aggiornamento dei parametri non dipende quindi solo dal gradiente corrente, ma anche dalla direzione seguita nelle iterazioni precedenti.
+
+\subsubsection{Aggiornamento dei parametri}
+
+Siano $\eta > 0$ il learning rate e $\mu \in [0,1)$ il coefficiente di momentum.  
+Le equazioni di aggiornamento sono:
+
+\[
+\highlight{
+\mathbf{v}^{(k+1)} = \mu \mathbf{v}^{(k)} - \eta \mathbf{g}^{(k)},
+\qquad
+\theta^{(k+1)} = \theta^{(k)} + \mathbf{v}^{(k+1)},}
+\]
+dove $\mathbf{g}^{(k)}$ è la stima del gradiente al passo $k$.
+
+\section{Metodi di regolarizzazione}
+
+Le reti neurali profonde hanno un’elevata capacità espressiva, ma questa caratteristica le rende particolarmente soggette a \textbf{overfitting}, ovvero a un’eccessiva aderenza ai dati di addestramento a scapito della capacità di generalizzazione.
+
+La \textbf{regolarizzazione} comprende un insieme di tecniche volte a ridurre l’errore di generalizzazione, introducendo vincoli o perturbazioni controllate durante l’addestramento.
+
+\subsection{Regolarizzazione dei parametri}
+
+Una forma comune di regolarizzazione consiste nell’aggiungere un termine di penalizzazione alla funzione di costo:
+
+\[
+\highlight{
+\bar{J}(\theta) = J(\theta) + \lambda E_{\text{reg}}(\theta),}
+\]
+
+dove $E_{\text{reg}}(\theta)$ è una funzione che penalizza valori elevati dei parametri e $\lambda > 0$ controlla l’intensità della regolarizzazione.
+
+Un esempio tipico è la penalizzazione della norma dei pesi:
+
+\[
+\highlight{
+E_{\text{reg}}(\theta) = \sum_j |\theta_j|^q,}
+\]
+
+che incoraggia soluzioni più semplici e stabili.
+
+\subsection{Dataset augmentation}
+
+La \textbf{dataset augmentation} è una tecnica di regolarizzazione che consiste nel generare nuovi esempi di addestramento a partire da quelli esistenti, applicando trasformazioni che non alterano l’etichetta semantica dei dati.
+
+Nel caso di immagini, esempi tipici di trasformazioni includono rotazioni, traslazioni, ridimensionamenti e variazioni di illuminazione.  
+L’aggiunta di rumore è un’altra forma di augmentation utilizzata in diversi contesti.
+
+Dal punto di vista concettuale, la dataset augmentation:
+\begin{itemize}
+    \item aumenta artificialmente la dimensione del dataset;
+    \item riduce l’overfitting;
+    \item induce invarianze desiderate nel modello.
+\end{itemize}
+
+A differenza di altre tecniche di regolarizzazione, la dataset augmentation agisce direttamente sui dati, non sui parametri o sull’algoritmo di ottimizzazione.
+
+\subsection{Parameter sharing}
+
+Il \textbf{parameter sharing} è una tecnica di regolarizzazione che impone vincoli sui parametri del modello, forzando diversi componenti della rete a condividere gli stessi pesi.
+
+Questo riduce il numero totale di parametri liberi e limita la complessità effettiva del modello, migliorandone la capacità di generalizzazione.
+
+Il parameter sharing è un elemento centrale nelle \textbf{Convolutional Neural Networks (CNN)}, dove lo stesso filtro convoluzionale viene applicato a diverse regioni dell’input.  
+In questo contesto, la condivisione dei parametri:
+\begin{itemize}
+    \item riduce drasticamente il numero di parametri;
+    \item introduce invarianza rispetto a traslazioni locali;
+    \item rende l’apprendimento più efficiente e stabile.
+\end{itemize}
+
+Il parameter sharing rappresenta un esempio di come vincoli strutturali, coerenti con la natura dei dati, possano migliorare significativamente le prestazioni di una rete neurale.
+
+
+\subsection{Early stopping}
+
+L’\textbf{early stopping} è una tecnica di regolarizzazione che consiste nell’interrompere l’addestramento prima della convergenza sul training set, al fine di evitare l’overfitting.
+
+Durante l’addestramento, la loss sul training set tende a diminuire monotonicamente, mentre la loss sul validation set inizialmente diminuisce ma può successivamente aumentare.  
+Questo comportamento indica che il modello sta iniziando ad adattarsi eccessivamente ai dati di addestramento, perdendo capacità di generalizzazione.
+
+L’early stopping arresta l’ottimizzazione nel punto in cui la loss di validazione raggiunge il minimo, utilizzando quindi un criterio basato su \textbf{cross-validation}.  
+
+Dal punto di vista concettuale, l’early stopping agisce come una forma di regolarizzazione implicita: limita la complessità effettiva del modello senza modificare esplicitamente la funzione di costo o l’architettura della rete.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{early_stop.png}
+    \caption{Andamento della loss sul training set e sul validation set durante l’addestramento. 
+            La training loss decresce monotonicamente, mentre la validation loss, dopo una fase iniziale di miglioramento, smette di diminuire e inizia ad aumentare, indicando overfitting. 
+            L’early stopping consiste nell’interrompere l’addestramento nel punto di minimo della validation loss.}
+    \label{fig:early_stop}
+\end{figure}
+
+\subsection{Dropout}
+
+Il \textbf{dropout} è una tecnica di regolarizzazione specifica per le reti neurali, che consiste nel disattivare casualmente una frazione delle unità della rete durante l’addestramento.
+
+Ad ogni iterazione, ogni unità viene ignorata con una certa probabilità $\alpha$.  
+In questo modo, la rete non può fare affidamento su percorsi specifici e viene costretta a distribuire l’informazione su più unità.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.80\textwidth]{dropout.png}
+    \caption{Effetto del Dropout sui neuroni}
+    \label{fig:dropout}
+\end{figure}
+
+Dal punto di vista concettuale, il dropout:
+\begin{itemize}
+    \item riduce la co-adattazione tra neuroni;
+    \item agisce come una forma di ensemble implicito di reti più piccole;
+    \item migliora la robustezza e la generalizzazione del modello.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{dropout2.png}
+    \caption{Errore di classificazione in funzione del numero di aggiornamenti dei pesi con e senza dropout. 
+    Le curve con dropout mostrano un errore finale più basso e una maggiore stabilità rispetto al caso senza dropout.}
+    \label{fig:dropout2}
+\end{figure}
+
+\section*{RIEPILOGO}
+\begin{tcolorbox}[
+    colback=green!5,
+    colframe=green!50!black,
+    title= Artificial Neural Networks,
+    breakable
+]
+
+Le \textbf{Artificial Neural Networks (ANN)} sono modelli parametrici che approssimano funzioni complesse tramite la composizione di trasformazioni lineari e non lineari.  
+In particolare, le \textbf{Feedforward Neural Networks (FNN)} implementano funzioni ottenute come catene di livelli senza cicli, caratterizzate da profondità (depth) e larghezza (width).
+
+Il \textbf{Teorema di Approssimazione Universale} garantisce che una rete con almeno un livello nascosto e un numero sufficiente di unità possa approssimare qualsiasi funzione, ma non fornisce indicazioni sull’efficienza, sull’addestrabilità o sulla generalizzazione del modello.  
+In pratica, architetture più \textbf{profonde} risultano più efficienti e generalizzano meglio rispetto a reti molto larghe e poco profonde.
+
+Le \textbf{funzioni di attivazione} negli strati nascosti introducono non linearità e determinano la capacità espressiva della rete.  
+Funzioni come ReLU sono particolarmente adatte a reti profonde poiché riducono i problemi di saturazione del gradiente.
+
+La rete definisce implicitamente una distribuzione condizionata $p(t \mid x, \theta)$.  
+La \textbf{loss function} deriva dal principio di massima verosimiglianza ed è strettamente legata all’attivazione dello strato di output:
+\begin{itemize}
+    \item regressione: output lineare e Mean Squared Error;
+    \item classificazione binaria: sigmoide e Binary Cross-Entropy;
+    \item classificazione multiclasse: softmax e Categorical Cross-Entropy.
+\end{itemize}
+
+Il \textbf{calcolo del gradiente} è reso efficiente dall’algoritmo di \textbf{back-propagation}, che applica in modo sistematico la regola della catena per propagare l’errore dall’output verso i parametri dei livelli precedenti.  
+La back-propagation non aggiorna i parametri, ma fornisce le informazioni necessarie agli algoritmi di ottimizzazione.
+
+L’ottimizzazione avviene tipicamente tramite \textbf{Stochastic Gradient Descent (SGD)} e sue varianti, come \textbf{SGD con momentum}, che accelerano la convergenza e riducono le oscillazioni.
+
+A causa dell’elevata capacità dei modelli, le reti neurali sono soggette a overfitting.  
+Per questo motivo vengono utilizzate diverse tecniche di \textbf{regolarizzazione}, tra cui:
+\begin{itemize}
+    \item penalizzazione dei parametri;
+    \item dropout;
+    \item early stopping;
+    \item dataset augmentation;
+    \item parameter sharing.
+\end{itemize}
+
+Queste tecniche non aumentano la capacità di approssimazione del modello, ma ne controllano la complessità effettiva, migliorando la generalizzazione.
+
+\end{tcolorbox}
+
+\chapter{Convolutional Neural Networks}
+
+\section{Motivazioni}
+
+Finora, nei modelli di apprendimento automatico e nelle Artificial Neural Networks, gli input sono stati trattati come \textbf{vettori di feature generici}.  
+Questa rappresentazione è adeguata in molti contesti, ma risulta limitante quando i dati possiedono una \textbf{struttura interna} rilevante.
+
+In numerose applicazioni reali, infatti, gli input sono segnali strutturati, come:
+\begin{itemize}
+    \item segnali audio, rappresentabili come vettori monodimensionali di lunghezza variabile;
+    \item immagini, rappresentabili come matrici bidimensionali multi-canale;
+    \item video, rappresentabili come sequenze temporali di immagini multi-canale;
+    \item segnali fisici, ottenuti come campionamenti di grandezze continue.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{audio.png}
+    \caption{Un audio equivale ad avere un tensore 1D}
+    \label{fig:audio}
+\end{figure}
+
+Questi dati non sono semplici vettori, ma \textbf{tensori} di diversa dimensionalità, nei quali:
+\begin{itemize}
+    \item esiste una nozione di località;
+    \item le relazioni spaziali o temporali tra le componenti sono semanticamente rilevanti;
+    \item le stesse strutture possono comparire in posizioni diverse dell’input.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{immagini.png}
+    \caption{Un immagine equivale ad avere una matrice 2D ed un tensore 3D}
+    \label{fig:immagini}
+\end{figure}
+
+L’utilizzo di reti completamente connesse in questi casi presenta due limiti principali:
+\begin{itemize}
+    \item un numero di parametri molto elevato;
+    \item l’incapacità di sfruttare esplicitamente la struttura locale dei dati.
+\end{itemize}
+
+Le \textbf{Convolutional Neural Networks (CNN)} nascono per superare questi limiti.
+
+\section{Richiamo alla convoluzione}
+
+L’operatore fondamentale alla base delle CNN è la \textbf{convoluzione}, un’operazione matematica che combina due funzioni producendo una terza funzione che misura il grado di sovrapposizione tra una funzione e una versione traslata dell’altra.
+
+\subsubsection{Convoluzione continua}
+
+Date due funzioni continue $x(t)$ e $w(t)$, la loro convoluzione è definita come:
+
+\[
+\highlight{
+(x * w)(t) \equiv \int_{-\infty}^{+\infty} x(a)\, w(t - a)\, da.}
+\]
+
+\subsubsection{Convoluzione discreta}
+
+Nel caso discreto, la convoluzione assume la forma:
+
+\[
+\highlight{
+(x * w)(t) \equiv \sum_{a=-\infty}^{+\infty} x(a)\, w(t - a).}
+\]
+
+Questa formulazione è particolarmente rilevante per il trattamento di segnali digitali e costituisce la base delle operazioni utilizzate nelle CNN.
+
+\subsubsection{Convoluzione bidimensionale}
+
+Per segnali bidimensionali, come le immagini, la convoluzione discreta 2D tra un input $I$ e un kernel $K$ è definita come:
+
+\[
+\highlight{
+(I * K)(i, j) \equiv 
+\sum_{m \in S_1} \sum_{n \in S_2}
+I(m, n)\, K(i - m, j - n),}
+\]
+
+dove $S_1$ e $S_2$ sono insiemi finiti che definiscono il supporto del kernel.
+
+La convoluzione è un’operazione \textbf{commutativa}, a patto di effettuare il ribaltamento del kernel:
+\[
+(I * K)(i, j) =
+\sum_{m \in S_1} \sum_{n \in S_2}
+I(i - m, j - n)\, K(m, n).
+\]
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.80\textwidth]{CNN_2D.png}
+    \caption{Schema del funzionamento di una convoluzione 2D in una Convolutional Neural Network.
+            Un kernel tridimensionale, esteso su tutta la profondità dell’input, viene applicato localmente a diverse regioni dell’immagine. 
+            La stessa configurazione di pesi è condivisa tra tutte le posizioni spaziali, producendo una feature map che evidenzia la presenza di uno specifico pattern indipendentemente dalla sua posizione nell’input. }
+    \label{fig:CNN_2D}
+\end{figure}
+
+\subsubsection{ Convoluzione tridimensionale}
+
+La convoluzione può essere estesa a segnali di dimensionalità superiore.  
+Nel caso tridimensionale, la convoluzione discreta tra un input $I$ e un kernel $K$ è definita come:
+
+\[
+\highlight{
+(I * K)(i, j, k) \equiv
+\sum_{m \in S_1} \sum_{n \in S_2} \sum_{u \in S_3}
+I(i + m, j + n, k + u)\, K(m, n, u).}
+\]
+
+La convoluzione 3D è utilizzata quando:
+\begin{itemize}
+    \item l’input possiede una struttura tridimensionale intrinseca;
+    \item è necessario catturare correlazioni lungo tre dimensioni, ad esempio spazio e tempo.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.80\textwidth]{CNN_3D.png}
+    \caption{Un kernel tridimensionale opera su una regione locale dell’input estendendosi su tutta la profondità, combinando le informazioni       provenienti dai diversi canali. 
+    Il risultato di questa operazione è un singolo valore della feature map di output, ottenuto come somma delle risposte del kernel sui vari canali. }
+    \label{fig:CNN_3D}
+\end{figure}
+
+Esempi tipici includono:
+\begin{itemize}
+    \item video, rappresentati come sequenze temporali di immagini;
+    \item dati volumetrici, come immagini medicali (CT, MRI);
+    \item segnali multi-canale con dipendenza spaziale e temporale.
+\end{itemize}
+
+Nel contesto delle CNN per immagini a colori, è comune applicare una convoluzione \textbf{2D} su input \textbf{3D} (altezza, larghezza, canali), utilizzando kernel tridimensionali che si estendono su tutta la profondità dell’input.
+
+\subsection{Cross-correlazione}
+
+Nella pratica, molte librerie di machine learning implementano una variante detta \textbf{cross-correlazione}, definita come:
+
+\[
+\highlight{
+(I * K)(i, j) =
+\sum_{m \in S_1} \sum_{n \in S_2}
+I(i + m, j + n)\, K(m, n).}
+\]
+
+Dal punto di vista computazionale, il fatto che non sia necessario il ribaltamento del Kernel rende l’operazione:
+\begin{itemize}
+    \item più semplice da implementare;
+    \item più efficiente in termini di accesso alla memoria;
+    \item meglio ottimizzabile su architetture parallele (GPU/TPU).
+\end{itemize}
+
+Dal punto di vista dell’apprendimento, non vi è alcuna perdita di generalità:  
+poiché i valori del kernel sono parametri allenabili, la rete può apprendere automaticamente anche versioni ribaltate dei filtri, se necessario.
+
+Per questo motivo, nel contesto delle CNN, il termine \textit{convoluzione} viene comunemente utilizzato per indicare l’operazione di cross-correlazione.
+
+\subsection{Il kernel}
+
+Il \textbf{kernel} è l’elemento fondamentale alla base delle Convolutional Neural Networks.  
+Esso può essere visto come una piccola matrice di pesi che viene applicata localmente all’input per rilevare specifici pattern.
+
+Nel caso di immagini bidimensionali, un kernel ha tipicamente dimensioni ridotte, ad esempio $3 \times 3$ o $5 \times 5$.  
+Quando l’input presenta più canali (ad esempio immagini RGB), il kernel si estende anche lungo la dimensione dei canali, diventando un tensore tridimensionale.
+
+I valori del kernel non sono fissati a priori, ma costituiscono \textbf{parametri allenabili} della rete.  
+Durante l’addestramento, il kernel viene ottimizzato affinché risponda in modo elevato alla presenza di uno specifico pattern locale nell’input, come un bordo, un angolo o una texture.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{kernel.png}
+    \caption{}
+    \label{fig:kernel}
+\end{figure}
+
+\subsection{La feature map}
+
+Una \textbf{feature map} è il risultato dell’applicazione di un kernel sull’input tramite l’operazione di convoluzione.  
+Essa può essere vista come una nuova immagine (o matrice) in cui ogni valore rappresenta la risposta del kernel in una specifica posizione dell’input.
+
+Operativamente, mentre il kernel scorre sull’input, in ciascuna posizione viene prodotto un singolo valore di output.  
+L’insieme di tutti questi valori, organizzati secondo la struttura spaziale dell’input, costituisce la feature map.
+
+Ogni feature map è quindi associata a un singolo kernel e indica \emph{dove} il pattern cercato dal kernel è presente nell’input e con quale intensità.  
+Utilizzando più kernel nello stesso convolutional layer, si ottengono più feature map, ciascuna sensibile a un pattern diverso.
+
+
+\section{Convolutional Neural Networks}
+
+Le \textbf{Convolutional Neural Networks (CNN)} sono una classe di reti neurali profonde progettate per elaborare dati strutturati, come segnali temporali, immagini e video.  
+Esse estendono le Feedforward Neural Networks introducendo livelli convoluzionali, che sfruttano operatori locali e parametri condivisi per modellare in modo efficiente le dipendenze spaziali e temporali presenti nei dati.
+
+Formalmente, una CNN è una rete feedforward composta da una sequenza di livelli specializzati, in cui almeno uno è un \textbf{convolutional layer}.  
+Ogni livello convoluzionale applica un insieme di kernel all’input, producendo una collezione di \textbf{feature map} che rappresentano la presenza di pattern locali nell’input.
+
+A differenza delle reti completamente connesse, nelle CNN:
+\begin{itemize}
+    \item le connessioni tra neuroni sono \textbf{locali} (sparse connectivity);
+    \item gli stessi parametri sono riutilizzati su diverse regioni dell’input (parameter sharing);
+    \item la struttura spaziale dell’input viene preservata attraverso i livelli.
+\end{itemize}
+
+Queste caratteristiche permettono di ridurre drasticamente il numero di parametri allenabili, migliorando sia l’efficienza computazionale sia la capacità di generalizzazione del modello.
+
+Nel contesto delle immagini, l’input di una CNN è tipicamente rappresentato come un tensore tridimensionale, in cui due dimensioni descrivono la struttura spaziale e la terza rappresenta i canali (ad esempio RGB).  
+Le convoluzioni vengono applicate localmente sulle dimensioni spaziali e globalmente sulla profondità, consentendo alla rete di apprendere filtri sensibili a pattern visivi elementari, come bordi, angoli e texture.
+
+Una CNN è generalmente organizzata come una successione di \textbf{convolutional layers}, ciascuno seguito da una funzione di attivazione non lineare e, opzionalmente, da un livello di pooling.  
+I livelli convoluzionali iniziali apprendono feature locali semplici, mentre i livelli più profondi combinano tali feature per rappresentare strutture sempre più astratte.
+
+In sintesi, le Convolutional Neural Networks rappresentano un’evoluzione delle reti neurali classiche, in cui vincoli strutturali coerenti con la natura dei dati permettono di ottenere modelli più efficienti, robusti e scalabili per l’elaborazione di segnali strutturati.
+
+
+\section{Convolutional layer}
+
+Una \textbf{Convolutional Neural Network} può essere vista come una Feedforward Neural Network in cui uno o più livelli sono \textbf{convolutional layers}.  
+Un convolutional layer non è una singola operazione, ma una trasformazione composta, articolata in più stadi applicati in sequenza allo stesso input.
+
+In particolare, un convolutional layer è costituito da tre stadi principali:
+\begin{enumerate}
+    \item uno stadio di convoluzione (convolution stage);
+    \item uno stadio di attivazione non lineare;
+    \item uno stadio di pooling (opzionale).
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.50\textwidth]{convolutional_stage.png}
+    \caption{}
+    \label{fig:convolution_stage}
+\end{figure}
+
+
+\subsection{Convolution stage}
+
+Il \textbf{convolution stage} è il primo stadio di un convolutional layer e rappresenta il momento in cui viene applicata l’operazione di convoluzione (o, in pratica, di cross-correlazione) tra l’input e un insieme di kernel.
+
+In questo stadio, ogni kernel viene fatto scorrere sull’input e, in ciascuna posizione, produce un valore di attivazione tramite un prodotto scalare tra i pesi del kernel e una regione locale dell’input.  
+Il risultato è una \textbf{feature map}, che indica la risposta del kernel nelle diverse posizioni spaziali.
+
+Una caratteristica fondamentale del convolution stage è la \textbf{sparse connectivity}.  
+A differenza delle reti completamente connesse, ogni unità di output dipende solo da un sottoinsieme limitato delle unità di input, definito dal \textbf{receptive field} del kernel.  
+Questo significa che ciascun neurone è connesso soltanto a una regione locale dell’input e non all’intero volume di ingresso.
+
+La sparse connectivity è una conseguenza diretta della struttura dell’operazione di convoluzione e non dipende né dalla funzione di attivazione né dallo stadio di pooling.  
+Essa consente di ridurre significativamente il numero di connessioni e di parametri, rendendo il modello più efficiente e meglio adattato a dati con struttura spaziale o temporale.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.70\textwidth]{sparse_connectivity.png}
+    \caption{Confronto tra la connettività di un livello convoluzionale con quella di un livello completamente connesso. 
+    Nella parte superiore è mostrata la \textbf{sparse connectivity}: ogni unità di output è connessa solo a un sottoinsieme locale delle unità di input, definito dal receptive field. 
+    Nella parte inferiore è invece rappresentata una connessione completamente densa, in cui ogni unità di output dipende da tutte le unità di input. 
+    Questo confronto evidenzia come la convoluzione riduca il numero di connessioni e parametri, sfruttando la struttura locale dei dati.}
+    \label{fig:sparse_connectivity}
+\end{figure}
+
+NB: Il receptive field è la porzione dell’input che può influenzare il valore di un neurone nella feature map.
+
+\subsubsection{Parameter sharing}
+
+Il \textbf{parameter sharing} è una proprietà fondamentale del convolution stage e consiste nell’utilizzo degli stessi parametri del kernel in tutte le posizioni dell’input.
+
+Quando un kernel viene fatto scorrere sull’input, i suoi pesi non cambiano da una posizione all’altra.  
+Lo stesso insieme di parametri viene applicato ripetutamente a regioni locali diverse, producendo una feature map.  
+Di conseguenza, tutti i neuroni appartenenti alla stessa feature map condividono gli stessi pesi.
+
+Dal punto di vista concettuale, il parameter sharing implica che la rete non apprende un pattern specifico per ogni posizione dell’input, ma apprende \emph{che tipo di pattern} cercare, indipendentemente da dove esso compaia.  
+Questo rende le CNN naturalmente adatte a dati in cui le stesse strutture possono apparire in posizioni diverse, come nel caso delle immagini.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.70\textwidth]{parameter_sharing.png}
+    \caption{}
+    \label{fig:sparse_connectivity}
+\end{figure}
+
+Il parameter sharing comporta una drastica riduzione del numero di parametri rispetto alle reti completamente connesse e contribuisce in modo significativo al miglioramento della capacità di generalizzazione.  
+Insieme alla sparse connectivity, esso rappresenta uno dei principali motivi per cui le Convolutional Neural Networks risultano più efficienti ed efficaci nell’elaborazione di dati strutturati.
+
+
+\subsubsection{Padding}
+
+Il \textbf{padding} è una tecnica utilizzata nel convolution stage che consiste nell’aggiungere valori artificiali ai bordi dell’input prima di applicare la convoluzione.  
+Nella pratica, i valori aggiunti sono tipicamente pari a zero (\textit{zero-padding}).
+
+L’introduzione del padding ha un effetto diretto sulla dimensione della feature map di output.  
+Senza padding, il kernel può essere applicato solo alle posizioni in cui esso è completamente contenuto nell’input, causando una riduzione progressiva delle dimensioni spaziali man mano che si procede nei layer.
+
+Il padding consente invece di:
+\begin{itemize}
+    \item controllare la dimensione dell’output;
+    \item preservare l’informazione ai bordi dell’input;
+    \item mantenere costante la risoluzione spaziale attraverso più layer convoluzionali.
+\end{itemize}
+
+In particolare, si distinguono due casi comuni:
+\begin{itemize}
+    \item \textbf{valid convolution}: nessun padding, con riduzione della dimensione dell’output;
+    \item \textbf{same convolution}: padding scelto in modo da ottenere un output con la stessa dimensione spaziale dell’input.
+\end{itemize}
+
+Dal punto di vista concettuale, il padding permette ai neuroni convoluzionali di trattare in modo simmetrico anche le regioni vicine ai bordi dell’input, evitando che tali regioni contribuiscano meno all’apprendimento rispetto alle zone centrali.
+
+Il padding influisce inoltre sul receptive field effettivo dei neuroni, poiché determina quante volte un pixel dell’input può essere incluso nelle operazioni di convoluzione.
+
+\paragraph{NB}: \textbf{Il padding avviene prima della convoluzione vera e propria.}
+
+
+\subsection{Detector stage}
+
+Il \textbf{detector stage} è il secondo stadio di un convolutional layer e consiste nell’applicazione di una funzione di attivazione non lineare alle feature map prodotte dal convolution stage.
+
+Dal punto di vista matematico, a ogni valore della feature map viene applicata una funzione
+
+\[
+\highlight{
+g(\cdot),}
+\]
+
+ottenendo una nuova mappa di attivazioni.  
+Una scelta comune per il detector stage è la funzione \textbf{ReLU}:
+
+\[
+\highlight{
+g(x) = \max(0, x).}
+\]
+
+Il ruolo principale del detector stage è introdurre \textbf{non linearità} nel modello.  
+In assenza di questo stadio, una sequenza di convoluzioni si ridurrebbe a un’unica trasformazione lineare equivalente, limitando drasticamente la capacità espressiva della rete.
+
+Dal punto di vista concettuale, il detector stage può essere interpretato come un meccanismo di rilevazione:  
+un kernel produce una risposta elevata solo quando il pattern che ha appreso è presente nella regione dell’input, e la funzione di attivazione enfatizza tali risposte, attenuando o annullando le attivazioni non rilevanti.
+
+Il detector stage non modifica la struttura spaziale delle feature map, ma ne trasforma i valori, rendendo la rappresentazione più selettiva e adatta alla composizione di più layer convoluzionali.
+
+\subsection{Pooling stage}
+
+Il \textbf{pooling stage} è lo stadio finale di un convolutional layer e ha lo scopo di ridurre la dimensionalità spaziale delle feature map, mantenendo al contempo l’informazione più rilevante.
+
+Il pooling opera localmente su ciascuna feature map, aggregando i valori all’interno di regioni spaziali limitate.  
+A differenza del convolution stage, il pooling non introduce nuovi parametri allenabili, ma applica una trasformazione deterministica.
+
+Le due operazioni di pooling più comuni sono:
+\begin{itemize}
+    \item \textbf{max pooling}, che seleziona il valore massimo all’interno della regione considerata;
+    \item \textbf{average pooling}, che calcola la media dei valori nella regione.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.70\textwidth]{pooling.png}
+    \caption{Il max pooling seleziona la risposta più forte in una regione, enfatizzando la presenza di un pattern, mentre l’average pooling ne fornisce una misura media dell’intensità.}
+    \label{fig:convolution_stage}
+\end{figure}
+
+Dal punto di vista concettuale, il pooling:
+\begin{itemize}
+    \item riduce la risoluzione spaziale delle feature map;
+    \item diminuisce il costo computazionale dei layer successivi;
+    \item introduce una certa invarianza a piccole traslazioni dell’input.
+\end{itemize}
+
+Riducendo la dimensionalità delle rappresentazioni intermedie, il pooling contribuisce anche a limitare l’overfitting e a rendere la rete più robusta rispetto a variazioni locali dell’input.
+
+È importante notare che il pooling agisce solo sulle dimensioni spaziali delle feature map e non sulla loro profondità: il numero di feature map rimane invariato.
+
+\subsection{Dimensione delle feature map e numero di parametri}
+
+Si consideri un input tridimensionale di dimensioni
+\[
+w_{in} \times h_{in} \times d_{in},
+\]
+dove $w_{in}$ e $h_{in}$ rappresentano le dimensioni spaziali e $d_{in}$ il numero di canali.  
+Si considerino inoltre $d_{out}$ kernel convoluzionali di dimensioni
+\[
+w_k \times h_k \times d_{in},
+\]
+uno per ciascuna feature map di output, con stride $s$ e padding $p$.
+
+\section{Dimensione della feature map di output}
+
+Le dimensioni spaziali delle feature map di output sono date da:
+
+\[
+\highlight{
+w_{out} = \frac{w_{in} - w_k + 2p}{s} + 1,
+\qquad
+h_{out} = \frac{h_{in} - h_k + 2p}{s} + 1.}
+\]
+
+Il numero di feature map in output è pari al numero di kernel utilizzati, ovvero $d_{out}$.  
+Di conseguenza, l’output del convolutional layer è un tensore di dimensioni:
+
+\[
+\highlight{
+w_{out} \times h_{out} \times d_{out}.}
+\]
+
+\subsubsection{Numero di parametri allenabili}
+
+Il numero di parametri allenabili di un convolutional layer dipende esclusivamente dalle dimensioni dei kernel e dal loro numero, e non dalla dimensione spaziale dell’input.
+
+Ogni kernel contiene:
+
+\[
+\highlight{
+w_k \cdot h_k \cdot d_{in}}
+\]
+
+pesi, e a ciascun kernel è associato un termine di bias.  
+
+Poiché i kernel sono $d_{out}$, il numero totale di parametri allenabili è:
+
+\[
+\highlight{
+|\theta| = w_k \cdot h_k \cdot d_{in} \cdot d_{out} + d_{out}.}
+\]
+
+Questo risultato evidenzia uno dei principali vantaggi delle Convolutional Neural Networks:  
+grazie al \textbf{parameter sharing}, il numero di parametri cresce linearmente con il numero di kernel e non con la dimensione dell’input, a differenza delle reti completamente connesse.
+
+\section*{RIEPILOGO}
+
+\begin{tcolorbox}[
+    colback=green!5,
+    colframe=green!50!black,
+    title=Convolutional Neural Networks,
+    breakable
+]
+
+Le \textbf{Convolutional Neural Networks (CNN)} sono una classe di reti neurali feedforward progettate per elaborare dati strutturati, come immagini, segnali e video.  
+Esse sfruttano vincoli architetturali coerenti con la struttura dei dati, ottenendo modelli più efficienti e con migliore capacità di generalizzazione rispetto alle reti completamente connesse.
+
+L’operatore fondamentale delle CNN è la \textbf{convoluzione}, che applica un kernel locale all’input producendo una \textbf{feature map}.  
+Nella pratica, viene utilizzata la cross-correlazione, equivalente dal punto di vista dell’apprendimento e più efficiente dal punto di vista computazionale.
+
+Il \textbf{kernel} è un tensore di parametri allenabili che definisce un operatore lineare locale.  
+Applicando lo stesso kernel in tutte le posizioni dell’input si realizza il principio di \textbf{parameter sharing}, che consente di rilevare lo stesso pattern indipendentemente dalla sua posizione e riduce drasticamente il numero di parametri.
+
+Ogni valore di una feature map dipende solo da una regione locale dell’input, detta \textbf{receptive field}.  
+Questa proprietà, nota come \textbf{sparse connectivity}, permette alle CNN di sfruttare le relazioni locali presenti nei dati e contribuisce all’efficienza del modello.
+
+Un \textbf{convolutional layer} è composto da tre stadi principali:
+\begin{itemize}
+    \item \textbf{convolution stage}, in cui i kernel vengono applicati all’input;
+    \item \textbf{detector stage}, che introduce non linearità tramite funzioni di attivazione (tipicamente ReLU);
+    \item \textbf{pooling stage}, che riduce la dimensionalità spaziale delle feature map e introduce invarianza a piccole traslazioni.
+\end{itemize}
+
+Il \textbf{padding} consente di controllare la dimensione delle feature map e di preservare l’informazione ai bordi dell’input, mentre lo \textbf{stride} determina di quanto il kernel si sposta sull’input durante la convoluzione.
+
+La dimensione delle feature map di output dipende da input, kernel, padding e stride, mentre il numero di parametri allenabili di un convolutional layer dipende esclusivamente dalle dimensioni dei kernel e dal loro numero, grazie al parameter sharing.
+
+Infine, il \textbf{transfer learning} permette di riutilizzare CNN pre-addestrate su grandi dataset, sfruttando le feature generiche apprese nei layer convoluzionali iniziali per risolvere nuovi compiti con meno dati e minore costo computazionale.
+
+\medskip
+\textit{Le CNN rappresentano quindi un’estensione strutturata delle reti neurali classiche, particolarmente efficace per l’elaborazione di dati con struttura spaziale o temporale.}
+
+\end{tcolorbox}
 
 
 

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.11.26)  11 JAN 2026 13:01
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.11.26)  13 JAN 2026 23:08
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -646,30 +646,59 @@ Package: ragged2e 2023/06/22 v3.6 ragged2e Package
 \RaggedLeftParindent=\skip66
 \RaggedRightParindent=\skip67
 \JustifyingParindent=\skip68
-) (c:/texlive/2025/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+) (c:/texlive/2025/texmf-dist/tex/latex/amscls/amsthm.sty
+Package: amsthm 2020/05/29 v2.20.6
+\thm@style=\toks45
+\thm@bodyfont=\toks46
+\thm@headfont=\toks47
+\thm@notefont=\toks48
+\thm@headpunct=\toks49
+\thm@preskip=\skip69
+\thm@postskip=\skip70
+\thm@headsep=\skip71
+\dth@everypar=\toks50
+)
+\c@theorem=\count366
+ (c:/texlive/2025/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count366
-) (./Appunti teorici.aux)
+\l__color_backend_stack_int=\count367
+) (./Appunti teorici.aux
+
+LaTeX Warning: Label `fig:polynomial_basis' multiply defined.
+
+
+LaTeX Warning: Label `fig:neuron' multiply defined.
+
+
+LaTeX Warning: Label `fig:neuron' multiply defined.
+
+
+LaTeX Warning: Label `fig:sparse_connectivity' multiply defined.
+
+
+LaTeX Warning: Label `fig:convolution_stage' multiply defined.
+
+)
 \openout1 = `"Appunti teorici.aux"'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -707,24 +736,24 @@ LaTeX Font Info:    ... okay on input line 39.
 
 (c:/texlive/2025/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count367
+\scratchcounter=\count368
 \scratchdimen=\dimen321
 \scratchbox=\box85
-\nofMPsegments=\count368
-\nofMParguments=\count369
-\everyMPshowfont=\toks45
-\MPscratchCnt=\count370
+\nofMPsegments=\count369
+\nofMParguments=\count370
+\everyMPshowfont=\toks51
+\MPscratchCnt=\count371
 \MPscratchDim=\dimen322
-\MPnumerator=\count371
-\makeMPintoPDFobject=\count372
-\everyMPtoPDFconversion=\toks46
+\MPnumerator=\count372
+\makeMPintoPDFobject=\count373
+\everyMPtoPDFconversion=\toks52
 ) (c:/texlive/2025/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
  (c:/texlive/2025/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
-Package hyperref Info: Link coloring ON on input line 39.
+Package hyperref Info: Link coloring ON on input line 42.
  (./Appunti teorici.out) (./Appunti teorici.out)
 \@outlinefile=\write5
 \openout5 = `"Appunti teorici.out"'.
@@ -733,19 +762,19 @@ Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: float package is loaded.
 Package caption Info: listings package is loaded.
 Package caption Info: End \AtBeginDocument code.
-\c@lstlisting=\count373
+\c@lstlisting=\count374
  (c:/texlive/2025/texmf-dist/tex/latex/base/inputenc.sty
 Package: inputenc 2024/02/08 v1.3d Input encoding file
-\inpenc@prehook=\toks47
-\inpenc@posthook=\toks48
+\inpenc@prehook=\toks53
+\inpenc@posthook=\toks54
 )
 Package pgfplots notification 'compat/show suggested version=true': document has been generated with the most recent feature set (\pgfplotsset{compat=1.18}).
 
-LaTeX Font Info:    Trying to load font information for U+msa on input line 42.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 45.
 (c:/texlive/2025/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 42.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 45.
  (c:/texlive/2025/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
@@ -754,187 +783,423 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.39 ...e di determinazione}{20}{subsection.2.8.1}
+l.39 ...e di determinazione}{21}{subsection.2.8.1}
                                                   % [1
 
-] [2])
+] [2] [3])
 \tf@toc=\write6
 \openout6 = `"Appunti teorici.toc"'.
 
- [3]
+ [4]
 Chapter 1.
-[4
+[5
 
 
-{c:/texlive/2025/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}] [5] [6] [7] [8] [9]
-Underfull \hbox (badness 1264) in paragraph at lines 410--410
+{c:/texlive/2025/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}] [6] [7] [8] [9] [10]
+Underfull \hbox (badness 1264) in paragraph at lines 411--411
 \OT1/cmr/m/n/12 uta, che viene ap-prossi-mata me-di-ante una fun-zione com-putabile. Nel caso
  []
 
 
-Underfull \hbox (badness 1303) in paragraph at lines 410--410
+Underfull \hbox (badness 1303) in paragraph at lines 411--411
 []\OT1/cmr/m/n/12 L'apprendimento dei parametri avviene tramite un al-go-ritmo it-er-a-tivo, come
  []
 
-[10] [11]
+[11] [12]
 Chapter 2.
-[12
+[13
 
-] [13] [14] [15]
-Overfull \hbox (0.51643pt too wide) in paragraph at lines 636--637
+] [14] [15] [16]
+Overfull \hbox (0.51643pt too wide) in paragraph at lines 637--638
 \OT1/cmr/m/n/12 Nel caso di prob-lemi di clas-si-fi-cazione, una met-rica co-mune-mente uti-liz-zata ^^Re l'accuratezza: 
  []
 
-[16]
-<confusion_matrix.png, id=647, 599.23875pt x 502.12593pt>
+[17]
+<confusion_matrix.png, id=993, 599.23875pt x 502.12593pt>
 File: confusion_matrix.png Graphic file (type png)
 <use confusion_matrix.png>
-Package pdftex.def Info: confusion_matrix.png  used on input line 708.
+Package pdftex.def Info: confusion_matrix.png  used on input line 709.
 (pdftex.def)             Requested size: 250.38564pt x 209.80347pt.
- [17]
-<MAE.jpg, id=653, 642.4pt x 481.8pt>
+ [18]
+<MAE.jpg, id=1000, 642.4pt x 481.8pt>
 File: MAE.jpg Graphic file (type jpg)
 <use MAE.jpg>
-Package pdftex.def Info: MAE.jpg  used on input line 729.
+Package pdftex.def Info: MAE.jpg  used on input line 730.
 (pdftex.def)             Requested size: 318.66948pt x 239.01003pt.
- [18 <./confusion_matrix.png>]
-<MSE.png, id=661, 578.16pt x 361.35pt>
+ [19 <./confusion_matrix.png>]
+<MSE.png, id=1007, 578.16pt x 361.35pt>
 File: MSE.png Graphic file (type png)
 <use MSE.png>
-Package pdftex.def Info: MSE.png  used on input line 742.
+Package pdftex.def Info: MSE.png  used on input line 743.
 (pdftex.def)             Requested size: 318.66948pt x 199.16766pt.
- [19 <./MAE.jpg> <./MSE.png>]
-<confronto_metriche.jpeg, id=669, 853.1875pt x 555.07375pt>
+ [20 <./MAE.jpg> <./MSE.png>]
+<confronto_metriche.jpeg, id=1015, 853.1875pt x 555.07375pt>
 File: confronto_metriche.jpeg Graphic file (type jpg)
 <use confronto_metriche.jpeg>
-Package pdftex.def Info: confronto_metriche.jpeg  used on input line 764.
+Package pdftex.def Info: confronto_metriche.jpeg  used on input line 765.
 (pdftex.def)             Requested size: 318.66948pt x 207.3221pt.
- [20 <./confronto_metriche.jpeg>] [21]
+ [21 <./confronto_metriche.jpeg>] [22]
 Chapter 3.
-<decision_tree_structure.png, id=681, 405.515pt x 524.96124pt>
+<decision_tree_structure.png, id=1027, 405.515pt x 524.96124pt>
 File: decision_tree_structure.png Graphic file (type png)
 <use decision_tree_structure.png>
-Package pdftex.def Info: decision_tree_structure.png  used on input line 900.
+Package pdftex.def Info: decision_tree_structure.png  used on input line 901.
 (pdftex.def)             Requested size: 295.90588pt x 383.07434pt.
-[22
+[23
 
 ]
-LaTeX Font Info:    Trying to load font information for OMS+cmr on input line 921.
+LaTeX Font Info:    Trying to load font information for OMS+cmr on input line 922.
  (c:/texlive/2025/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2024/11/19 v2.5n Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 921.
- [23 <./decision_tree_structure.png>]
-<play_tennis_decision_tree.png, id=693, 853.1875pt x 506.89375pt>
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 922.
+ [24 <./decision_tree_structure.png>]
+<play_tennis_decision_tree.png, id=1040, 853.1875pt x 506.89375pt>
 File: play_tennis_decision_tree.png Graphic file (type png)
 <use play_tennis_decision_tree.png>
-Package pdftex.def Info: play_tennis_decision_tree.png  used on input line 948.
+Package pdftex.def Info: play_tennis_decision_tree.png  used on input line 949.
 (pdftex.def)             Requested size: 295.90588pt x 175.80667pt.
- [24 <./play_tennis_decision_tree.png>]
-<decision_tree_to_rules.png, id=701, 1405.25pt x 776.9025pt>
+ [25 <./play_tennis_decision_tree.png>]
+<decision_tree_to_rules.png, id=1047, 1405.25pt x 776.9025pt>
 File: decision_tree_to_rules.png Graphic file (type png)
 <use decision_tree_to_rules.png>
-Package pdftex.def Info: decision_tree_to_rules.png  used on input line 988.
+Package pdftex.def Info: decision_tree_to_rules.png  used on input line 989.
 (pdftex.def)             Requested size: 318.66948pt x 176.17064pt.
- [25 <./decision_tree_to_rules.png>]
-Overfull \hbox (37.52203pt too wide) in paragraph at lines 1014--1016
+ [26 <./decision_tree_to_rules.png>]
+Overfull \hbox (37.52203pt too wide) in paragraph at lines 1015--1017
 \OT1/cmr/m/n/12 L'algoritmo \OT1/cmr/m/it/12 ID3 \OT1/cmr/m/n/12 (It-er-a-tive Di-chotomiser 3) ^^Re uno dei primi al-go-ritmi pro-posti per l'apprendimento
  []
 
-[26] [27] [28] [29] [30] [31]
-<random_forest.png, id=760, 1204.5pt x 677.53125pt>
+[27] [28] [29] [30] [31] [32]
+<random_forest.png, id=1106, 1204.5pt x 677.53125pt>
 File: random_forest.png Graphic file (type png)
 <use random_forest.png>
-Package pdftex.def Info: random_forest.png  used on input line 1330.
+Package pdftex.def Info: random_forest.png  used on input line 1331.
 (pdftex.def)             Requested size: 446.13727pt x 250.95143pt.
- [32 <./random_forest.png>] [33] [34] [35]
+ [33 <./random_forest.png>] [34] [35] [36]
 Chapter 4.
-[36
+[37
 
 ]
-Overfull \hbox (0.8129pt too wide) in paragraph at lines 1582--1584
+Overfull \hbox (0.8129pt too wide) in paragraph at lines 1583--1585
 \OT1/cmr/m/n/12 Il cri-te-rio di \OT1/cmr/bx/n/12 Max-i-mum A Pos-te-ri-ori (MAP) \OT1/cmr/m/n/12 es-tende il ML in-tro-ducendo l'informazione
  []
 
 
-Overfull \hbox (2.62164pt too wide) in paragraph at lines 1596--1597
+Overfull \hbox (2.62164pt too wide) in paragraph at lines 1597--1598
 []\OT1/cmr/m/n/12 la verosimiglianza $\OML/cmm/m/it/12 P\OT1/cmr/m/n/12 (\OML/cmm/m/it/12 x[] \OMS/cmsy/m/n/12 j \OML/cmm/m/it/12 v; D\OT1/cmr/m/n/12 )$, che misura quanto bene la classe sp-iega l'osservazione; 
  []
 
-[37] [38] [39] [40] [41] [42] [43] [44]
+[38] [39] [40] [41] [42] [43] [44] [45]
 Chapter 5.
-[45
+[46
 
-] [46] [47] [48] [49]
+] [47] [48] [49] [50]
 Chapter 6.
-<linearly_separable.png, id=853, 374.14781pt x 360.59718pt>
+<linearly_separable.png, id=1198, 374.14781pt x 360.59718pt>
 File: linearly_separable.png Graphic file (type png)
 <use linearly_separable.png>
-Package pdftex.def Info: linearly_separable.png  used on input line 2198.
+Package pdftex.def Info: linearly_separable.png  used on input line 2199.
 (pdftex.def)             Requested size: 227.62206pt x 219.38072pt.
-[50
+[51
 
  <./linearly_separable.png>]
-<nonlinearly_separable.png, id=861, 185.94469pt x 174.6525pt>
+<nonlinearly_separable.png, id=1206, 185.94469pt x 174.6525pt>
 File: nonlinearly_separable.png Graphic file (type png)
 <use nonlinearly_separable.png>
-Package pdftex.def Info: nonlinearly_separable.png  used on input line 2210.
+Package pdftex.def Info: nonlinearly_separable.png  used on input line 2211.
 (pdftex.def)             Requested size: 273.14923pt x 256.56819pt.
- [51 <./nonlinearly_separable.png>]
-<linear_discriminant_geometry.png, id=868, 574.39594pt x 440.39531pt>
+ [52 <./nonlinearly_separable.png>]
+<linear_discriminant_geometry.png, id=1213, 574.39594pt x 440.39531pt>
 File: linear_discriminant_geometry.png Graphic file (type png)
 <use linear_discriminant_geometry.png>
-Package pdftex.def Info: linear_discriminant_geometry.png  used on input line 2250.
+Package pdftex.def Info: linear_discriminant_geometry.png  used on input line 2251.
 (pdftex.def)             Requested size: 318.66948pt x 244.33493pt.
- [52 <./linear_discriminant_geometry.png>] [53] [54]
-<least_squares_outliers.png, id=885, 907.13907pt x 450.9347pt>
+ [53 <./linear_discriminant_geometry.png>] [54] [55]
+<least_squares_outliers.png, id=1230, 907.13907pt x 450.9347pt>
 File: least_squares_outliers.png Graphic file (type png)
 <use least_squares_outliers.png>
-Package pdftex.def Info: least_squares_outliers.png  used on input line 2408.
+Package pdftex.def Info: least_squares_outliers.png  used on input line 2409.
 (pdftex.def)             Requested size: 409.71692pt x 203.66873pt.
- [55 <./least_squares_outliers.png>] [56] [57] [58]
-<perceptron_training_process.png, id=907, 453.19313pt x 430.60875pt>
+ [56 <./least_squares_outliers.png>] [57] [58] [59]
+<perceptron_training_process.png, id=1252, 453.19313pt x 430.60875pt>
 File: perceptron_training_process.png Graphic file (type png)
 <use perceptron_training_process.png>
-Package pdftex.def Info: perceptron_training_process.png  used on input line 2630.
+Package pdftex.def Info: perceptron_training_process.png  used on input line 2631.
 (pdftex.def)             Requested size: 386.96027pt x 367.67493pt.
- [59 <./perceptron_training_process.png>]
-Overfull \hbox (20.80882pt too wide) in paragraph at lines 2636--2639
+ [60 <./perceptron_training_process.png>]
+Overfull \hbox (20.80882pt too wide) in paragraph at lines 2637--2640
 \OT1/cmr/m/n/12 empi di train-ing ap-parte-nenti alle due classi. Le frecce in-di-cano la di-rezione dell'aggiornamento
  []
 
 
-Overfull \hbox (10.23393pt too wide) in paragraph at lines 2648--2650
+Overfull \hbox (10.23393pt too wide) in paragraph at lines 2649--2651
 \OT1/cmr/m/n/12 l'errore commesso sull'esempio cor-rente. Di con-seguenza, la trai-et-to-ria se-guita dall'iperpiano
  []
 
-<perceptron.jpg, id=915, 1127.21124pt x 796.9775pt>
+<perceptron.jpg, id=1261, 1127.21124pt x 796.9775pt>
 File: perceptron.jpg Graphic file (type jpg)
 <use perceptron.jpg>
-Package pdftex.def Info: perceptron.jpg  used on input line 2658.
+Package pdftex.def Info: perceptron.jpg  used on input line 2659.
 (pdftex.def)             Requested size: 386.96027pt x 273.5955pt.
-[60 <./perceptron.jpg>] [61] (./Appunti teorici.aux)
+[61 <./perceptron.jpg>] [62]
+<fisher_mean_difference.png, id=1273, 421.575pt x 321.45094pt>
+File: fisher_mean_difference.png Graphic file (type png)
+<use fisher_mean_difference.png>
+Package pdftex.def Info: fisher_mean_difference.png  used on input line 2764.
+(pdftex.def)             Requested size: 386.96027pt x 295.06157pt.
+ [63]
+<fisher_optimal_projection.png, id=1279, 412.54124pt x 313.9228pt>
+File: fisher_optimal_projection.png Graphic file (type png)
+<use fisher_optimal_projection.png>
+Package pdftex.def Info: fisher_optimal_projection.png  used on input line 2775.
+(pdftex.def)             Requested size: 386.96027pt x 294.45996pt.
+ [64 <./fisher_mean_difference.png>] [65 <./fisher_optimal_projection.png>]
+Overfull \hbox (3.4539pt too wide) in paragraph at lines 2820--2821
+[]\OT1/cmr/m/n/12 Il margine di un iper-pi-ano di de-ci-sione ^^Re definito come la dis-tanza min-ima tra l'iperpiano
+ []
+
+[66]
+<svm_maximum_margin.png, id=1301, 731.73375pt x 402.00188pt>
+File: svm_maximum_margin.png Graphic file (type png)
+<use svm_maximum_margin.png>
+Package pdftex.def Info: svm_maximum_margin.png  used on input line 2882.
+(pdftex.def)             Requested size: 409.71692pt x 225.09497pt.
+ [67 <./svm_maximum_margin.png>]
+<soft_margin_slack.png, id=1309, 402.00188pt x 523.9575pt>
+File: soft_margin_slack.png Graphic file (type png)
+<use soft_margin_slack.png>
+Package pdftex.def Info: soft_margin_slack.png  used on input line 2938.
+(pdftex.def)             Requested size: 341.43307pt x 445.0142pt.
+ [68] [69 <./soft_margin_slack.png>] [70] [71]
+Chapter 7.
+<linear_regression_2d.png, id=1329, 578.91281pt x 477.28313pt>
+File: linear_regression_2d.png Graphic file (type png)
+<use linear_regression_2d.png>
+Package pdftex.def Info: linear_regression_2d.png  used on input line 3104.
+(pdftex.def)             Requested size: 295.90588pt x 243.95737pt.
+[72
+
+] [73 <./linear_regression_2d.png>]
+<polinomial_curve_fitting.png, id=1341, 688.82344pt x 493.845pt>
+File: polinomial_curve_fitting.png Graphic file (type png)
+<use polinomial_curve_fitting.png>
+Package pdftex.def Info: polinomial_curve_fitting.png  used on input line 3139.
+(pdftex.def)             Requested size: 409.71692pt x 293.73969pt.
+<basis_function_ex.png, id=1343, 1006.51031pt x 400.49625pt>
+File: basis_function_ex.png Graphic file (type png)
+<use basis_function_ex.png>
+Package pdftex.def Info: basis_function_ex.png  used on input line 3154.
+(pdftex.def)             Requested size: 409.71692pt x 163.02509pt.
+ [74 <./polinomial_curve_fitting.png>] [75 <./basis_function_ex.png>]
+<regularization_effects.png, id=1356, 559.33969pt x 422.32782pt>
+File: regularization_effects.png Graphic file (type png)
+<use regularization_effects.png>
+Package pdftex.def Info: regularization_effects.png  used on input line 3208.
+(pdftex.def)             Requested size: 318.66948pt x 240.6198pt.
+<regularization_effects2.png, id=1357, 447.17062pt x 334.24875pt>
+File: regularization_effects2.png Graphic file (type png)
+<use regularization_effects2.png>
+Package pdftex.def Info: regularization_effects2.png  used on input line 3233.
+(pdftex.def)             Requested size: 318.66948pt x 238.2006pt.
+ [76 <./regularization_effects.png>]
+<regularization_effects3.png, id=1364, 456.20438pt x 328.22626pt>
+File: regularization_effects3.png Graphic file (type png)
+<use regularization_effects3.png>
+Package pdftex.def Info: regularization_effects3.png  used on input line 3242.
+(pdftex.def)             Requested size: 318.66948pt x 229.28102pt.
+ [77 <./regularization_effects2.png> <./regularization_effects3.png>]
+Underfull \hbox (badness 1430) in paragraph at lines 3292--3294
+[]\OT1/cmr/bx/n/12 Stima dei parametri \OT1/cmr/m/n/12 As-sumendo ru-more gaus-siano ad-di-tivo, la mas-sima
+ []
+
+[78]
+Chapter 8.
+[79
+
+] [80]
+Overfull \hbox (0.63364pt too wide) in paragraph at lines 3425--3426
+\OT1/cmr/m/n/12 Il \OT1/cmr/m/it/12 ker-nel trick \OT1/cmr/m/n/12 con-siste nell'osservare che, se un al-go-ritmo dipende dagli in-put \OT1/cmr/bx/n/12 solo tramite
+ []
+
+[81] [82] [83]
+Chapter 9.
+[84
+
+]
+<voting.png, id=1410, 588.69937pt x 550.30594pt>
+File: voting.png Graphic file (type png)
+<use voting.png>
+Package pdftex.def Info: voting.png  used on input line 3645.
+(pdftex.def)             Requested size: 295.90588pt x 276.60497pt.
+ [85] [86 <./voting.png>]
+<mixture_of_experts.png, id=1423, 588.69937pt x 550.30594pt>
+File: mixture_of_experts.png Graphic file (type png)
+<use mixture_of_experts.png>
+Package pdftex.def Info: mixture_of_experts.png  used on input line 3675.
+(pdftex.def)             Requested size: 318.66948pt x 297.89131pt.
+ [87 <./mixture_of_experts.png>]
+<stacking.png, id=1430, 386.94562pt x 365.11406pt>
+File: stacking.png Graphic file (type png)
+<use stacking.png>
+Package pdftex.def Info: stacking.png  used on input line 3695.
+(pdftex.def)             Requested size: 295.90588pt x 279.21106pt.
+ [88 <./stacking.png>]
+<cascading.png, id=1437, 434.37282pt x 405.01312pt>
+File: cascading.png Graphic file (type png)
+<use cascading.png>
+Package pdftex.def Info: cascading.png  used on input line 3723.
+(pdftex.def)             Requested size: 341.43307pt x 318.37477pt.
+ [89 <./cascading.png>]
+<boosting.png, id=1444, 701.62125pt x 360.59718pt>
+File: boosting.png Graphic file (type png)
+<use boosting.png>
+Package pdftex.def Info: boosting.png  used on input line 3773.
+(pdftex.def)             Requested size: 364.19667pt x 187.18147pt.
+ [90] [91 <./boosting.png>]
+<adaboost_evolution.png, id=1459, 1001.24063pt x 493.0922pt>
+File: adaboost_evolution.png Graphic file (type png)
+<use adaboost_evolution.png>
+Package pdftex.def Info: adaboost_evolution.png  used on input line 3845.
+(pdftex.def)             Requested size: 432.48051pt x 212.98857pt.
+ [92 <./adaboost_evolution.png>] [93] [94] [95]
+Chapter 10.
+<neuron.png, id=1489, 983.92593pt x 355.3275pt>
+File: neuron.png Graphic file (type png)
+<use neuron.png>
+Package pdftex.def Info: neuron.png  used on input line 3990.
+(pdftex.def)             Requested size: 432.48051pt x 156.18192pt.
+[96
+
+] [97 <./neuron.png>] [98] [99]
+<ReLu.png, id=1513, 661.72218pt x 398.99063pt>
+File: ReLu.png Graphic file (type png)
+<use ReLu.png>
+Package pdftex.def Info: ReLu.png  used on input line 4174.
+(pdftex.def)             Requested size: 432.48051pt x 260.76544pt.
+ [100 <./ReLu.png>]
+<activation_function.png, id=1521, 935.74594pt x 334.24875pt>
+File: activation_function.png Graphic file (type png)
+<use activation_function.png>
+Package pdftex.def Info: activation_function.png  used on input line 4210.
+(pdftex.def)             Requested size: 432.48051pt x 154.48561pt.
+ [101 <./activation_function.png>]
+Overfull \hbox (6.79503pt too wide) in paragraph at lines 4247--4250
+\OT1/cmr/m/n/12 la mas-simiz-zazione della verosimiglianza equiv-ale alla min-i-miz-zazione della \OT1/cmr/bx/n/12 Mean Squared
+ []
+
+[102] [103] [104] [105] [106] [107]
+Overfull \hbox (38.32942pt too wide) in paragraph at lines 4602--4603
+\OT1/cmr/m/n/12 L'\OT1/cmr/bx/n/12 early stop-ping \OT1/cmr/m/n/12 ^^Re una tec-nica di re-go-lar-iz-zazione che con-siste nell'interrompere l'addestramento
+ []
+
+<early_stop.png, id=1571, 748.29562pt x 359.84438pt>
+File: early_stop.png Graphic file (type png)
+<use early_stop.png>
+Package pdftex.def Info: early_stop.png  used on input line 4613.
+(pdftex.def)             Requested size: 386.96027pt x 186.08238pt.
+
+Underfull \hbox (badness 1231) in paragraph at lines 4616--4616
+[]\OT1/cmr/m/it/12 Figure 10.4: |An-da-mento della loss sul train-ing set e sul val-i-da-tion set du-rante
+ []
+
+<dropout.png, id=1572, 770.12718pt x 420.82219pt>
+File: dropout.png Graphic file (type png)
+<use dropout.png>
+Package pdftex.def Info: dropout.png  used on input line 4629.
+(pdftex.def)             Requested size: 364.19667pt x 199.00648pt.
+[108 <./early_stop.png>]
+<dropout2.png, id=1580, 636.87938pt x 476.53032pt>
+File: dropout2.png Graphic file (type png)
+<use dropout2.png>
+Package pdftex.def Info: dropout2.png  used on input line 4643.
+(pdftex.def)             Requested size: 386.96027pt x 289.53421pt.
+ [109 <./dropout.png> <./dropout2.png>] [110]
+Chapter 11.
+<audio.png, id=1594, 1032.85875pt x 249.93375pt>
+File: audio.png Graphic file (type png)
+<use audio.png>
+Package pdftex.def Info: audio.png  used on input line 4710.
+(pdftex.def)             Requested size: 432.48051pt x 104.65111pt.
+<immagini.png, id=1595, 1053.1847pt x 216.05719pt>
+File: immagini.png Graphic file (type png)
+<use immagini.png>
+Package pdftex.def Info: immagini.png  used on input line 4724.
+(pdftex.def)             Requested size: 432.48051pt x 88.72247pt.
+[111
+
+ <./audio.png>] [112 <./immagini.png>]
+<CNN_2D.png, id=1611, 542.025pt x 345.54094pt>
+File: CNN_2D.png Graphic file (type png)
+<use CNN_2D.png>
+Package pdftex.def Info: CNN_2D.png  used on input line 4783.
+(pdftex.def)             Requested size: 364.19667pt x 232.18083pt.
+<CNN_3D.png, id=1612, 590.95781pt x 323.70938pt>
+File: CNN_3D.png Graphic file (type png)
+<use CNN_3D.png>
+Package pdftex.def Info: CNN_3D.png  used on input line 4810.
+(pdftex.def)             Requested size: 364.19667pt x 199.5024pt.
+ [113 <./CNN_2D.png>] [114 <./CNN_3D.png>]
+<kernel.png, id=1627, 547.2947pt x 405.76593pt>
+File: kernel.png Graphic file (type png)
+<use kernel.png>
+Package pdftex.def Info: kernel.png  used on input line 4861.
+(pdftex.def)             Requested size: 386.96027pt x 286.89467pt.
+
+Overfull \hbox (4.16989pt too wide) in paragraph at lines 4868--4870
+\OT1/cmr/m/n/12 Una \OT1/cmr/bx/n/12 fea-ture map \OT1/cmr/m/n/12 ^^Re il risul-tato dell'applicazione di un ker-nel sull'input tramite l'operazione
+ []
+
+[115 <./kernel.png>]
+<convolutional_stage.png, id=1634, 263.48438pt x 444.91219pt>
+File: convolutional_stage.png Graphic file (type png)
+<use convolutional_stage.png>
+Package pdftex.def Info: convolutional_stage.png  used on input line 4918.
+(pdftex.def)             Requested size: 227.62206pt x 384.3753pt.
+ [116]
+<sparse_connectivity.png, id=1642, 435.12563pt x 417.05812pt>
+File: sparse_connectivity.png Graphic file (type png)
+<use sparse_connectivity.png>
+Package pdftex.def Info: sparse_connectivity.png  used on input line 4940.
+(pdftex.def)             Requested size: 318.66948pt x 305.45537pt.
+ [117 <./convolutional_stage.png>]
+<parameter_sharing.png, id=1649, 575.90157pt x 453.94594pt>
+File: parameter_sharing.png Graphic file (type png)
+<use parameter_sharing.png>
+Package pdftex.def Info: parameter_sharing.png  used on input line 4963.
+(pdftex.def)             Requested size: 318.66948pt x 251.1949pt.
+ [118 <./sparse_connectivity.png>] [119 <./parameter_sharing.png>]
+<pooling.png, id=1666, 703.12688pt x 459.21562pt>
+File: pooling.png Graphic file (type png)
+<use pooling.png>
+Package pdftex.def Info: pooling.png  used on input line 5042.
+(pdftex.def)             Requested size: 318.66948pt x 208.1236pt.
+ [120] [121 <./pooling.png>] [122] [123] (./Appunti teorici.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-11-14>
  ***********
+
+
+LaTeX Warning: There were multiply-defined labels.
+
 Package rerunfilecheck Info: File `"Appunti teorici".out' has not changed.
-(rerunfilecheck)             Checksum: 8AD3043C788164754E52CC6D6BEB722B;19766.
+(rerunfilecheck)             Checksum: 7F3A40340D94D8AAE9EE1317777575DA;32229.
  ) 
 Here is how much of TeX's memory you used:
- 39496 strings out of 467538
- 935115 string characters out of 5423724
+ 40134 strings out of 467538
+ 946049 string characters out of 5423724
  1507420 words of memory out of 5000000
- 67583 multiletter control sequences out of 15000+600000
- 638718 words of font info for 82 fonts, out of 8000000 for 9000
+ 67993 multiletter control sequences out of 15000+600000
+ 639698 words of font info for 85 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  98i,19n,108p,817b,2193s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb>
-Output written on "Appunti teorici.pdf" (62 pages, 1138970 bytes).
+<c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb>
+Output written on "Appunti teorici.pdf" (124 pages, 4958976 bytes).
 PDF statistics:
- 1042 PDF objects out of 1200 (max. 8388607)
- 892 compressed objects within 9 object streams
- 237 named destinations out of 1000 (max. 500000)
- 1035 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1864 PDF objects out of 2073 (max. 8388607)
+ 1577 compressed objects within 16 object streams
+ 458 named destinations out of 1000 (max. 500000)
+ 1734 words of extra memory for PDF output out of 10000 (max. 10000000)
 
