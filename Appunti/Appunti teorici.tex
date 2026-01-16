@@ -5150,5 +5150,1269 @@ Infine, il \textbf{transfer learning} permette di riutilizzare CNN pre-addestrat
 \end{tcolorbox}
 
 
+\chapter{Unsupervised Learning}
+
+Nel contesto del \emph{Machine Learning}, si parla di \emph{Unsupervised Learning} quando il processo di apprendimento avviene in assenza di etichette associate ai dati.
+Formalmente, è disponibile un insieme di dati di input
+
+\[
+\highlight{
+\mathcal{D} = \{ \mathbf{x}_n \}_{n=1}^{N},}
+\]
+
+ma non sono noti i corrispondenti valori target.
+
+L’obiettivo principale dell’apprendimento non supervisionato non è la predizione di una variabile di uscita, bensì la scoperta di \emph{strutture latenti} nei dati.
+Tra i problemi tipici rientrano:
+\begin{itemize}
+    \item il \textbf{clustering}, ovvero l’individuazione di gruppi omogenei di dati;
+    \item la \textbf{modellazione della distribuzione dei dati}, utile anche come fase preliminare a metodi supervisionati;
+    \item la \textbf{riduzione della dimensionalità} e l’analisi di variabili latenti.
+\end{itemize}
+
+\subsection{Cluster}
+
+Nel contesto dell’apprendimento non supervisionato, un \emph{cluster} è un insieme di dati che presentano caratteristiche simili tra loro e differenti rispetto ai dati appartenenti ad altri gruppi.
+L’idea di clustering nasce dall’osservazione che i dati non sono distribuiti in modo uniforme nello spazio delle feature, ma tendono a concentrarsi in regioni ben definite.
+
+Dal punto di vista geometrico, un cluster può essere interpretato come una regione dello spazio in cui la densità dei dati è elevata.
+Nel caso dei Gaussian Mixture Models, ciascun cluster è modellato tramite una distribuzione gaussiana, che ne descrive la posizione (media) e la forma (covarianza).
+
+\subsection{Variabili latenti}
+
+Durante il processo di generazione dei dati, ogni osservazione è prodotta da una specifica componente del modello.
+Tuttavia, nell’apprendimento non supervisionato, questa informazione non è osservabile direttamente.
+
+Per rappresentare tale informazione nascosta si introducono le \emph{variabili latenti}.
+Una variabile latente è una variabile non osservata che influenza la generazione dei dati osservabili.
+
+L’introduzione delle variabili latenti consente di:
+\begin{itemize}
+    \item modellare esplicitamente l’appartenenza dei dati ai cluster;
+    \item passare da un clustering puramente geometrico a un clustering probabilistico;
+    \item formulare il problema dell’apprendimento come un problema di inferenza statistica.
+\end{itemize}
+
+\section{Gaussian Mixture Models}
+
+Un \emph{Gaussian Mixture Model} (GMM) è un modello probabilistico che assume che i dati osservati siano generati da una combinazione di più distribuzioni gaussiane.
+La distribuzione di probabilità complessiva è definita come una combinazione convessa di $K$ componenti gaussiane:
+
+\[
+\highlight{
+p(\mathbf{x}) = \sum_{k=1}^{K} \pi_k \, \mathcal{N}(\mathbf{x}; \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k),}
+\]
+
+dove:
+\begin{itemize}
+    \item $\pi_k$ è la probabilità a priori della componente $k$-esima, con $\pi_k \geq 0$ e $\sum_{k=1}^{K} \pi_k = 1$;
+    \item $\boldsymbol{\mu}_k$ è il vettore media della $k$-esima gaussiana;
+    \item $\boldsymbol{\Sigma}_k$ è la matrice di covarianza associata.
+\end{itemize}
+
+Il GMM è un \emph{modello generativo}: descrive esplicitamente il processo attraverso cui i dati vengono prodotti.
+In particolare, la generazione di un singolo campione $\mathbf{x}_n$ può essere descritta in due fasi:
+\begin{enumerate}
+    \item selezione di una componente $k$ secondo la distribuzione discreta definita dai pesi $\{\pi_1, \dots, \pi_K\}$;
+    \item generazione del dato $\mathbf{x}_n$ campionando dalla distribuzione gaussiana
+
+    \[
+    \highlight{
+    \mathcal{N}(\mathbf{x}; \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k).}
+    \]
+
+\end{enumerate}
+
+Nel contesto dell’apprendimento non supervisionato, il problema consiste nello stimare i parametri del modello
+
+\[
+\highlight{
+\{ \pi_k, \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k \}_{k=1}^{K}}
+\]
+a partire dai soli dati osservati $\mathcal{D}$, senza conoscere quale componente gaussiana abbia generato ciascun campione.
+
+
+\subsection{Generazione dei dati con un Gaussian Mixture Model}
+
+Un \emph{Gaussian Mixture Model} definisce un processo generativo esplicito per i dati osservati.
+L’ipotesi fondamentale è che ogni osservazione $\mathbf{x}_n$ sia generata da una tra $K$ distribuzioni gaussiane, selezionata in modo casuale secondo una distribuzione discreta sui componenti.
+
+Il processo generativo può essere descritto come segue:
+\begin{enumerate}
+    \item si estrae una variabile discreta $k \in \{1, \dots, K\}$ secondo la distribuzione
+    \[
+    P(k) = \pi_k;
+    \]
+    \item dato il valore di $k$, si genera il campione $\mathbf{x}_n$ dalla distribuzione gaussiana associata:
+    \[
+    \mathbf{x}_n \sim \mathcal{N}(\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k).
+    \]
+\end{enumerate}
+
+Ripetendo questo processo $N$ volte si ottiene un dataset
+
+\[
+\mathcal{D} = \{ \mathbf{x}_1, \dots, \mathbf{x}_N \},
+\]
+
+che risulta composto da più gruppi di dati, ciascuno caratterizzato da una propria media, covarianza e peso probabilistico.
+
+Dal punto di vista geometrico, ciascuna componente gaussiana genera un \emph{cluster} con forma ellittica nello spazio delle feature, la cui orientazione e dispersione sono determinate dalla matrice di covarianza $\boldsymbol{\Sigma}_k$.
+Un esempio bidimensionale di dati generati da un GMM con due componenti è mostrato in Figura~\ref{fig:GMM}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{GMM.png}
+    \caption{Esempio di dati generati da un Gaussian Mixture Model con due componenti. Ogni cluster corrisponde a una diversa distribuzione gaussiana con media e covarianza proprie.}
+    \label{fig:GMM}
+\end{figure}
+
+È importante sottolineare che, nel contesto dell’apprendimento non supervisionato, il dataset osservato contiene esclusivamente i campioni $\mathbf{x}_n$, mentre l’informazione relativa a quale componente gaussiana abbia generato ciascun dato non è osservabile.
+Questa informazione nascosta verrà modellata introducendo opportune \emph{variabili latenti}.
+
+\subsection{Introduzione formale delle variabili latenti nel GMM}
+
+Per rendere esplicita l’appartenenza di ciascun dato a un cluster, nel Gaussian Mixture Model si introducono delle variabili latenti discrete.
+Per ogni osservazione $\mathbf{x}_n$ si definisce una variabile latente
+
+\[
+\highlight{
+\mathbf{z}_n = (z_{n1}, \dots, z_{nK})^T,}
+\]
+
+dove ciascuna componente $z_{nk}$ è una variabile binaria tale che:
+
+\[
+\highlight{
+z_{nk} \in \{0,1\}, \qquad \sum_{k=1}^{K} z_{nk} = 1.}
+\]
+
+Questa rappresentazione è nota come \emph{codifica 1-out-of-$K$} e garantisce che ogni dato sia associato a una e una sola componente del modello.
+
+La variabile latente $z_{nk} = 1$ indica che il campione $\mathbf{x}_n$ è stato generato dalla $k$-esima distribuzione gaussiana.
+
+\subsection{Distribuzione a priori delle variabili latenti}
+
+Si assume che le variabili latenti siano distribuite secondo una distribuzione categorica parametrizzata dai pesi del modello:
+
+\[
+\highlight{
+P(z_{nk} = 1) = \pi_k,}
+\]
+
+con $\pi_k \geq 0$ e $\sum_{k=1}^{K} \pi_k = 1$.
+La distribuzione congiunta della variabile latente $\mathbf{z}_n$ può quindi essere scritta come:
+
+\[
+\highlight{
+P(\mathbf{z}_n) = \prod_{k=1}^{K} \pi_k^{\, z_{nk}}.}
+\]
+
+\subsection{Distribuzione condizionata dei dati}
+
+Dato il valore della variabile latente, la distribuzione del dato osservato è gaussiana:
+
+\[
+\highlight{
+P(\mathbf{x}_n \mid z_{nk} = 1) = \mathcal{N}(\mathbf{x}_n; \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k).}
+\]
+
+Utilizzando la codifica 1-out-of-$K$, la distribuzione condizionata può essere espressa in forma compatta come:
+
+\[
+\highlight{
+P(\mathbf{x}_n \mid \mathbf{z}_n)
+= \prod_{k=1}^{K}
+\mathcal{N}(\mathbf{x}_n; \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)^{z_{nk}}.}
+\]
+
+\subsection{Distribuzione congiunta e marginale}
+
+Applicando la regola della catena, la distribuzione congiunta delle variabili osservate e latenti è:
+
+\[
+\highlight{
+P(\mathbf{x}_n, \mathbf{z}_n)
+= P(\mathbf{x}_n \mid \mathbf{z}_n) P(\mathbf{z}_n).}
+\]
+
+La distribuzione marginale dei dati osservati si ottiene marginalizzando rispetto alle variabili latenti:
+
+\[
+\highlight{
+P(\mathbf{x}_n) = \sum_{\mathbf{z}_n} P(\mathbf{x}_n, \mathbf{z}_n)
+= \sum_{k=1}^{K} \pi_k \, \mathcal{N}(\mathbf{x}_n; \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k),}
+\]
+
+che coincide con l’espressione del Gaussian Mixture Model.
+
+\subsection{Distribuzione a posteriori delle variabili latenti}
+
+Dato un campione osservato $\mathbf{x}_n$, è possibile calcolare la distribuzione a posteriori delle variabili latenti tramite il teorema di Bayes:
+
+\[
+\highlight{
+\gamma(z_{nk}) \equiv P(z_{nk} = 1 \mid \mathbf{x}_n)
+= \frac{\pi_k \, \mathcal{N}(\mathbf{x}_n; \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)}
+{\sum_{j=1}^{K} \pi_j \, \mathcal{N}(\mathbf{x}_n; \boldsymbol{\mu}_j, \boldsymbol{\Sigma}_j)}.}
+\]
+
+La quantità $\gamma(z_{nk})$ rappresenta la \emph{responsabilità} della $k$-esima componente nel generare il dato $\mathbf{x}_n$ ed esprime un’assegnazione probabilistica del campione al cluster.
+
+\section{K-means Clustering}
+
+L’algoritmo \emph{K-means} è uno dei metodi più semplici e diffusi per il clustering non supervisionato.
+Dato un insieme di dati
+\[
+\mathcal{D} = \{ \mathbf{x}_n \}_{n=1}^{N}
+\]
+e un numero fissato di cluster $K$, l’obiettivo di K-means è suddividere i dati in $K$ gruppi minimizzando la distanza tra ciascun punto e il centro del cluster a cui è assegnato.
+
+\subsection{Obiettivo dell’algoritmo}
+
+K-means mira a minimizzare la seguente funzione obiettivo:
+
+\[
+\highlight{
+J = \sum_{n=1}^{N} \sum_{k=1}^{K} r_{nk} \, \lVert \mathbf{x}_n - \boldsymbol{\mu}_k \rVert^2,}
+\]
+
+dove:
+\begin{itemize}
+    \item $\boldsymbol{\mu}_k$ è il centroide del cluster $k$;
+    \item $r_{nk} \in \{0,1\}$ è una variabile di assegnazione tale che $r_{nk}=1$ se il punto $\mathbf{x}_n$ appartiene al cluster $k$ e $0$ altrimenti;
+    \item per ogni $n$, vale il vincolo $\sum_{k=1}^{K} r_{nk} = 1$.
+\end{itemize}
+
+Questo formalizza un \emph{hard clustering}: ogni dato appartiene a un solo cluster.
+
+\subsection{Algoritmo K-means}
+
+L’algoritmo procede in modo iterativo alternando due fasi:
+
+\paragraph{Fase di assegnazione}
+Dato un insieme corrente di centroidi $\{\boldsymbol{\mu}_k\}$, ogni punto viene assegnato al cluster il cui centroide è più vicino:
+\[
+r_{nk} =
+\begin{cases}
+1 & \text{se } k = \arg\min_j \lVert \mathbf{x}_n - \boldsymbol{\mu}_j \rVert^2, \\
+0 & \text{altrimenti}.
+\end{cases}
+\]
+
+\paragraph{Fase di aggiornamento}
+Una volta fissate le assegnazioni, i centroidi vengono ricalcolati come media dei punti appartenenti al cluster:
+
+\[
+\highlight{
+\boldsymbol{\mu}_k = \frac{1}{N_k} \sum_{n=1}^{N} r_{nk} \, \mathbf{x}_n,
+\qquad
+N_k = \sum_{n=1}^{N} r_{nk}.}
+\]
+
+Queste due fasi vengono ripetute fino a convergenza, ovvero fino a quando le assegnazioni non cambiano più oppure la funzione obiettivo non diminuisce ulteriormente.
+
+\subsection{Interpretazione geometrica}
+
+La Figura~\ref{fig:k-means} mostra l’evoluzione dell’algoritmo K-means nel caso bidimensionale con $K=2$:
+a partire da centroidi iniziali arbitrari, le assegnazioni e i centroidi vengono aggiornati iterativamente fino alla convergenza.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{k-means.png}
+    \caption{Evoluzione dell’algoritmo K-means. I punti sono assegnati ai cluster in base alla distanza dal centroide corrente; le linee indicano i confini di decisione. Le croci rappresentano i centroidi, che vengono aggiornati a ogni iterazione fino alla convergenza.}
+    \label{fig:k-means}
+\end{figure}
+
+Dal punto di vista geometrico, K-means costruisce una partizione dello spazio in regioni di Voronoi, ciascuna associata a un centroide.
+I confini tra i cluster sono iperpiani determinati dalla distanza euclidea dai centroidi.
+
+
+\subsubsection{Osservazioni}
+
+K-means è un algoritmo semplice ed efficiente, ma presenta alcune limitazioni:
+\begin{itemize}
+    \item il numero di cluster $K$ deve essere fissato a priori;
+    \item il risultato dipende fortemente dall’inizializzazione dei centroidi;
+    \item il clustering è basato esclusivamente sulla distanza euclidea;
+    \item i cluster ottenuti hanno forma approssimativamente sferica.
+\end{itemize}
+
+Queste limitazioni motivano l’introduzione di modelli probabilistici più generali, come i Gaussian Mixture Models, e di algoritmi di stima più flessibili, come l’Expectation Maximization.
+
+\section{Expectation Maximization (EM)}
+
+Nel caso dei Gaussian Mixture Models, il problema dell’apprendimento consiste nello stimare i parametri
+
+\[
+\highlight{
+\Theta = \{ \pi_k, \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k \}_{k=1}^{K}}
+\]
+
+a partire da un insieme di dati osservati
+
+\[
+\highlight{
+\mathcal{D} = \{ \mathbf{x}_n \}_{n=1}^{N},}
+\]
+
+in presenza di variabili latenti non osservabili $\mathbf{z}_n$.
+
+\subsection{Massima verosimiglianza con variabili latenti}
+
+L’obiettivo è massimizzare la log-verosimiglianza dei dati osservati:
+
+\[
+\highlight{
+\ln p(\mathcal{D} \mid \Theta)
+= \sum_{n=1}^{N} \ln \left( \sum_{k=1}^{K}
+\pi_k \, \mathcal{N}(\mathbf{x}_n; \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k) \right).}
+\]
+
+La presenza della somma all’interno del logaritmo rende la massimizzazione diretta di questa funzione un problema non banale.
+Questa difficoltà è dovuta al fatto che le variabili latenti $\mathbf{z}_n$, che indicano quale componente abbia generato ciascun dato, non sono osservabili.
+
+\subsection{Idea dell’algoritmo EM}
+
+L’algoritmo \emph{Expectation Maximization} affronta il problema alternando due fasi:
+\begin{itemize}
+    \item una fase di \textbf{stima} delle variabili latenti, data una stima corrente dei parametri;
+    \item una fase di \textbf{aggiornamento} dei parametri, data la distribuzione stimata delle variabili latenti.
+\end{itemize}
+
+L’algoritmo procede quindi per ottimizzazione iterativa, migliorando la log-verosimiglianza dei dati a ogni iterazione.
+
+\subsection{E-step (Expectation step)}
+
+Dato un insieme corrente di parametri $\Theta^{(t)}$, si calcola la distribuzione a posteriori delle variabili latenti:
+
+\[
+\highlight{
+\gamma(z_{nk})^{(t+1)} \equiv
+P(z_{nk} = 1 \mid \mathbf{x}_n, \Theta^{(t)})
+=
+\frac{\pi_k^{(t)} \, \mathcal{N}(\mathbf{x}_n; \boldsymbol{\mu}_k^{(t)}, \boldsymbol{\Sigma}_k^{(t)})}
+{\sum_{j=1}^{K} \pi_j^{(t)} \, \mathcal{N}(\mathbf{x}_n; \boldsymbol{\mu}_j^{(t)}, \boldsymbol{\Sigma}_j^{(t)})}.}
+\]
+
+Questa quantità rappresenta la \emph{responsabilità} della $k$-esima componente nella generazione del dato $\mathbf{x}_n$.
+A differenza di K-means, l’assegnazione ai cluster è ora \emph{soft} e probabilistica.
+
+\subsection{M-step (Maximization step)}
+
+Utilizzando le responsabilità $\gamma(z_{nk})^{(t+1)}$, si aggiornano i parametri del modello:
+
+\paragraph{Aggiornamento delle medie}
+\[
+\boldsymbol{\mu}_k^{(t+1)} =
+\frac{1}{N_k}
+\sum_{n=1}^{N}
+\gamma(z_{nk})^{(t+1)} \, \mathbf{x}_n,
+\qquad
+N_k = \sum_{n=1}^{N} \gamma(z_{nk})^{(t+1)}.
+\]
+
+\paragraph{Aggiornamento delle covarianze}
+\[
+\boldsymbol{\Sigma}_k^{(t+1)} =
+\frac{1}{N_k}
+\sum_{n=1}^{N}
+\gamma(z_{nk})^{(t+1)}
+(\mathbf{x}_n - \boldsymbol{\mu}_k^{(t+1)})
+(\mathbf{x}_n - \boldsymbol{\mu}_k^{(t+1)})^T.
+\]
+
+\paragraph{Aggiornamento dei pesi}
+\[
+\pi_k^{(t+1)} = \frac{N_k}{N}.
+\]
+
+\subsection{Algoritmo EM}
+
+L’algoritmo EM può essere riassunto come segue:
+\begin{enumerate}
+    \item inizializzazione dei parametri $\Theta^{(0)}$;
+    \item ripetizione alternata di E-step e M-step;
+    \item arresto quando la log-verosimiglianza converge o dopo un numero prefissato di iterazioni.
+\end{enumerate}
+
+L’algoritmo converge a un massimo locale della log-verosimiglianza dei dati osservati.
+
+\subsection{Relazione con K-means}
+
+L’algoritmo EM per i Gaussian Mixture Models può essere visto come una generalizzazione probabilistica di K-means.
+In particolare:
+\begin{itemize}
+    \item K-means utilizza assegnazioni hard, mentre EM utilizza assegnazioni soft;
+    \item K-means assume cluster sferici e varianze identiche;
+    \item EM permette cluster ellittici e di diversa dispersione.
+\end{itemize}
+
+\subsection{Interpretazione dell’algoritmo EM}
+
+Il comportamento dell’algoritmo EM può essere compreso osservando l’evoluzione iterativa delle distribuzioni gaussiane stimate.
+La Figura~\ref{fig:em} mostra un esempio bidimensionale di apprendimento di un GMM con due componenti.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{em.png}
+    \caption{Evoluzione dell’algoritmo EM per un Gaussian Mixture Model con due componenti. Le ellissi rappresentano le curve di livello delle distribuzioni gaussiane stimate. Il numero $L$ indica l’iterazione dell’algoritmo.}
+    \label{fig:em}
+\end{figure}
+
+Nella fase iniziale (Figura~(a)), i parametri del modello sono inizializzati in modo approssimativo: le gaussiane non riflettono ancora la reale struttura dei dati.
+Durante le prime iterazioni (Figure~(b) e (c)), l’algoritmo EM alterna:
+\begin{itemize}
+    \item una stima probabilistica dell’appartenenza dei punti ai cluster (E-step);
+    \item un aggiornamento dei parametri delle gaussiane (M-step).
+\end{itemize}
+
+A ogni iterazione $L$, le ellissi si deformano e si spostano per adattarsi progressivamente alla distribuzione dei dati.
+In particolare:
+\begin{itemize}
+    \item le medie si muovono verso le regioni di maggiore densità;
+    \item le covarianze catturano orientazione e dispersione dei cluster;
+    \item le assegnazioni diventano via via più nette.
+\end{itemize}
+
+Dopo un numero sufficiente di iterazioni (Figure~(d), (e) e (f)), il modello converge a una configurazione stabile in cui ciascuna componente gaussiana descrive correttamente uno dei cluster presenti nei dati.
+
+Questa rappresentazione evidenzia una differenza fondamentale rispetto a K-means:
+mentre K-means aggiorna solo i centroidi e produce cluster sferici,
+EM apprende anche la forma, l’orientazione e la dispersione dei cluster attraverso le matrici di covarianza.
+
+\section{General Expectation Maximization Problem}
+
+L’algoritmo Expectation Maximization non è limitato ai Gaussian Mixture Models, ma rappresenta un metodo generale per la stima dei parametri di modelli probabilistici in presenza di variabili latenti.
+
+\subsection{Definizione del problema}
+
+Si consideri:
+\begin{itemize}
+    \item un insieme di dati osservati
+    \[
+    X = \{ \mathbf{x}_1, \dots, \mathbf{x}_N \};
+    \]
+    \item un insieme di variabili latenti non osservate
+    \[
+    Z = \{ \mathbf{z}_1, \dots, \mathbf{z}_N \};
+    \]
+    \item un modello probabilistico parametrizzato
+    \[
+    p(\mathbf{y} \mid \boldsymbol{\theta}),
+    \quad \text{dove } \mathbf{y}_n = (\mathbf{x}_n, \mathbf{z}_n)
+    \]
+    rappresenta il \emph{dato completo}.
+\end{itemize}
+
+L’obiettivo è determinare il valore dei parametri
+\[
+\boldsymbol{\theta}^*
+\]
+che massimizza la log-verosimiglianza dei dati osservati:
+\[
+\boldsymbol{\theta}^* = \arg\max_{\boldsymbol{\theta}} \ln p(X \mid \boldsymbol{\theta}).
+\]
+
+Poiché le variabili latenti $Z$ non sono osservabili, la massimizzazione diretta della verosimiglianza risulta in generale complessa o intrattabile.
+
+\subsection{Funzione ausiliaria $Q$}
+
+L’algoritmo EM introduce una funzione ausiliaria
+
+\[
+\highlight{
+Q(\boldsymbol{\theta}' \mid \boldsymbol{\theta})
+= \mathbb{E}_{Z \mid X, \boldsymbol{\theta}}
+\left[ \ln p(X, Z \mid \boldsymbol{\theta}') \right],}
+\]
+
+che rappresenta il valore atteso della log-verosimiglianza del dato completo, calcolato rispetto alla distribuzione a posteriori delle variabili latenti, data la stima corrente dei parametri $\boldsymbol{\theta}$.
+
+\subsection{Algoritmo EM generale}
+
+L’algoritmo EM procede iterativamente secondo i seguenti passi:
+
+\paragraph{E-step (Expectation)}
+Dato il valore corrente dei parametri $\boldsymbol{\theta}^{(t)}$, si calcola la distribuzione a posteriori delle variabili latenti e la funzione:
+
+\[
+\highlight{
+Q(\boldsymbol{\theta}' \mid \boldsymbol{\theta}^{(t)})
+= \mathbb{E}_{Z \mid X, \boldsymbol{\theta}^{(t)}}
+\left[ \ln p(X, Z \mid \boldsymbol{\theta}') \right].}
+\]
+
+\paragraph{M-step (Maximization)}
+Si aggiornano i parametri massimizzando la funzione $Q$:
+
+\[
+\highlight{
+\boldsymbol{\theta}^{(t+1)} =
+\arg\max_{\boldsymbol{\theta}'} Q(\boldsymbol{\theta}' \mid \boldsymbol{\theta}^{(t)}).}
+\]
+
+Questi due passi vengono ripetuti fino a convergenza.
+
+\subsection{Proprietà dell’algoritmo EM}
+
+L’algoritmo EM presenta le seguenti proprietà generali:
+\begin{itemize}
+    \item la log-verosimiglianza dei dati osservati non diminuisce a ogni iterazione;
+    \item la convergenza è garantita verso un massimo locale;
+    \item la qualità della soluzione dipende dall’inizializzazione dei parametri;
+    \item il metodo è applicabile a un’ampia classe di modelli con variabili latenti.
+\end{itemize}
+
+\subsection{Applicazioni}
+
+Il framework generale di EM trova applicazione in numerosi contesti, tra cui:
+\begin{itemize}
+    \item clustering non supervisionato;
+    \item Gaussian Mixture Models;
+    \item Hidden Markov Models;
+    \item Bayesian Networks;
+    \item modelli con variabili latenti continue o discrete.
+\end{itemize}
+
+
+\section*{RIEPILOGO}
+\begin{tcolorbox}[
+    colback=green!5,
+    colframe=green!60!black,
+    title=\textbf{Unsupervised learning},
+    fonttitle=\bfseries,
+    coltitle=black,
+    boxed title style={
+        colback=green!60!black,
+        colframe=green!60!black
+    }
+]
+
+L'\textbf{apprendimento non supervisionato} si applica a contesti in cui sono disponibili solo i dati di input, senza etichette associate. L'obiettivo è individuare strutture latenti nei dati, come cluster o pattern statistici, direttamente a partire dalle osservazioni.
+
+I \textbf{Gaussian Mixture Models (GMM)} sono modelli probabilistici generativi che descrivono i dati come generati da una combinazione di distribuzioni gaussiane. Ogni componente del modello rappresenta un cluster ed è caratterizzata da una media, una matrice di covarianza e una probabilità a priori.
+
+Per modellare l'appartenenza dei dati ai cluster si introducono \textbf{variabili latenti}, che indicano quale componente gaussiana ha generato ciascun campione. Queste variabili non sono osservabili e devono essere inferite insieme ai parametri del modello.
+
+L'algoritmo \textbf{K-means} fornisce una soluzione semplice al problema del clustering basata su assegnazioni hard e distanza euclidea. Sebbene efficiente, è limitato a cluster sferici, è sensibile all'inizializzazione e non fornisce una modellazione probabilistica.
+
+L'\textbf{Expectation Maximization (EM)} generalizza K-means introducendo assegnazioni soft e una formulazione probabilistica. L'algoritmo alterna una fase di stima delle variabili latenti (E-step) e una fase di aggiornamento dei parametri del modello (M-step), garantendo la non diminuzione della log-verosimiglianza e la convergenza a un massimo locale.
+
+Infine, EM rappresenta un \textbf{metodo generale di inferenza} applicabile a un'ampia classe di modelli con variabili latenti, come Gaussian Mixture Models, Hidden Markov Models e Bayesian Networks.
+
+\end{tcolorbox}
+
+
+\chapter{Dimensionally reduction}
+
+\section{Variabili latenti}
+
+Nei problemi di riduzione della dimensionalità, i dati osservati sono spesso rappresentati in spazi ad alta dimensionalità. Tuttavia, la dimensionalità dello spazio di rappresentazione non coincide necessariamente con il numero di gradi di libertà che descrivono le variazioni significative dei dati.
+
+Le \emph{variabili latenti} rappresentano tali gradi di libertà nascosti, non direttamente osservabili, che generano i dati osservati. Sebbene ogni campione sia descritto da un vettore ad alta dimensionalità
+
+\[
+\highlight{
+\mathbf{x}_n \in \mathbb{R}^d,}
+\]
+
+la variabilità effettiva dei dati può essere spiegata da un numero molto inferiore di parametri.
+
+Un esempio semplice è costituito da un insieme di immagini ottenute ruotando un singolo prototipo. 
+In questo caso, ogni immagine è rappresentata da un vettore ad alta dimensionalità, ma tutte le variazioni osservate dipendono 
+da un unico parametro, l'angolo di rotazione. Il dataset presenta quindi un solo grado di libertà.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{3.png}
+    \caption{Esempio di immagini della stessa cifra scritta a mano. 
+    Sebbene ogni immagine sia rappresentata in uno spazio ad alta dimensionalità, 
+    le variazioni osservate sono riconducibili a un numero ridotto di gradi di libertà 
+    (variabili latenti), come rotazioni, traslazioni e differenze di stile.}
+    \label{fig:3}
+\end{figure}
+
+Un ulteriore esempio è dato da un insieme di immagini RGB di dimensione $100 \times 100$, ottenute mediante trasformazioni 
+geometriche di una singola immagine. Sebbene ogni immagine appartenga a uno spazio di dimensione $30{,}000$, le trasformazioni 
+applicate (traslazioni bidimensionali e rotazione) introducono soltanto tre gradi di libertà. 
+Questo evidenzia come lo spazio dei dati sia molto più grande dello spazio delle variazioni effettive.
+
+\section{Manifold dei dati}
+
+Quando i dati presentano una struttura interna, essi non occupano uniformemente l'intero spazio di rappresentazione, 
+ma si distribuiscono su una regione a dimensionalità inferiore. Questa regione viene detta \emph{manifold}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{manifold.png}
+    \caption{Rappresentazione del manifold dei dati ottenuta proiettando immagini della stessa cifra sulle componenti principali PC2 e PC3.}
+    \label{fig:manifold}
+\end{figure}
+
+
+La nozione di manifold può essere visualizzata proiettando i dati in uno spazio a dimensionalità ridotta. 
+In Figura~\ref{fig:manifold} sono riportate le proiezioni di immagini della stessa cifra scritta a mano sulle componenti principali seconda e terza.
+Sebbene lo spazio di rappresentazione sia bidimensionale, i dati non occupano l'intero piano, ma si distribuiscono lungo una 
+struttura continua e chiusa. Questa struttura rappresenta il manifold su cui giacciono i dati: 
+una varietà a dimensionalità inferiore che riflette i gradi di libertà effettivi del dataset.
+
+In questo caso, la disposizione circolare dei punti è coerente con una variazione continua di un singolo fattore latente, 
+come ad esempio la rotazione del prototipo. La figura mostra quindi come dati ad alta dimensionalità possano essere descritti 
+efficacemente come campioni di un manifold a bassa dimensionalità immerso in uno spazio di dimensione maggiore.
+
+Per dati dotati di struttura, il numero di distorsioni o trasformazioni rilevanti è inferiore al numero di dimensioni dello spazio dei dati. 
+Di conseguenza, i campioni appartengono a un manifold a dimensionalità ridotta.
+
+\section{Principal Component Analysis}
+
+La \emph{Principal Component Analysis} (PCA) è una delle tecniche più utilizzate per la riduzione della dimensionalità. L'obiettivo della PCA è individuare una rappresentazione a dimensione ridotta dei dati che preservi il più possibile la loro struttura, mantenendo le variazioni più significative.
+
+La PCA viene comunemente impiegata per:
+\begin{itemize}
+    \item riduzione della dimensionalità;
+    \item compressione dei dati (con perdita di informazione controllata);
+    \item visualizzazione di dati ad alta dimensionalità;
+    \item estrazione di caratteristiche rilevanti.
+\end{itemize}
+
+Dal punto di vista geometrico, la PCA ricerca nuove direzioni nello spazio dei dati lungo le quali la variabilità dei campioni è massima. 
+Proiettando i dati su tali direzioni, è possibile ottenere una rappresentazione compatta che approssima il manifold su cui i dati giacciono.
+
+\subsection{Centratura dei dati e matrice di covarianza}
+
+Per poter misurare correttamente la varianza dei dati proiettati, è necessario considerare dati centrati rispetto alla loro media.
+
+La media del dataset è definita come
+\[
+\bar{\mathbf{x}} = \frac{1}{N} \sum_{n=1}^{N} \mathbf{x}_n.
+\]
+
+A partire da essa si costruisce la matrice dei dati centrati
+\[
+\mathbf{X} =
+\begin{bmatrix}
+(\mathbf{x}_1 - \bar{\mathbf{x}})^T \\
+\vdots \\
+(\mathbf{x}_n - \bar{\mathbf{x}})^T \\
+\vdots \\
+(\mathbf{x}_N - \bar{\mathbf{x}})^T
+\end{bmatrix}
+\in \mathbb{R}^{N \times d}.
+\]
+
+La matrice di covarianza del dataset è quindi definita come
+\[
+\mathbf{S} = \frac{1}{N} \sum_{n=1}^{N} (\mathbf{x}_n - \bar{\mathbf{x}})(\mathbf{x}_n - \bar{\mathbf{x}})^T
+= \frac{1}{N} \mathbf{X}^T \mathbf{X}.
+\]
+
+La matrice di covarianza $\mathbf{S}$ descrive come le diverse componenti dei dati variano congiuntamente ed è l'oggetto centrale su cui si basa la PCA.
+
+\subsection{Massimizzazione della varianza}
+
+Si consideri la proiezione dei dati centrati lungo una direzione unitaria
+\[
+\mathbf{u}_1 \in \mathbb{R}^d, \qquad \mathbf{u}_1^T \mathbf{u}_1 = 1.
+\]
+La proiezione del campione $\mathbf{x}_n$ è data da $\mathbf{u}_1^T \mathbf{x}_n$, mentre la proiezione della media è $\mathbf{u}_1^T \bar{\mathbf{x}}$.
+
+La varianza dei dati proiettati può essere scritta come
+
+\[
+\highlight{
+\frac{1}{N} \sum_{n=1}^{N} \left( \mathbf{u}_1^T \mathbf{x}_n - \mathbf{u}_1^T \bar{\mathbf{x}} \right)^2
+= \mathbf{u}_1^T \mathbf{S} \mathbf{u}_1,}
+\]
+
+dove $\mathbf{S}$ è la matrice di covarianza del dataset.
+
+Il problema della PCA consiste quindi nel massimizzare la varianza dei dati proiettati, imponendo che la direzione di proiezione 
+abbia norma unitaria:
+
+\[
+\highlight{
+\max_{\mathbf{u}_1} \; \mathbf{u}_1^T \mathbf{S} \mathbf{u}_1
+\qquad \text{soggetto a} \qquad
+\mathbf{u}_1^T \mathbf{u}_1 = 1.}
+\]
+
+Questo problema vincolato può essere risolto introducendo un moltiplicatore di Lagrange $\lambda_1$ e considerando la funzione
+
+\[
+\highlight{
+\mathcal{L}(\mathbf{u}_1, \lambda_1)
+= \mathbf{u}_1^T \mathbf{S} \mathbf{u}_1
++ \lambda_1 \left( 1 - \mathbf{u}_1^T \mathbf{u}_1 \right).}
+\]
+
+Imponendo l'annullamento della derivata rispetto a $\mathbf{u}_1$ si ottiene
+\[
+\mathbf{S} \mathbf{u}_1 = \lambda_1 \mathbf{u}_1.
+\]
+Pertanto, la direzione che massimizza la varianza è un autovettore della matrice di covarianza.
+
+Moltiplicando a sinistra per $\mathbf{u}_1^T$ e usando il vincolo di normalizzazione, si ha
+\[
+\mathbf{u}_1^T \mathbf{S} \mathbf{u}_1 = \lambda_1,
+\]
+che rappresenta la varianza dei dati proiettati lungo la direzione $\mathbf{u}_1$.
+
+La varianza è massima quando $\mathbf{u}_1$ è l'autovettore associato al massimo autovalore $\lambda_1$ della matrice di covarianza.
+Questa direzione prende il nome di \emph{prima componente principale}.
+
+\section{PCA come minimizzazione dell'errore di ricostruzione}
+
+Si consideri una base ortonormale completa dello spazio dei dati
+\[
+\{ \mathbf{u}_i \}_{i=1}^{d}, \qquad \mathbf{u}_i^T \mathbf{u}_j = \delta_{ij},
+\]
+dove $\delta_{ij}$ è il delta di Kronecker. Ogni campione $\mathbf{x}_n$ può essere espresso come combinazione lineare di tali vettori:
+\[
+\mathbf{x}_n = \sum_{i=1}^{d} \alpha_{ni} \mathbf{u}_i.
+\]
+Grazie all'ortonormalità della base, i coefficienti sono dati da
+\[
+\alpha_{ni} = \mathbf{x}_n^T \mathbf{u}_i,
+\]
+e quindi
+\[
+\mathbf{x}_n = \sum_{i=1}^{d} (\mathbf{x}_n^T \mathbf{u}_i)\,\mathbf{u}_i.
+\]
+
+L'obiettivo della riduzione della dimensionalità è approssimare ogni campione $\mathbf{x}_n$ utilizzando solo $m < d$ componenti. 
+L'approssimazione può essere scritta come
+
+\[
+\highlight{
+\tilde{\mathbf{x}}_n
+= \sum_{i=1}^{m} z_{ni} \mathbf{u}_i
++ \sum_{i=m+1}^{d} b_i \mathbf{u}_i,}
+\]
+
+dove $z_{ni}$ sono coefficienti dipendenti dal campione, mentre $b_i$ sono termini costanti, indipendenti da $n$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{PCA1.png}
+    \caption{Media del dataset e prime componenti principali ottenute tramite PCA. 
+            Ogni componente principale corrisponde a un autovettore della matrice di covarianza 
+            ed evidenzia una direzione di variazione significativa nei dati. 
+            Le componenti sono ordinate in base al valore decrescente dell’autovalore associato, 
+            che misura la varianza spiegata lungo ciascuna direzione.}
+    \label{fig:PCA1}
+\end{figure}
+
+L'errore di approssimazione viene misurato tramite l'errore quadratico medio (MSE):
+
+\[
+\highlight{
+J = \frac{1}{N} \sum_{n=1}^{N} \left\| \mathbf{x}_n - \tilde{\mathbf{x}}_n \right\|^2.}
+\]
+
+Minimizzando $J$ rispetto ai coefficienti $z_{ni}$ e ai termini $b_i$, si ottiene
+\[
+z_{ni} = \mathbf{x}_n^T \mathbf{u}_i, \qquad i = 1, \ldots, m,
+\]
+\[
+b_i = \bar{\mathbf{x}}^T \mathbf{u}_i, \qquad i = m+1, \ldots, d.
+\]
+
+Sostituendo tali espressioni, l'errore di ricostruzione diventa
+
+\[
+\highlight{
+\mathbf{x}_n - \tilde{\mathbf{x}}_n
+= \sum_{i=m+1}^{d} \left[ (\mathbf{x}_n - \bar{\mathbf{x}})^T \mathbf{u}_i \right] \mathbf{u}_i,}
+\]
+
+e l'errore quadratico medio complessivo risulta
+
+\[
+\highlight{
+J = \sum_{i=m+1}^{d} \mathbf{u}_i^T \mathbf{S} \mathbf{u}_i,}
+\]
+dove $\mathbf{S}$ è la matrice di covarianza del dataset.
+
+La minimizzazione dell'errore $J$ sotto il vincolo di normalizzazione $\mathbf{u}_i^T \mathbf{u}_i = 1$ porta all'equazione agli autovalori
+
+\[
+\highlight{
+\mathbf{S} \mathbf{u}_i = \lambda_i \mathbf{u}_i.}
+\]
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{PCA2.png}
+    \caption{Spettro degli autovalori della matrice di covarianza. 
+            Ogni autovalore $\lambda_i$ rappresenta la varianza dei dati lungo la corrispondente componente principale. 
+            La rapida decrescita degli autovalori indica che gran parte della variabilità del dataset è concentrata nelle prime 
+            componenti.}
+    \label{fig:PCA2}
+\end{figure}
+
+L'errore di ricostruzione minimo è dato dalla somma degli autovalori associati alle componenti scartate:
+
+\[
+\highlight{
+J = \sum_{i=m+1}^{d} \lambda_i.}
+\]
+
+Pertanto, l'errore è minimizzato scegliendo come componenti principali gli autovettori associati ai $m$ autovalori maggiori 
+della matrice di covarianza. Questo dimostra che la massimizzazione della varianza e la minimizzazione dell'errore di 
+ricostruzione sono formulazioni equivalenti della PCA.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{PCA3.png}
+    \caption{Andamento dell’errore di ricostruzione in funzione del numero di componenti principali mantenute. 
+            L’errore è pari alla somma degli autovalori scartati e diminuisce rapidamente all’aumentare delle componenti incluse, 
+            mostrando l’equivalenza tra massimizzazione della varianza e minimizzazione dell’errore di ricostruzione nella PCA.}
+    \label{fig:PCA3}
+\end{figure}
+
+
+\section{Algoritmi per la PCA}
+
+Una volta formulato il problema della PCA, le componenti principali possono essere calcolate in diversi modi equivalenti, che differiscono principalmente per efficienza computazionale.
+
+\begin{enumerate}
+    \item \textbf{Autodecomposizione completa della matrice di covarianza.}  
+    Si calcola la matrice di covarianza
+    \[
+    \mathbf{S} = \frac{1}{N} \mathbf{X}^T \mathbf{X},
+    \]
+    e se ne determinano tutti gli autovalori e gli autovettori. Questo approccio è concettualmente semplice, ma computazionalmente costoso quando la dimensionalità $d$ è elevata.
+    
+    \item \textbf{Autodecomposizione parziale.}  
+    In molti casi è sufficiente calcolare solo gli $m$ autovettori associati ai maggiori autovalori, ottenendo così una riduzione significativa del costo computazionale.
+    
+    \item \textbf{Decomposizione ai valori singolari (SVD).}  
+    In alternativa, la PCA può essere calcolata mediante la decomposizione ai valori singolari della matrice dei dati centrati $\mathbf{X}$. Questo approccio è numericamente più stabile ed è particolarmente efficace per dataset ad alta dimensionalità.
+\end{enumerate}
+
+\subsection{PCA per dati ad alta dimensionalità}
+
+Nei problemi reali è frequente che la dimensionalità dei dati sia molto elevata, mentre il numero di campioni disponibili sia relativamente ridotto. In particolare, può verificarsi il caso
+\[
+N \ll d,
+\]
+ad esempio quando si lavora con un piccolo insieme di immagini ad alta risoluzione.
+
+In questa situazione, la matrice di covarianza
+\[
+\mathbf{S} = \frac{1}{N} \mathbf{X}^T \mathbf{X} \in \mathbb{R}^{d \times d}
+\]
+presenta almeno $d - N + 1$ autovalori nulli. 
+Il calcolo diretto degli autovettori di $\mathbf{S}$ risulta quindi inefficiente dal punto di vista computazionale.
+
+Per superare questo problema, si osserva che l'equazione agli autovalori
+\[
+\frac{1}{N} \mathbf{X}^T \mathbf{X} \mathbf{u}_i = \lambda_i \mathbf{u}_i
+\]
+può essere trasformata moltiplicando entrambi i membri a sinistra per $\mathbf{X}$:
+\[
+\frac{1}{N} \mathbf{X} \mathbf{X}^T (\mathbf{X} \mathbf{u}_i) = \lambda_i (\mathbf{X} \mathbf{u}_i).
+\]
+
+Definendo
+\[
+\mathbf{v}_i = \mathbf{X} \mathbf{u}_i,
+\]
+si ottiene il problema agli autovalori
+
+\[
+\highlight{
+\frac{1}{N} \mathbf{X} \mathbf{X}^T \mathbf{v}_i = \lambda_i \mathbf{v}_i,}
+\]
+
+dove la matrice $\mathbf{X} \mathbf{X}^T \in \mathbb{R}^{N \times N}$ ha la stessa parte non nulla dello spettro di $\mathbf{X}^T \mathbf{X}$, ma dimensione molto inferiore.
+
+Una volta calcolati gli autovalori $\lambda_i$ e gli autovettori $\mathbf{v}_i$ della matrice $\mathbf{X} \mathbf{X}^T$, gli autovettori della matrice di covarianza possono essere ricostruiti come
+
+\[
+\highlight{
+\mathbf{u}_i = \frac{1}{\sqrt{N \lambda_i}} \mathbf{X}^T \mathbf{v}_i,}
+\]
+
+dove il fattore di normalizzazione garantisce che $\mathbf{u}_i^T \mathbf{u}_i = 1$.
+
+In conclusione, quando il numero di campioni è molto inferiore alla dimensionalità dei dati, 
+la PCA può essere calcolata in modo efficiente lavorando nello spazio dei campioni anziché nello spazio delle caratteristiche.
+
+\section{Probabilistic Principal Component Analysis}
+
+La \emph{Probabilistic Principal Component Analysis} (PPCA) fornisce un'interpretazione probabilistica della PCA classica, formulandola come un modello generativo con variabili latenti continue.
+
+Si assume che ogni osservazione $\mathbf{x} \in \mathbb{R}^d$ sia generata a partire da un vettore latente
+\[
+\mathbf{z} \in \mathbb{R}^k, \qquad k < d,
+\]
+tramite una trasformazione lineare affetta da rumore:
+\[
+\mathbf{x} = \mathbf{W}\mathbf{z} + \boldsymbol{\mu} + \boldsymbol{\epsilon}.
+\]
+
+Nel modello PPCA si assumono le seguenti ipotesi:
+\begin{itemize}
+    \item le variabili latenti seguono una distribuzione gaussiana standard
+    \[
+    \highlight{
+    p(\mathbf{z}) = \mathcal{N}(\mathbf{z}; \mathbf{0}, \mathbf{I});}
+    \]
+    \item il rumore è gaussiano isotropo
+    \[
+    \highlight{
+    \boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \sigma^2 \mathbf{I});}
+    \]
+    \item il modello condizionato dei dati, dato lo stato latente, è quindi
+    \[
+    \highlight{
+    p(\mathbf{x} \mid \mathbf{z}) = \mathcal{N}(\mathbf{x}; \mathbf{W}\mathbf{z} + \boldsymbol{\mu}, \sigma^2 \mathbf{I}).}
+    \]
+\end{itemize}
+
+I parametri del modello sono la matrice di proiezione $\mathbf{W} \in \mathbb{R}^{d \times k}$, 
+il vettore di media $\boldsymbol{\mu}$ e la varianza del rumore $\sigma^2$.
+
+\subsection{Maximum Likelihood PCA}
+
+Nel contesto della Probabilistic PCA, i parametri del modello possono essere stimati tramite il principio di \emph{massima verosimiglianza}. Dato un insieme di dati osservati
+
+\[
+\{\mathbf{x}_n\}_{n=1}^{N},
+\]
+
+l'obiettivo è determinare i parametri $\mathbf{W}$, $\boldsymbol{\mu}$ e $\sigma^2$ che massimizzano la log-verosimiglianza dei dati:
+
+\[
+\highlight{
+\arg \max_{\mathbf{W},\,\boldsymbol{\mu},\,\sigma^2}
+\sum_{n=1}^{N} \log p(\mathbf{x}_n \mid \mathbf{W}, \boldsymbol{\mu}, \sigma^2).}
+\]
+
+Poiché la distribuzione marginale dei dati è gaussiana,
+
+\[
+\highlight{
+p(\mathbf{x}) = \mathcal{N}(\mathbf{x}; \boldsymbol{\mu}, \mathbf{C}),
+\qquad
+\mathbf{C} = \mathbf{W}\mathbf{W}^T + \sigma^2 \mathbf{I},}
+\]
+la funzione di verosimiglianza dipende unicamente dalla matrice di covarianza indotta dal modello.
+
+Imponendo l'annullamento delle derivate della log-verosimiglianza rispetto ai parametri, si ottiene una soluzione in forma chiusa. In particolare, la stima di massima verosimiglianza della media coincide con la media campionaria:
+
+\[
+\highlight{
+\boldsymbol{\mu}_{\text{ML}} = \bar{\mathbf{x}} = \frac{1}{N} \sum_{n=1}^{N} \mathbf{x}_n.}
+\]
+
+La soluzione di massima verosimiglianza per la matrice $\mathbf{W}$ risulta essere strettamente legata agli autovalori e agli autovettori della matrice di covarianza dei dati. In particolare, le direzioni individuate dal modello coincidono con le componenti principali della PCA classica, mentre il parametro $\sigma^2$ rappresenta la varianza del rumore isotropo.
+
+Questo risultato mostra che la PCA classica può essere interpretata come una soluzione di massima verosimiglianza di un modello generativo lineare con rumore gaussiano.
+
+\subsection{Stima dei parametri tramite algoritmo EM}
+
+La soluzione di massima verosimiglianza per il modello di Probabilistic PCA può essere ottenuta anche mediante l'algoritmo EM (\emph{Expectation-Maximization}). Questo approccio risulta particolarmente utile quando si interpretano le variabili latenti come dati mancanti.
+
+Nel contesto della PPCA, l'algoritmo EM alterna due fasi:
+\begin{itemize}
+    \item \textbf{E-step (Expectation):}  
+    dato un insieme corrente di parametri del modello, si calcola la distribuzione a posteriori delle variabili latenti
+    \[
+    p(\mathbf{z}_n \mid \mathbf{x}_n),
+    \]
+    insieme ai momenti necessari per l'aggiornamento dei parametri.
+    
+    \item \textbf{M-step (Maximization):}  
+    si aggiornano i parametri $\mathbf{W}$, $\boldsymbol{\mu}$ e $\sigma^2$ massimizzando il valore atteso della log-verosimiglianza completa, utilizzando le stime ottenute nell'E-step.
+\end{itemize}
+
+Iterando le due fasi, l'algoritmo EM converge a una soluzione di massima verosimiglianza. 
+Nel caso della PPCA, tale soluzione coincide con quella ottenuta tramite l'autodecomposizione della matrice di covarianza, 
+mostrando ancora una volta l'equivalenza tra la formulazione probabilistica e la PCA classica.
+
+L'uso dell'algoritmo EM evidenzia come la PCA possa essere interpretata come un modello generativo con variabili latenti, 
+aprendo la strada a generalizzazioni non lineari e a modelli più complessi.
+
+\section{Autoencoder}
+
+Gli \emph{autoencoder} sono reti neurali progettate per apprendere una rappresentazione compatta dei dati attraverso un 
+processo di ricostruzione. L'idea di base consiste nell'addestrare una rete neurale a riprodurre in uscita lo stesso dato 
+fornito in ingresso, imponendo però una restrizione sulla dimensionalità della rappresentazione interna.
+
+Un autoencoder è composto da due parti principali:
+\begin{itemize}
+    \item un \textbf{encoder}, che mappa il dato di ingresso $\mathbf{x} \in \mathbb{R}^d$ in una rappresentazione latente a dimensionalità ridotta $\mathbf{z} \in \mathbb{R}^k$, con $k < d$;
+    \item un \textbf{decoder}, che ricostruisce il dato originale a partire dalla rappresentazione latente.
+\end{itemize}
+
+Indicando con $f(\cdot)$ la funzione di codifica e con $g(\cdot)$ la funzione di decodifica, il processo può essere scritto come
+
+\[
+\highlight{
+\mathbf{z} = f(\mathbf{x}), \qquad
+\tilde{\mathbf{x}} = g(\mathbf{z}).}
+\]
+
+L'addestramento dell'autoencoder avviene minimizzando una funzione di perdita di ricostruzione che misura la differenza 
+tra l'ingresso e l'uscita della rete:
+
+\[
+\highlight{
+\mathcal{L}(\mathbf{x}, \tilde{\mathbf{x}}) = \left\| \mathbf{x} - \tilde{\mathbf{x}} \right\|^2,}
+\]
+
+oppure, più in generale, una funzione di perdita adatta al tipo di dati considerati.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{autoencoder.png}
+    \caption{Schema generale di un autoencoder. 
+            L’encoder comprime il dato di ingresso in una rappresentazione latente a bassa 
+            dimensionalità $\mathbf{z}$, mentre il decoder utilizza tale rappresentazione per ricostruire l’input originale. 
+            L’addestramento avviene minimizzando l’errore di ricostruzione tra input e output, forzando la rete ad apprendere 
+            una rappresentazione compatta e informativa dei dati.}
+    \label{fig:autoencoder}
+\end{figure}
+
+\subsection{Bottleneck e rappresentazione latente}
+
+La caratteristica fondamentale di un autoencoder è la presenza di uno \emph{strato centrale} a dimensionalità ridotta, 
+detto \emph{bottleneck}. Questo strato impone una compressione dell'informazione, costringendo la rete ad apprendere una 
+rappresentazione latente compatta dei dati.
+
+Dal punto di vista architetturale, l'encoder implementa una funzione
+
+\[
+\highlight{
+\mathbf{z} = f_1(\mathbf{x}),}
+\]
+
+che mappa l'input in uno spazio latente a bassa dimensionalità, mentre il decoder implementa una funzione
+
+\[
+\highlight{
+\tilde{\mathbf{x}} = f_2(\mathbf{z}),}
+\]
+
+che ricostruisce l'input a partire dalla rappresentazione latente.
+
+La presenza di funzioni di attivazione non lineari negli strati nascosti consente all'autoencoder di apprendere 
+trasformazioni non lineari, permettendo di approssimare manifolds complessi che non possono essere catturati da tecniche lineari 
+come la PCA.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{bottleneck.png}
+    \caption{Schema di un autoencoder con bottleneck.}
+    \label{fig:bottleneck}
+\end{figure}
+
+
+\subsection{Convolutional Autoencoders}
+
+Quando i dati di ingresso sono immagini, l'utilizzo di autoencoder completamente connessi risulta inefficiente, 
+poiché non sfrutta la struttura spaziale dei dati. 
+I \emph{Convolutional Autoencoders} (CAE) estendono il concetto di autoencoder introducendo strati convoluzionali sia 
+nell'encoder sia nel decoder.
+
+Nell'encoder, strati convoluzionali e operazioni di sottocampionamento permettono di estrarre caratteristiche locali e di 
+ridurre progressivamente la dimensionalità spaziale dell'immagine, producendo una rappresentazione latente compatta. 
+Il decoder opera in modo simmetrico, utilizzando strati di convoluzione trasposta (o upsampling) per ricostruire l'immagine 
+originale a partire dallo spazio latente.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{convolutional_autoencoders.png}
+    \caption{Schema di un Convolutional Autoencoder per immagini.}
+    \label{fig:convolutional_autoencoders}
+\end{figure}
+
+\subsection{Autoencoder per Anomaly Detection}
+
+Gli autoencoder sono particolarmente adatti a problemi di \emph{anomaly detection}, ovvero al riconoscimento di campioni a
+nomali rispetto a un insieme di dati considerati normali. Questo tipo di problema può essere visto come una forma di 
+classificazione a una sola classe (\emph{one-class classification}).
+
+Si consideri un dataset
+\[
+\mathcal{D} = \{(\mathbf{x}_n, n)\},
+\]
+composto esclusivamente da campioni appartenenti alla classe normale. L'obiettivo è apprendere una funzione
+\[
+f : \mathcal{X} \rightarrow \{n, a\},
+\]
+che, dato un nuovo campione $\mathbf{x}_0$, stabilisca se esso sia normale ($n$) o anomalo ($a$).
+
+L'approccio basato su autoencoder prevede i seguenti passi:
+\begin{enumerate}
+    \item addestrare un autoencoder utilizzando esclusivamente campioni normali, in modo che la rete apprenda una rappresentazione latente e una ricostruzione accurata dei dati nominali;
+    \item calcolare l'errore di ricostruzione sui dati di training e determinare una soglia $\delta$, ad esempio
+    \[
+    \delta = \text{mean}(\mathcal{L}) + \text{std}(\mathcal{L}),
+    \]
+    dove $\mathcal{L}$ indica la loss di ricostruzione;
+    \item dato un nuovo campione $\mathbf{x}_0$, ricostruirlo tramite l'autoencoder e calcolare l'errore di ricostruzione $\mathcal{L}_0$;
+    \item se $\mathcal{L}_0 < \delta$, il campione viene classificato come normale, altrimenti come anomalo.
+\end{enumerate}
+
+L'idea alla base di questo metodo è che l'autoencoder, essendo stato addestrato solo su dati normali, 
+sia in grado di ricostruire accuratamente tali campioni, mentre produca un errore elevato su dati che si discostano 
+significativamente dalla distribuzione appresa.
+
+\section{Variational Autoencoders}
+
+I \emph{Variational Autoencoders} (VAE) sono una classe di autoencoder progettati per apprendere non solo una rappresentazione 
+latente compatta dei dati, ma anche una struttura probabilistica dello spazio latente. A differenza degli autoencoder standard, 
+i VAE sono modelli \emph{generativi}, in grado di produrre nuovi campioni realistici a partire dallo spazio latente.
+
+Negli autoencoder classici, l’encoder mappa un dato di ingresso in un singolo punto dello spazio latente. Nei VAE, invece, 
+l’encoder produce una \emph{distribuzione} nello spazio latente, tipicamente una distribuzione gaussiana, da cui vengono 
+estratti i campioni utilizzati dal decoder.
+
+In particolare, dato un input $\mathbf{x}$, l’encoder stima i parametri di una distribuzione
+
+\[
+\highlight{
+q(\mathbf{z} \mid \mathbf{x}) = \mathcal{N}(\mathbf{z}; \boldsymbol{\mu}(\mathbf{x}), \boldsymbol{\Sigma}(\mathbf{x})),}
+\]
+
+mentre il decoder definisce una distribuzione
+
+\[
+\highlight{
+p(\mathbf{x} \mid \mathbf{z}),}
+\]
+
+che modella il processo di generazione dei dati a partire dalle variabili latenti.
+
+Una delle proprietà fondamentali dei Variational Autoencoders è la possibilità di interpretare e manipolare lo spazio 
+latente in modo continuo e semanticamente significativo. Questo consente di modificare specifiche caratteristiche dei dati 
+generati agendo lungo particolari direzioni dello spazio latente.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{VAE_faces.png}
+    \caption{Esempio di manipolazione dello spazio latente in un Variational Autoencoder. 
+            Variazioni controllate delle variabili latenti permettono di modificare attributi semantici delle immagini generate, 
+            come l’aggiunta o la rimozione del sorriso o degli occhiali.}
+    \label{fig:convolutional_autoencoders}
+\end{figure}
+
+\subsection{Problemi dei VAE e funzione obiettivo}
+
+La formulazione dei Variational Autoencoders introduce alcune problematiche fondamentali che richiedono soluzioni specifiche.
+
+\paragraph{Produzione di una distribuzione latente.}
+A differenza degli autoencoder standard, l’encoder di un VAE non produce un singolo punto nello spazio latente, 
+ma i parametri di una distribuzione, tipicamente una gaussiana:
+
+\[
+\highlight{
+q(\mathbf{z} \mid \mathbf{x}) = \mathcal{N}(\mathbf{z}; \boldsymbol{\mu}(\mathbf{x}), \boldsymbol{\Sigma}(\mathbf{x})).}
+\]
+Questo consente di modellare l’incertezza sulla rappresentazione latente associata a ciascun dato.
+
+\paragraph{Regolarizzazione dello spazio latente.}
+Senza ulteriori vincoli, le distribuzioni latenti apprese potrebbero essere disorganizzate o degeneri, rendendo impossibile una 
+generazione coerente di nuovi campioni. Per evitare questo problema, nei VAE si impone che la distribuzione latente appresa sia 
+vicina a una distribuzione prior fissata, generalmente
+
+\[
+\highlight{
+p(\mathbf{z}) = \mathcal{N}(\mathbf{0}, \mathbf{I}).}
+\]
+
+Questa regolarizzazione è ottenuta introducendo un termine di divergenza di Kullback--Leibler tra la distribuzione latente 
+appresa e il prior:
+
+\[
+\highlight{
+\mathrm{KL}\bigl(q(\mathbf{z} \mid \mathbf{x}) \,\|\, p(\mathbf{z})\bigr).}
+\]
+
+\paragraph{Evidence Lower Bound (ELBO).}
+La funzione obiettivo dei VAE è data dalla \emph{Evidence Lower Bound} (ELBO), che bilancia accuratezza di ricostruzione e 
+regolarizzazione dello spazio latente:
+
+\[
+\highlight{
+\mathcal{L}_{\text{ELBO}} =
+\mathbb{E}_{q(\mathbf{z} \mid \mathbf{x})}
+\bigl[\log p(\mathbf{x} \mid \mathbf{z})\bigr]
+-
+\mathrm{KL}\bigl(q(\mathbf{z} \mid \mathbf{x}) \,\|\, p(\mathbf{z})\bigr).}
+\]
+
+Il primo termine incoraggia una buona ricostruzione dei dati, mentre il secondo impone una struttura continua e ben organizzata 
+nello spazio latente.
+
+\subsection{Problemi dei VAE e funzione obiettivo}
+
+La formulazione dei Variational Autoencoders introduce alcune problematiche fondamentali che richiedono soluzioni specifiche.
+
+\paragraph{Produzione di una distribuzione latente.}
+A differenza degli autoencoder standard, l’encoder di un VAE non produce un singolo punto nello spazio latente, ma i parametri di 
+una distribuzione, tipicamente una gaussiana:
+
+\[
+q(\mathbf{z} \mid \mathbf{x}) = \mathcal{N}(\mathbf{z}; \boldsymbol{\mu}(\mathbf{x}), \boldsymbol{\Sigma}(\mathbf{x})).
+\]
+Questo consente di modellare l’incertezza sulla rappresentazione latente associata a ciascun dato.
+
+\paragraph{Regolarizzazione dello spazio latente.}
+Senza ulteriori vincoli, le distribuzioni latenti apprese potrebbero essere disorganizzate o degeneri, rendendo impossibile una generazione coerente di nuovi campioni. Per evitare questo problema, nei VAE si impone che la distribuzione latente appresa sia vicina a una distribuzione prior fissata, generalmente
+\[
+p(\mathbf{z}) = \mathcal{N}(\mathbf{0}, \mathbf{I}).
+\]
+
+Questa regolarizzazione è ottenuta introducendo un termine di divergenza di Kullback--Leibler tra la distribuzione latente appresa e il prior:
+\[
+\mathrm{KL}\bigl(q(\mathbf{z} \mid \mathbf{x}) \,\|\, p(\mathbf{z})\bigr).
+\]
+
+\paragraph{Evidence Lower Bound (ELBO).}
+La funzione obiettivo dei VAE è data dalla \emph{Evidence Lower Bound} (ELBO), che bilancia accuratezza di ricostruzione e regolarizzazione dello spazio latente:
+\[
+\mathcal{L}_{\text{ELBO}} =
+\mathbb{E}_{q(\mathbf{z} \mid \mathbf{x})}
+\bigl[\log p(\mathbf{x} \mid \mathbf{z})\bigr]
+-
+\mathrm{KL}\bigl(q(\mathbf{z} \mid \mathbf{x}) \,\|\, p(\mathbf{z})\bigr).
+\]
+
+Il primo termine incoraggia una buona ricostruzione dei dati, mentre il secondo impone una struttura continua e ben organizzata 
+nello spazio latente.
+
+\subsection{Reparameterization Trick}
+
+Nei Variational Autoencoders, il decoder opera su campioni estratti dalla distribuzione latente
+\[
+q(\mathbf{z} \mid \mathbf{x}) = \mathcal{N}(\mathbf{z}; \boldsymbol{\mu}(\mathbf{x}), \boldsymbol{\Sigma}(\mathbf{x})).
+\]
+Tuttavia, l’operazione di campionamento non è differenziabile e impedirebbe l’uso diretto dell’algoritmo di backpropagation per 
+l’addestramento della rete.
+
+Per risolvere questo problema, nei VAE si introduce il \emph{reparameterization trick}, che consente di separare la componente 
+stocastica dai parametri della distribuzione. In particolare, un campione $\mathbf{z}$ può essere riscritto come
+
+\[
+\highlight{
+\mathbf{z} = \boldsymbol{\mu}(\mathbf{x}) + \boldsymbol{\sigma}(\mathbf{x}) \odot \boldsymbol{\epsilon},
+\qquad
+\boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I}),}
+\]
+
+dove $\boldsymbol{\sigma}$ è la deviazione standard e $\odot$ denota il prodotto elemento per elemento.
+
+In questo modo, la variabilità stocastica è interamente contenuta nella variabile casuale $\boldsymbol{\epsilon}$, 
+mentre $\boldsymbol{\mu}$ e $\boldsymbol{\sigma}$ rimangono funzioni deterministiche e differenziabili dell’input. 
+Ciò permette di propagare il gradiente attraverso il campionamento e di addestrare il modello tramite discesa del gradiente.
+
+Il reparameterization trick rappresenta un elemento chiave dei VAE e rende possibile l’ottimizzazione della funzione obiettivo 
+ELBO mediante metodi di apprendimento standard.
+
 
 \end{document}
