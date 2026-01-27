@@ -14,6 +14,8 @@
 \usepackage{pgfplots}
 \usepackage{ragged2e} %Per poter giustificare il testo
 \usepackage{amsthm}  %Per i teoremi
+\usepackage{amssymb}
+
 
 \newtheorem{theorem}{Teorema} %Definire i teoremi
 
@@ -699,7 +701,12 @@ La scelta della metrica di valutazione deve quindi essere guidata dal contesto a
 
 \subsection{Matrice di confusione multi-classe}
 
-Nei problemi di classificazione multi-classe, la matrice di confusione riporta quante volte un’istanza della classe \( C_i \) viene classificata come appartenente alla classe \( C_j \).
+La \emph{confusion matrix} per un problema di classificazione multi-classe con $K$ classi è una matrice quadrata
+\[
+\mathbf{C} \in \mathbb{N}^{K \times K},
+\]
+in cui le righe rappresentano le classi reali e le colonne le classi predette dal classificatore.
+L’elemento $C_{i,j}$ indica il numero di istanze appartenenti realmente alla classe $C_i$ che vengono classificate come appartenenti alla classe $C_j$.
 
 La diagonale principale contiene le classificazioni corrette per ciascuna classe, mentre gli elementi fuori diagonale indicano le classi che vengono più frequentemente confuse.
 L’analisi della matrice di confusione consente di individuare debolezze specifiche del classificatore.
@@ -2805,7 +2812,7 @@ Una volta determinata la direzione \( w \), un nuovo esempio \( x \) viene class
 
 La soglia può essere scelta, ad esempio, come il punto medio tra le medie proiettate delle due classi.
 
-\subsection{Support Vector Machine}
+\section{Support Vector Machine}
 
 Le \textbf{Support Vector Machine (SVM)} sono una classe di algoritmi di apprendimento supervisionato per la classificazione (e regressione), basati sulla costruzione di un iperpiano di decisione ottimale.
 
@@ -2890,7 +2897,7 @@ Piccole variazioni nei dati o la presenza di rumore potrebbero compromettere la 
 Nel pannello di destra è invece mostrato l’iperpiano a margine massimo.
 Questo iperpiano massimizza la distanza tra le due classi, risultando più stabile e robusto rispetto a perturbazioni nei dati.
 
-\section{Soft-Margin Support Vector Machine}
+\subsection{Soft-Margin Support Vector Machine}
 
 Nel caso reale, i dati di training non sono quasi mai perfettamente linearmente separabili.
 La presenza di rumore, outlier o sovrapposizione tra le classi rende impossibile soddisfare rigidamente i vincoli dell’hard-margin SVM.
@@ -3578,6 +3585,286 @@ Le SVM kernelizzate rappresentano uno dei metodi più efficaci per classificazio
 
 \end{tcolorbox}
 
+\chapter{Instance Based}
+
+Gli \textbf{instance-based methods} sono modelli \emph{non-parametrici} che non costruiscono esplicitamente un modello globale durante la fase di training, ma \emph{memorizzano l’intero dataset} e rimandano il processo di apprendimento alla fase di predizione (\emph{lazy learning}).
+
+Nei modelli parametrici il numero di parametri è fissato e indipendente dalla dimensione del dataset.
+Nei modelli non parametrici, viceversa, il numero di parametri cresce con il numero di dati disponibili.
+
+\subsubsection{K-Nearest Neighbors (K-NN)}
+
+Si consideri un problema di classificazione:
+
+\[
+\highlight{
+f : \mathcal{X} \rightarrow \mathcal{C},
+\quad
+\mathcal{D} = \{(x_n, t_n)\}_{n=1}^N}
+\]
+
+Dato un nuovo campione $x$, l’algoritmo K-NN opera come segue:
+\begin{enumerate}
+    \item si individuano i $K$ campioni più vicini a $x$ nel dataset $\mathcal{D}$;
+    \item si assegna a $x$ la classe più frequente tra i suoi $K$ vicini.
+\end{enumerate}
+
+La probabilità della classe $c$ dato $x$ è stimata come:
+
+\[
+\highlight{
+p(c \mid x, \mathcal{D}, K) =
+\frac{1}{K}
+\sum_{x_n \in \mathcal{N}_K(x, \mathcal{D})}
+\mathbb{I}(t_n = c)}
+\]
+
+dove $\mathcal{N}_K(x, \mathcal{D})$ è l’insieme dei $K$ nearest neighbors di $x$ e $\mathbb{I}(\cdot)$ è la funzione indicatrice.
+
+\paragraph{Osservazioni}
+\begin{itemize}
+    \item è necessario memorizzare l’intero dataset;
+    \item il metodo dipende fortemente dalla funzione di distanza scelta;
+    \item per $K=1$ la frontiera di decisione induce una tassellazione di Voronoi;
+    \item aumentando $K$ si ottengono regioni di decisione più lisce, riducendo l’overfitting.
+\end{itemize}
+
+\section{K-Nearest Neighbors: interpretazione geometrica}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{knn_k3.png}
+    \caption{
+    Classificazione K-NN con $K=3$.  
+    Per ciascun punto di query ($x_1$, $x_2$) vengono selezionati i tre campioni più vicini nel dataset; la classe assegnata è quella di maggioranza tra i vicini.  
+    La decisione è locale e dipende fortemente dalla distribuzione dei punti nello spazio delle feature.
+    }
+    \label{fig:knn_k3}
+\end{figure}
+
+Nel caso $K>1$, la classificazione si basa su un voto di maggioranza locale, che introduce un effetto di regolarizzazione: all’aumentare di $K$, le regioni di decisione diventano più lisce e la sensibilità al rumore diminuisce, riducendo il rischio di overfitting.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{voronoi_k1.png}
+    \caption{
+    Tassellazione di Voronoi indotta da un classificatore 1-NN ($K=1$).  
+    Ogni punto del dataset genera una regione dello spazio contenente tutti i punti più vicini a esso rispetto a qualunque altro campione.  
+    La frontiera di decisione risulta altamente irregolare e perfettamente adattata ai dati di training.
+    }
+    \label{fig:voronoi_k1}
+\end{figure}
+
+Per $K=1$, il classificatore assegna a ogni punto la classe del nearest neighbor più vicino, inducendo una tassellazione di Voronoi dello spazio delle feature.  
+Questo rappresenta il caso limite di massima varianza, in cui il modello è estremamente sensibile al rumore e tende all’overfitting.
+
+\subsection{Effetto del parametro $K$ sulle regioni di decisione}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{knn_increasing_k.png}
+    \caption{
+    Effetto dell’aumento del parametro $K$ nel classificatore K-NN.  
+    Da sinistra a destra: $K=1$, $K=3$, $K=31$.  
+    All’aumentare di $K$, le regioni di decisione diventano progressivamente più lisce, riducendo la complessità del modello e l’overfitting.
+    }
+    \label{fig:knn_increasing_k}
+\end{figure}
+
+La Figura~\ref{fig:knn_increasing_k} mostra come il valore del parametro $K$ influenzi direttamente la forma delle regioni di decisione nel classificatore K-NN.
+
+Nel caso $K=1$, la classificazione è determinata esclusivamente dal nearest neighbor più vicino.  
+Le regioni di decisione risultano altamente irregolari e frammentate, adattandosi in modo quasi perfetto ai dati di training.  
+Questo comportamento corrisponde a un modello ad alta varianza, fortemente sensibile al rumore e incline all’overfitting.
+
+Per valori intermedi di $K$ (ad esempio $K=3$), la decisione si basa su una maggioranza locale.  
+Le regioni di decisione diventano più regolari, mantenendo comunque una buona capacità di catturare la struttura locale dei dati.
+
+Per valori elevati di $K$ (ad esempio $K=31$), la classificazione tiene conto di un intorno molto ampio del punto di query.  
+Le regioni di decisione risultano notevolmente più lisce e meno sensibili alle fluttuazioni locali del dataset.  
+In questo regime, la varianza del modello si riduce, ma aumenta il bias, con il rischio di underfitting.
+
+In sintesi, il parametro $K$ controlla il compromesso bias–variance del classificatore K-NN:
+
+\[
+\highlight{
+K \uparrow \;\Rightarrow\; \text{decision boundaries più lisce} \;\Rightarrow\; \text{minore overfitting}}
+\]
+
+\section{Kernelized Nearest Neighbors}
+
+Nel classificatore K-NN, la selezione dei nearest neighbors dipende dalla funzione di distanza utilizzata nello spazio delle feature.  
+Nel caso della distanza euclidea al quadrato tra due punti $x$ e $x_n$:
+
+\[
+\highlight{
+\|x - x_n\|^2
+= (x - x_n)^T (x - x_n)
+= x^T x + x_n^T x_n - 2 x^T x_n}
+\]
+
+Si osserva che la distanza può essere espressa esclusivamente in termini di prodotti scalari.  
+Questo consente di applicare il \emph{kernel trick}, sostituendo il prodotto scalare con una funzione kernel:
+
+\[
+\highlight{
+x^T x_n \;\longrightarrow\; k(x, x_n)}
+\]
+
+In questo modo, la distanza viene calcolata implicitamente in uno spazio delle feature ad alta (o infinita) dimensionalità:
+
+\[
+\highlight{
+\|\phi(x) - \phi(x_n)\|^2
+= k(x,x) + k(x_n,x_n) - 2k(x,x_n)}
+\]
+  
+dove $\phi(\cdot)$ è una mappatura implicita associata al kernel $k(\cdot,\cdot)$.
+
+\paragraph{Interpretazione}
+Il kernelized K-NN non modifica la regola di classificazione, ma ridefinisce la nozione di vicinanza tra i punti.  
+Due campioni risultano vicini se hanno un’elevata similarità nel feature space indotto dal kernel, anche se non sono vicini nello spazio originale.
+
+\paragraph{Conseguenze}
+\begin{itemize}
+    \item è possibile catturare strutture non lineari nei dati;
+    \item la frontiera di decisione può diventare non lineare anche nello spazio originale;
+    \item la scelta del kernel influenza direttamente la geometria dello spazio delle feature e quindi i nearest neighbors.
+\end{itemize}
+
+Il kernelized K-NN rappresenta quindi un’estensione non lineare del classificatore K-NN standard, analoga concettualmente all’uso dei kernel nelle Support Vector Machines.
+
+\section{Locally Weighted Regression}
+
+La \emph{Locally Weighted Regression} (LWR) è un metodo di apprendimento
+\emph{instance-based} e \emph{non parametrico}, in cui la funzione di regressione
+non viene appresa globalmente una volta per tutte, ma viene stimata \emph{localmente}
+in corrispondenza di ciascun punto di query.
+
+A differenza della regressione lineare classica, che apprende un unico modello
+valido su tutto il dominio, la LWR costruisce un modello locale utilizzando
+principalmente le istanze di training vicine al punto $x_{\text{new}}$ per cui si
+vuole effettuare la predizione.
+
+\subsubsection{Idea di base}
+Dato un punto di query $x_{\text{new}}$, si assegnano pesi diversi agli esempi
+di training $(x_i, y_i)$ in funzione della loro distanza da $x_{\text{new}}$.
+Gli esempi più vicini contribuiscono maggiormente alla stima, mentre quelli
+lontani hanno un’influenza trascurabile.
+
+La regressione viene quindi risolta come un problema di \emph{least squares pesati},
+che cambia per ogni punto di query.
+
+\subsubsection{Formulazione}
+Si consideri un modello lineare locale:
+\[
+\hat{y}(x) = \mathbf{w}^\top \mathbf{x}
+\]
+I parametri $\mathbf{w}$ sono stimati minimizzando la funzione di costo:
+
+\[
+\highlight{
+J(\mathbf{w}) = \sum_{i=1}^{n} w_i(x_{\text{new}})\,
+\big( y_i - \mathbf{w}^\top \mathbf{x}_i \big)^2}
+\]
+
+dove $w_i(x_{\text{new}})$ è una funzione di peso che dipende dalla distanza
+tra $x_i$ e il punto di query $x_{\text{new}}$.
+
+Una scelta tipica è una funzione kernel gaussiana:
+
+\[
+\highlight{
+w_i(x_{\text{new}}) =
+\exp\!\left(
+-\frac{\|x_i - x_{\text{new}}\|^2}{2\tau^2}
+\right)}
+\]
+
+dove $\tau$ è il parametro di bandwidth che controlla l’ampiezza della regione locale.
+
+\subsubsection{Interpretazione geometrica}
+Per ogni punto di query, la LWR seleziona una regione locale del dataset e
+adatta una retta (o un iperpiano) che approssima bene i dati in quella zona,
+ignorando la struttura globale della funzione.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{locally_weighted_regression.png}
+\caption{Interpretazione geometrica della Locally Weighted Regression.
+Per il punto di query $x_{\text{new}}$ viene costruito un modello locale
+utilizzando principalmente i punti vicini (ellisse rossa), ottenendo una
+retta di regressione locale che approssima la funzione solo in quella regione.}
+\end{figure}
+
+La figura mostra come, in presenza di una funzione non lineare globale,
+la LWR riesca a catturare correttamente l’andamento locale del dataset,
+a differenza di un modello lineare globale che risulterebbe inadeguato.
+
+\subsubsection{Caratteristiche principali}
+\begin{itemize}
+\item non esiste un modello globale esplicito;
+\item l’addestramento è differito al momento della predizione;
+\item elevata flessibilità e capacità di adattamento locale;
+\item costo computazionale elevato in fase di test;
+\item forte dipendenza dal parametro di bandwidth $\tau$.
+\end{itemize}
+
+La Locally Weighted Regression può essere vista come una generalizzazione
+continua dei metodi \emph{k-nearest neighbors} per la regressione, in cui
+l’influenza degli esempi non è binaria (vicino/lontano), ma decresce
+progressivamente con la distanza.
+
+\section*{RIEPILOGO}
+
+\begin{tcolorbox}[
+  colback=green!10!white,
+  colframe=green!50!black,
+  coltitle=white,
+  title=\textbf{Instance-Based Learning – Concetti chiave},
+  fonttitle=\bfseries,
+  breakable
+]
+
+I metodi di \emph{Instance-Based Learning} non apprendono un modello globale
+esplicito durante la fase di training, ma memorizzano il dataset e rimandano
+l’apprendimento al momento della predizione.
+
+\medskip
+\textbf{Idea fondamentale}
+
+La predizione per un punto di query $x_{\text{new}}$ viene ottenuta utilizzando
+direttamente gli esempi di training più simili, secondo una misura di distanza
+definita nello spazio delle feature.
+
+\medskip
+\textbf{K-Nearest Neighbors (KNN)}
+
+Nel metodo KNN la stima dell’output è ottenuta aggregando le etichette dei $k$
+vicini più prossimi a $x_{\text{new}}$.
+Il parametro $k$ controlla il compromesso tra:
+\begin{itemize}
+\item modelli molto flessibili e sensibili al rumore ($k$ piccolo);
+\item modelli più stabili ma meno adattivi ($k$ grande).
+\end{itemize}
+
+\medskip
+\textbf{Kernelized Nearest Neighbors}
+
+L’estensione kernelizzata dei KNN consente di definire la nozione di similarità
+tramite funzioni kernel, permettendo di catturare strutture non lineari nei dati
+senza esplicitare la mappatura nello spazio delle feature.
+
+\medskip
+\textbf{Locally Weighted Regression}
+
+La Locally Weighted Regression costruisce, per ogni punto di query, un modello
+di regressione locale risolvendo un problema di minimi quadrati pesati.
+Gli esempi di training contribuiscono alla stima in modo proporzionale alla loro
+vicinanza a $x_{\text{new}}$, secondo una funzione di peso (tipicamente gaussiana).
+\end{tcolorbox}
+
+
 \chapter{Multiple Learners}
 
 Nei capitoli precedenti abbiamo considerato modelli di apprendimento singoli, progettati per approssimare una funzione obiettivo a partire da un insieme di dati. In questo contesto, la qualità delle prestazioni dipende fortemente dalla scelta del modello, dalla sua complessità e dalla quantità di dati disponibili. Tuttavia, anche modelli ben progettati possono risultare limitati quando affrontano problemi complessi o dati rumorosi.
@@ -4136,22 +4423,97 @@ La progettazione è in larga parte \textbf{empirica} e dipende da:
 
 In sintesi, il teorema di approssimazione universale fornisce il fondamento teorico della potenza espressiva delle reti neurali, mentre le architetture profonde ne rappresentano la realizzazione pratica più efficace.
 
-\subsection{Funzioni di attivazione e funzione di costo}
+\section{Funzioni di attivazione e funzione di costo}
 
 Una rete neurale feedforward definisce una funzione parametrica
+
 \[
-y = f(x;\theta),
+\highlight{
+y = f(x;\theta),}
 \]
+
 ottenuta come composizione di trasformazioni lineari e non lineari.  
 Due elementi fondamentali determinano il comportamento del modello:
+
 \begin{itemize}
     \item le \textbf{funzioni di attivazione}, che definiscono la capacità espressiva della rete;
     \item la \textbf{loss function}, che quantifica l’errore e guida l’apprendimento.
 \end{itemize}
+
 Le funzioni di attivazione negli strati nascosti introducono non linearità nel modello.  
 In assenza di tali funzioni, anche una rete profonda collasserebbe in una trasformazione lineare equivalente.
 
 Non esistono principi teorici generali per la scelta ottimale della funzione di attivazione negli strati nascosti: la selezione è prevalentemente \textbf{empirica}.
+
+
+\subsection{Funzioni di attivazione dell’output layer}
+
+La funzione di attivazione dell’output layer dipende direttamente dal tipo di problema da risolvere.  
+La scelta dell’output unit e della funzione di costo è infatti strettamente legata all’interpretazione probabilistica dell’output del modello.
+
+Sia $\mathbf{h} = f(\mathbf{x}; \theta^{(n-1)})$ l’output dell’ultimo hidden layer.  
+L’output della rete è dato da.
+
+\[
+\highlight{
+\mathbf{y} = f^{(n)}(\mathbf{h}; \theta^{(n)}),}
+\]
+dove la funzione $f^{(n)}$ viene scelta in funzione del task.
+
+\subsubsection{Regressione}
+
+Nel caso di problemi di regressione, l’output layer utilizza unità lineari, ovvero la funzione di identità:
+
+\[
+\highlight{
+y = \mathbf{w}^T \mathbf{h} + b.}
+\]
+
+Si assume un modello di rumore Gaussiano:
+\[
+p(t \mid \mathbf{x}) = \mathcal{N}(t \mid y, \beta^{-1}),
+\]
+per cui la massimizzazione della log-verosimiglianza equivale alla minimizzazione della \textbf{mean squared error (MSE)}.
+
+Le unità lineari non saturano e sono quindi adatte alla predizione di valori reali non limitati, inoltre
+consentono alla rete di predire valori continui non limitati e di non distorcere il valore stimato.
+Questa scelta è particolarmente appropriata quando il target appartiene a $\mathbb{R}$ e quando la funzione di perdita adottata è l’errore quadratico medio (Mean Squared Error, MSE).
+
+\subsubsection{Classificazione binaria}
+
+Per problemi di classificazione binaria, l’output layer utilizza la funzione di attivazione \textbf{sigmoid}:
+
+\[
+\highlight{
+y = \sigma(\mathbf{w}^T \mathbf{h} + b).}
+\]
+
+L’output $y$ può essere interpretato come una probabilità.  
+Il modello di verosimiglianza corrisponde a una distribuzione di Bernoulli e la funzione di costo associata è la \textbf{binary cross-entropy}, ovvero la negative log-likelihood.
+
+In questo caso, l’unità di output satura solo quando il modello fornisce una predizione corretta con alta confidenza.
+
+\subsubsection{Classificazione multi-classe}
+
+Nel caso di classificazione multi-classe, l’output layer è costituito da più unità e utilizza la funzione di attivazione \textbf{softmax}:
+
+\[
+\highlight{
+y_i = \text{softmax}(\alpha^{(i)}) = 
+\frac{\exp(\alpha^{(i)})}{\sum_j \exp(\alpha^{(j)})},
+\qquad
+\alpha^{(i)} = \mathbf{w}_i^T \mathbf{h} + b_i.}
+\]
+
+La softmax produce una distribuzione di probabilità sulle classi.  
+La funzione di costo associata è la \textbf{categorical cross-entropy}, che corrisponde alla negative log-likelihood di una distribuzione multinomiale.
+
+Le unità di output saturano solo in presenza di errori minimi, favorendo una maggiore stabilità dell’addestramento.
+
+
+\subsection{Funzioni di attivazione nell'hidden layer}
+
+Negli \textbf{hidden layer}, la funzione di attivazione ha lo scopo principale di introdurre non linearità nel modello, permettendo alla rete di apprendere rappresentazioni complesse e non linearmente separabili dei dati. In questo contesto, la funzione di attivazione non è vincolata all’interpretazione dell’output, ma è scelta per favorire la capacità espressiva e la stabilità dell’addestramento.
 
 \subsubsection{Rectified Linear Unit (ReLU)}
 La funzione di attivazione più utilizzata è la \textbf{Rectified Linear Unit}:
@@ -5359,6 +5721,61 @@ Dato un campione osservato $\mathbf{x}_n$, è possibile calcolare la distribuzio
 
 La quantità $\gamma(z_{nk})$ rappresenta la \emph{responsabilità} della $k$-esima componente nel generare il dato $\mathbf{x}_n$ ed esprime un’assegnazione probabilistica del campione al cluster.
 
+\paragraph{Interpretazione grafica di un Gaussian Mixture Model}
+
+Un Gaussian Mixture Model descrive i dati come generati da una combinazione
+(lineare) di $k$ distribuzioni gaussiane.
+Ogni componente gaussiana rappresenta una possibile sorgente dei dati,
+caratterizzata da una media e da una matrice di covarianza.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{gmm_interpretation.png}
+\caption{Rappresentazione grafica del funzionamento di un Gaussian Mixture Model.
+(a) Inizializzazione delle componenti gaussiane.
+(b) Distribuzione dei dati senza assegnazione esplicita ai cluster.
+(c) Assegnazione probabilistica delle osservazioni alle componenti del modello.}
+\end{figure}
+
+La Figura illustra il comportamento di un GMM in tre fasi concettuali.
+
+Nel pannello (a) sono mostrate più componenti gaussiane inizializzate nello
+spazio dei dati. Ogni colore rappresenta una diversa gaussiana, definita da
+una media e da una covarianza. In questa fase le componenti sono solo ipotesi
+sulla struttura dei dati.
+
+Nel pannello (b) si osservano i dati nel loro insieme, senza una suddivisione
+esplicita in cluster. A differenza di metodi come il K-means, nel GMM non esiste
+un’assegnazione rigida dei punti a un singolo cluster.
+
+Nel pannello (c) è mostrato il risultato del modello appreso: ogni osservazione
+è associata probabilisticamente alle diverse componenti gaussiane. I colori
+rappresentano la componente con probabilità a posteriori maggiore per ciascun
+punto, ma ogni osservazione contribuisce in realtà a tutte le componenti in
+misura diversa.
+
+\subsubsection{Ruolo del parametro $k$}
+
+Nel Gaussian Mixture Model, il parametro $k$ indica il numero di componenti
+gaussiane che costituiscono il modello.
+A differenza del K-means, in cui $k$ rappresenta il numero di cluster rigidi,
+nel GMM $k$ rappresenta il numero di distribuzioni probabilistiche utilizzate
+per modellare i dati.
+
+Ogni componente gaussiana non corrisponde necessariamente a un cluster ben
+separato, ma contribuisce alla distribuzione complessiva dei dati.
+Valori diversi di $k$ permettono di modellare strutture più o meno complesse:
+\begin{itemize}
+\item un valore di $k$ piccolo produce un modello più semplice;
+\item un valore di $k$ grande consente di approssimare distribuzioni più complesse,
+ma aumenta il rischio di overfitting.
+\end{itemize}
+
+Il valore di $k$ è quindi un iperparametro del modello e deve essere scelto
+in base al compromesso tra capacità di rappresentazione e generalizzazione.
+
+
+
 \section{K-means Clustering}
 
 L’algoritmo \emph{K-means} è uno dei metodi più semplici e diffusi per il clustering non supervisionato.
@@ -6413,6 +6830,979 @@ Ciò permette di propagare il gradiente attraverso il campionamento e di addestr
 
 Il reparameterization trick rappresenta un elemento chiave dei VAE e rende possibile l’ottimizzazione della funzione obiettivo 
 ELBO mediante metodi di apprendimento standard.
+
+\section{Generative Adversarial Networks}
+
+I \emph{Generative Adversarial Networks} (GAN) sono modelli generativi che apprendono la distribuzione dei dati attraverso un processo di addestramento avversario. A differenza dei Variational Autoencoders, i GAN non modellano esplicitamente una distribuzione di probabilità dei dati, ma imparano a generare campioni realistici tramite la competizione tra due reti neurali.
+
+Un GAN è composto da due modelli:
+\begin{itemize}
+    \item un \textbf{generatore} ($G$), che riceve in input un vettore latente casuale $\mathbf{z}$ e produce un campione sintetico $\tilde{\mathbf{x}} = G(\mathbf{z})$;
+    
+   \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{gan_decoder.png}
+        \label{fig:gan_decoder}
+    \end{figure}
+
+    Il generatore riceve in input un vettore latente casuale, campionato da una distribuzione semplice, e lo trasforma progressivamente in un’immagine attraverso una serie di convoluzioni trasposte e operazioni di upsampling. A partire da una rappresentazione compatta e priva di struttura spaziale, la rete costruisce l’immagine aumentando gradualmente la risoluzione e introducendo dettagli sempre più complessi.
+    Il ruolo del generatore è quello di trasformare il rumore in campioni che approssimino la distribuzione dei dati reali.
+
+    \item un \textbf{discriminatore} ($D$), che riceve in input un campione e restituisce la probabilità che esso provenga dal dataset reale piuttosto che dal generatore.
+
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{gan_encoder.png}
+        \label{fig:gan_encoder}
+    \end{figure}
+
+    Nei GAN, il discriminatore è tipicamente implementato come una rete convoluzionale profonda che estrae feature gerarchiche dalle immagini per distinguere campioni reali da campioni generati. Il generatore, invece, utilizza una struttura convoluzionale inversa per produrre immagini a partire da uno spazio latente.
+
+\end{itemize}
+
+
+\subsection{Addestramento avversario}
+
+L’addestramento dei GAN si basa su un gioco competitivo tra generatore e discriminatore. Il discriminatore viene addestrato per distinguere correttamente tra campioni reali e campioni generati, mentre il generatore viene addestrato per produrre campioni in grado di ingannare il discriminatore.
+
+Il processo di addestramento procede iterativamente secondo i seguenti passi:
+\begin{enumerate}
+    \item il discriminatore viene addestrato utilizzando un insieme di campioni reali e un insieme di campioni generati;
+    \item il generatore viene aggiornato mantenendo fisso il discriminatore, con l’obiettivo di massimizzare la probabilità che i campioni generati vengano classificati come reali.
+\end{enumerate}
+
+Questo meccanismo competitivo porta idealmente a una situazione di equilibrio in cui il discriminatore non è più in grado di distinguere tra dati reali e dati generati, e i campioni prodotti dal generatore seguono la stessa distribuzione dei dati osservati.
+
+\begin{figure}[H]
+        \centering
+        \includegraphics[width=0.90\textwidth]{GAN.png}
+        \caption{Schema di addestramento di un GAN. Il generatore trasforma rumore latente in immagini, mentre il discriminatore distingue tra dati reali e generati.}
+        \label{fig:GAN}
+    \end{figure}
+
+\subsection{Spazio latente nei GAN}
+
+Anche nei GAN è presente uno spazio latente, rappresentato dal vettore $\mathbf{z}$. Tuttavia, a differenza dei Variational Autoencoders, lo spazio latente dei GAN non è regolarizzato esplicitamente e non è garantito che possieda una struttura continua o semanticamente interpretabile.
+
+Lo spazio latente nei GAN funge principalmente da sorgente di variabilità per la generazione dei dati, consentendo di produrre campioni diversi a partire da input casuali differenti.
+
+\subsection{Vantaggi e limiti}
+
+I GAN sono noti per la loro capacità di generare campioni di elevata qualità percettiva, in particolare nel dominio delle immagini. Tuttavia, l’addestramento avversario può risultare instabile e non fornisce una misura esplicita della verosimiglianza dei dati.
+
+Queste caratteristiche rendono i GAN complementari ai Variational Autoencoders: mentre i VAE privilegiano la stabilità e l’interpretabilità dello spazio latente, i GAN puntano alla qualità visiva dei campioni generati.
+
+\newpage
+\section*{RIEPILOGO}
+
+\begin{tcolorbox}[
+    colback=green!5,
+    colframe=green!50!black,
+    title=Convolutional Neural Networks,
+    breakable
+]
+
+La riduzione della dimensionalità si basa sull’osservazione che dati ad alta dimensionalità presentano spesso una struttura intrinseca a bassa dimensionalità, descrivibile tramite variabili latenti e manifolds. L’obiettivo è individuare rappresentazioni compatte che preservino l’informazione rilevante dei dati.
+
+La \emph{Principal Component Analysis} (PCA) realizza una riduzione dimensionale lineare proiettando i dati lungo le direzioni di massima varianza. Essa è equivalente alla minimizzazione dell’errore di ricostruzione, che risulta pari alla somma degli autovalori scartati della matrice di covarianza.
+
+La \emph{Probabilistic PCA} fornisce un’interpretazione statistica della PCA introducendo un modello generativo lineare con variabili latenti gaussiane. In questo contesto, la PCA emerge come soluzione di massima verosimiglianza e può essere stimata tramite l’algoritmo EM.
+
+Gli \emph{autoencoder} generalizzano la PCA introducendo modelli non lineari basati su reti neurali, composti da un encoder e un decoder separati da un bottleneck. Essi apprendono rappresentazioni latenti compatte ottimizzando una loss di ricostruzione e trovano applicazione, tra l’altro, nell’anomaly detection.
+
+I \emph{Variational Autoencoders} (VAE) estendono gli autoencoder introducendo una formulazione probabilistica dello spazio latente. L’addestramento avviene massimizzando l’ELBO, che bilancia accuratezza di ricostruzione e regolarizzazione tramite la KL divergence. Il reparameterization trick consente l’ottimizzazione tramite backpropagation.
+
+I \emph{Generative Adversarial Networks} (GAN) sono modelli generativi basati su un addestramento avversario tra un generatore e un discriminatore. Essi non modellano esplicitamente una likelihood, ma apprendono a generare campioni realistici tramite un gioco competitivo, privilegiando la qualità percettiva dei dati generati.
+
+Nel complesso, queste tecniche mostrano come la modellazione dello spazio latente costituisca un elemento centrale per l’analisi, la compressione e la generazione dei dati complessi.
+
+\end{tcolorbox}
+
+\chapter{Reinforcement learning}
+
+\section{Dynamic Systems e Proprietà di Markov}
+
+Un sistema dinamico è un sistema che evolve nel tempo secondo una legge di transizione.
+Indichiamo con $x_k$ lo stato del sistema al tempo $k$ e con $z_k$ l'osservazione
+disponibile all'agente. L'evoluzione del sistema è descritta da:
+\begin{itemize}
+    \item una funzione di transizione dello stato $f$;
+    \item una funzione di osservazione $h$;
+    \item termini di rumore $w_k$ e $v_k$.
+\end{itemize}
+
+Si distinguono due problemi fondamentali:
+\begin{itemize}
+    \item \textbf{Reasoning}: dato il modello $(f,h)$ e lo stato corrente, prevedere
+    gli stati futuri;
+    \item \textbf{Learning}: determinare il modello $(f,h)$ a partire
+    dall'esperienza passata.
+\end{itemize}
+
+Lo \textbf{stato} di un sistema dinamico deve codificare tutta l'informazione
+necessaria per prevedere l'evoluzione futura del sistema, rappresentare la conoscenza acquisita e perseguire l'obiettivo dell'agente.
+
+\subsection{Proprietà di Markov}
+
+Un processo soddisfa la proprietà di Markov se, una volta noto lo stato corrente,
+l'evoluzione futura del sistema è indipendente dalla storia passata.
+In altre parole, lo stato corrente contiene tutta l'informazione necessaria
+per predire il futuro.
+
+\section{Markov Decision Processes}
+
+Un Markov Decision Process (MDP) è un modello matematico per il
+decision making sequenziale in sistemi dinamici completamente osservabili.
+Negli MDP non è necessario introdurre osservazioni esplicite, poiché lo stato
+del sistema è interamente accessibile all'agente.
+
+\subsection{Modello grafico}
+
+La Figura~\ref{fig:mdp_graph} mostra il modello grafico di un MDP.
+Lo stato successivo $x_{t+1}$ dipende esclusivamente dallo stato corrente $x_t$
+e dall'azione $a_t$ eseguita dall'agente.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{mdp_graph.png}
+    \caption{Modello grafico di un Markov Decision Process: lo stato successivo
+    dipende dallo stato corrente e dall'azione scelta.}
+    \label{fig:mdp_graph}
+\end{figure}
+
+Questo modello soddisfa la proprietà di Markov:
+
+\[
+\highlight{
+P(x_{t+1} \mid x_t, a_t, x_{t-1}, a_{t-1}, \dots) =
+P(x_{t+1} \mid x_t, a_t)}
+\]
+
+\subsection{Definizione formale}
+
+Un MDP deterministico è definito come una tupla:
+
+\[
+\highlight{
+\mathcal{M} = \langle X, A, \delta, r \rangle}
+\]
+
+dove:
+\begin{itemize}
+    \item $X$ è l'insieme finito degli stati;
+    \item $A$ è l'insieme finito delle azioni;
+    \item $\delta : X \times A \rightarrow X$ è la funzione di transizione;
+    \item $r : X \times A \rightarrow \mathbb{R}$ è la funzione di ricompensa.
+\end{itemize}
+
+L'evoluzione del sistema è descritta dalle equazioni:
+
+\[
+\highlight{
+x_{t+1} = \delta(x_t, a_t), \qquad r_t = r(x_t, a_t)}
+\]
+
+\paragraph{Learning rate}
+Il learning rate $\alpha \in (0,1]$ controlla quanto le nuove osservazioni influenzano l’aggiornamento dei valori $Q$. Un valore elevato di $\alpha$ permette un apprendimento più rapido ma meno stabile, mentre un valore più piccolo rende l’apprendimento più lento ma più stabile. Se non specificato, il learning rate si assume costante.
+
+
+\section{MDP}
+
+Nei Markov Decision Processes non deterministici, l'esecuzione di una stessa
+azione in uno stesso stato può portare a esiti diversi. Questo modello è più
+realistico rispetto al caso deterministico e consente di rappresentare
+ambienti incerti.
+
+\subsection{MDP non deterministico}
+
+Un MDP non deterministico è definito come una tupla:
+
+\[
+\highlight{
+\mathcal{M} = \langle X, A, \delta, r \rangle}
+\]
+
+dove:
+\begin{itemize}
+    \item $X$ è l'insieme finito degli stati;
+    \item $A$ è l'insieme finito delle azioni;
+    \item $\delta : X \times A \rightarrow 2^X$ è la funzione di transizione;
+    \item $r : X \times A \times X \rightarrow \mathbb{R}$ è la funzione di ricompensa.
+\end{itemize}
+
+L'evoluzione del sistema è descritta da:
+
+\[
+\highlight{
+x_{t+1} \in \delta(x_t, a_t)}
+\]
+
+\subsection{MDP stocastico}
+
+Nel caso stocastico, le transizioni sono modellate tramite una distribuzione
+di probabilità. Un MDP stocastico è definito come:
+
+\[
+\highlight{
+\mathcal{M} = \langle X, A, P, r \rangle}
+\]
+
+dove $P(x' \mid x, a)$ rappresenta la probabilità di transizione dallo stato
+$x$ allo stato $x'$ eseguendo l'azione $a$.
+
+La dinamica del sistema è:
+
+\[
+\highlight{
+x_{t+1} \sim P(\cdot \mid x_t, a_t)}
+\]
+
+In entrambi i casi, si assume che lo stato risultante dall'esecuzione di
+un'azione sia completamente osservabile.
+
+\paragraph{NOTA BENE:}
+Un problema si dice stocastico quando l’esito di un’azione non è deterministico. Questo significa che, a parità di stato e di azione, il sistema può evolvere in modi diversi a causa della presenza di fenomeni casuali. In questi casi, il comportamento dell’ambiente non è completamente prevedibile e deve essere descritto in termini probabilistici.
+Formalmente: l’evoluzione del sistema o la ricompensa sono governate da variabili aleatorie.
+
+\subsection{Esempio di MDP non deterministico: Grid World}
+
+Consideriamo un ambiente a griglia in cui l'obiettivo dell'agente è
+raggiungere la colonna più a destra partendo da qualunque stato iniziale.
+Il problema è modellato come un Markov Decision Process non deterministico
+\[
+\mathcal{M} = \langle X, A, \delta, r \rangle .
+\]
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.95\textwidth]{nd_grid_world.png}
+    \caption{Esempio di ambiente non deterministico: l'agente deve raggiungere
+    il lato destro della griglia evitando gli ostacoli.}
+    \label{fig:nd_grid_world}
+\end{figure}
+
+L'insieme degli stati è definito come:
+\[
+X = \{(r,c) \mid (r,c) \text{ coordinate nella griglia}\}.
+\]
+
+L'insieme delle azioni disponibili è:
+\[
+A = \{\text{Left}, \text{Right}\}.
+\]
+
+La funzione di transizione $\delta$ è non deterministica:
+l'esecuzione di un'azione produce un movimento cardinale, ma con una
+probabilità pari a $0.1$ l'agente si muove diagonalmente. Inoltre, se lo
+stato di destinazione corrisponde a una cella occupata da un ostacolo,
+l'agente rimane nello stato corrente.
+
+La funzione di ricompensa è definita come segue:
+\begin{itemize}
+    \item $+1000$ per il raggiungimento della colonna più a destra;
+    \item $-10$ per l'urto contro un ostacolo;
+    \item $+1$ per ogni azione \emph{Right};
+    \item $-1$ per ogni azione \emph{Left}.
+\end{itemize}
+
+Questo esempio evidenzia come, in presenza di transizioni non deterministiche,
+l'ottimalità di una policy sia definita in termini di valore atteso della
+ricompensa cumulativa e non in base all'esito deterministico delle singole
+azioni.
+
+\section{Policy}
+
+In un Markov Decision Process, una policy descrive il comportamento
+dell'agente specificando quale azione eseguire in ogni stato.
+Formalmente, una policy è una funzione:
+
+\[
+\highlight{
+\pi : X \rightarrow A}
+\]
+che associa a ogni stato $x \in X$ un'azione $\pi(x) \in A$.
+
+Nel seguito si considerano policy stazionarie e deterministiche. Per
+MDP a orizzonte infinito, esiste sempre almeno una policy stazionaria
+ottima.
+
+\subsection{Funzione valore}
+
+Data una policy $\pi$, la funzione valore $V^\pi(x)$ è definita come
+il valore atteso della ricompensa cumulativa scontata:
+
+\[
+\highlight{
+V^\pi(x) \triangleq \mathbb{E}\left[\sum_{t=0}^{\infty} \gamma^t r_t
+\;\middle|\; x_0 = x, \pi \right],}
+\]
+dove $r_t = r(x_t, a_t, x_{t+1})$, $a_t = \pi(x_t)$ e
+$\gamma \in [0,1]$ è il fattore di sconto.
+
+\subsection{Policy ottima}
+
+Una policy $\pi^*$ è detta ottima se massimizza la funzione valore
+per ogni stato:
+
+\[
+\highlight{
+V^{\pi^*}(x) \geq V^\pi(x), \quad \forall x \in X, \; \forall \pi .}
+\]
+
+Equivalentemente, la policy ottima può essere definita come:
+
+\[
+\highlight{
+\pi^* = \arg\max_\pi V^\pi(x), \quad \forall x \in X .}
+\]
+
+Nel caso non deterministico o stocastico, l'ottimalità è definita in termini di valore atteso della ricompensa cumulativa e non in base all'esito deterministico delle singole azioni.
+
+
+\subsubsection{Esempio-Optimal Policy}
+
+La Figura~\ref{fig:nd_policy} mostra una politica ottima per un MDP
+non deterministico. Ogni cella rappresenta uno stato del sistema,
+mentre il colore indica l'azione scelta dalla policy ottima:
+verde per l'azione \emph{Right}, rosso per l'azione \emph{Left}.
+La presenza di azioni \emph{Left} in alcune regioni evidenzia come l'ottimalità sia definita in termini di valore atteso e non di effetto deterministico dell'azione
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{nd_optimal_policy.png}
+    \caption{Esempio di politica ottima in un controller non deterministico.}
+    \label{fig:nd_policy}
+\end{figure}
+
+Anche se la policy è deterministica, il sistema è non deterministico:
+l'esecuzione di una stessa azione nello stesso stato può portare a
+stati successivi diversi. La politica ottima massimizza quindi il
+valore atteso della ricompensa cumulativa e non il risultato immediato.
+
+\section{Equazione di Bellman}
+
+L'idea alla base dell'equazione di Bellman è che il valore di uno stato
+dipende dalla ricompensa immediata ottenuta e dal valore atteso degli
+stati futuri. Questa osservazione introduce una relazione ricorsiva
+tra i valori degli stati.
+
+\subsection{Equazione di Bellman per una policy}
+
+Data una policy $\pi$, la funzione valore $V^\pi(x)$ soddisfa la seguente
+equazione di Bellman:
+\[
+V^\pi(x) =
+\mathbb{E}\left[
+r(x, \pi(x), x') + \gamma V^\pi(x')
+\right].
+\]
+
+Nel caso stocastico, l'equazione può essere esplicitata come:
+\[
+V^\pi(x) =
+\sum_{x' \in X}
+P(x' \mid x, \pi(x))
+\left[
+r(x, \pi(x), x') + \gamma V^\pi(x')
+\right].
+\]
+
+\subsection{Equazione di Bellman per il valore ottimo}
+
+La funzione valore ottima è definita come:
+
+\[
+\highlight{
+V^*(x) \triangleq \max_\pi V^\pi(x).}
+\]
+
+Essa soddisfa la seguente equazione di Bellman di ottimalità:
+
+\[
+\highlight{
+V^*(x) =
+\max_{a \in A}
+\mathbb{E}\left[
+r(x, a, x') + \gamma V^*(x')
+\right].}
+\]
+
+Nel caso stocastico, l'equazione assume la forma:
+
+\[
+\highlight{
+V^*(x) =
+\max_{a \in A}
+\sum_{x' \in X}
+P(x' \mid x, a)
+\left[
+r(x, a, x') + \gamma V^*(x')
+\right].}
+\]
+
+Questa equazione non definisce un algoritmo, ma una condizione di
+consistenza che il valore ottimo deve soddisfare. Gli algoritmi di
+reinforcement learning mirano ad approssimare una soluzione di tale
+equazione anche in assenza della conoscenza esplicita delle dinamiche
+dell'ambiente.
+
+\section{One-State Markov Decision Process}
+
+Il One-State Markov Decision Process rappresenta il caso più semplice
+di MDP e costituisce una base concettuale fondamentale per il
+reinforcement learning.
+
+Un One-State MDP è definito come:
+
+\[
+\highlight{
+\mathcal{M} = \langle \{x_0\}, A, \delta, r \rangle}
+\]
+
+dove $\{x_0\}$ è l'unico stato del sistema, $A = \{a_1, \dots, a_n\}$
+è l'insieme delle azioni disponibili,
+$\delta(x_0, a_i) = x_0$ per ogni $a_i \in A$ e
+$r(x_0, a_i, x_0) = r(a_i)$ è la funzione di ricompensa.
+
+Poiché lo stato non cambia mai, il problema decisionale consiste
+unicamente nella selezione dell'azione che massimizza la ricompensa.
+
+\subsection{Policy ottima}
+
+Una policy $\pi : \{x_0\} \rightarrow A$ seleziona un'unica azione.
+Nel caso deterministico e noto, la policy ottima è:
+
+\[
+\highlight{
+\pi^*(x_0) = \arg\max_{a_i \in A} r(a_i).}
+\]
+
+Nel caso in cui il reward sia non deterministico, la policy ottima
+massimizza il valore atteso:
+
+\[
+\highlight{
+\pi^*(x_0) = \arg\max_{a_i \in A} \mathbb{E}[r(a_i)].}
+\]
+
+Questo scenario introduce il problema del compromesso tra esplorazione
+e sfruttamento, che costituisce il fondamento dei metodi di
+reinforcement learning.
+
+\section{Q-function}
+
+La funzione valore $V^\pi(x)$ misura quanto sia conveniente trovarsi in
+uno stato $x$ seguendo una policy $\pi$. Tuttavia, nel reinforcement
+learning è spesso necessario valutare direttamente le azioni.
+
+La Q-function associata a una policy $\pi$ è definita come:
+
+\[
+\highlight{
+Q^\pi(x,a) \triangleq
+\mathbb{E}\left[
+r(x,a,x') + \gamma V^\pi(x')
+\right]. }
+\]
+
+Essa rappresenta il valore atteso dell'esecuzione dell'azione $a$
+nello stato $x$, seguita dall'applicazione della policy $\pi$.
+
+Nel caso ottimo, la funzione valore e la Q-function sono legate da:
+
+\[
+\highlight{
+V^*(x) = \max_{a \in A} Q^*(x,a).}
+\]
+
+La Q-function ottima è definita come:
+
+\[
+\highlight{
+Q^*(x,a) = \max_\pi Q^\pi(x,a),}
+\]
+e consente di determinare direttamente la policy ottima:
+
+\[
+\highlight{
+\pi^*(x) = \arg\max_{a \in A} Q^*(x,a).}
+\]
+
+La Q-function ottima soddisfa la seguente equazione di Bellman:
+
+\[
+\highlight{
+Q^*(x,a) =
+\mathbb{E}\left[
+r(x,a,x') + \gamma \max_{a' \in A} Q^*(x',a')
+\right].}
+\]
+
+\section{Q-learning e apprendimento senza modello}
+
+Il Q-learning è un algoritmo di reinforcement learning che consente di
+apprendere la Q-function ottima $Q^*(x,a)$ senza conoscere esplicitamente
+il modello dell'ambiente, ovvero senza conoscere né la funzione di
+transizione $\delta$ né la funzione di ricompensa $r$.
+
+L'apprendimento avviene attraverso l'interazione diretta con l'ambiente:
+l'agente esegue un'azione, osserva lo stato successivo e la ricompensa,
+e aggiorna iterativamente la stima della Q-function.
+
+\subsection{Regola di aggiornamento}
+
+Nel caso generale non deterministico, la regola di aggiornamento del
+Q-learning è:
+
+\[
+\highlight{
+Q_{n}(x,a) \leftarrow
+Q_{n-1}(x,a) +
+\alpha \left[
+r + \gamma \max_{a' \in A} Q_{n-1}(x',a')
+- Q_{n-1}(x,a)
+\right],}
+\]
+
+dove $x$ è lo stato corrente, $a$ l'azione eseguita, $x'$ lo stato
+osservato dopo l'azione, $r$ la ricompensa immediata,
+$\alpha \in (0,1]$ è il learning rate e $\gamma \in [0,1]$ è il fattore
+di sconto.
+
+Questa regola deriva direttamente dall'equazione di Bellman per la
+Q-function ottima.
+
+La regola di aggiornamento del Q-learning si applica quando il problema è modellato come un MDP con dinamica di transizione ignota e stocastica e l’agente osserva direttamente sequenze di interazione del tipo $(x,a,r,x')$. In questi casi non è possibile calcolare la funzione valore tramite le equazioni di Bellman e i valori $Q(x,a)$ devono essere appresi dall’esperienza. 
+
+In altre parole, la regola di aggiornamento del Q-learning si usa quando l’agente non conosce il modello dell’ambiente ma può interagire con esso osservando cosa succede dopo ogni azione. In pratica, ogni volta che l’agente si trova in uno stato $x$, sceglie un’azione $a$, riceve una ricompensa $r$ e osserva il nuovo stato $x'$, si applica la formula di aggiornamento per correggere il valore $Q(x,a)$. Questa operazione viene ripetuta dopo ogni passo e permette di migliorare progressivamente la stima della funzione $Q$ a partire dall’esperienza.
+
+
+\subsection{Action selection: exploration vs exploitation}
+
+Negli algoritmi di Reinforcement Learning, oltre alla regola di aggiornamento dei valori $Q$, è necessario stabilire come l’agente seleziona le azioni durante l’apprendimento. Questo porta al problema del bilanciamento tra \emph{exploration} ed \emph{exploitation}.
+
+Per exploitation si intende la scelta dell’azione che, sulla base delle stime correnti di $Q(x,a)$, appare come la migliore. L’exploration, invece, consiste nel provare azioni diverse per raccogliere nuove informazioni sull’ambiente ed evitare di convergere prematuramente a soluzioni subottimali. In ambienti stocastici, una strategia puramente greedy non è sufficiente.
+
+Una soluzione semplice e ampiamente utilizzata è la \emph{$\varepsilon$-greedy policy}. Secondo questa strategia, in ogni stato $x$:
+\begin{itemize}
+    \item con probabilità $1 - \varepsilon$ viene selezionata l’azione che massimizza $Q(x,a)$;
+    \item con probabilità $\varepsilon$ viene selezionata un’azione casuale tra quelle disponibili.
+\end{itemize}
+
+Il parametro $\varepsilon$ controlla il livello di esplorazione. All’inizio dell’apprendimento è utile scegliere un valore relativamente alto di $\varepsilon$ per favorire l’esplorazione, mentre nel tempo $\varepsilon$ può essere ridotto per privilegiare l’exploitation delle conoscenze acquisite.
+
+Negli esercizi, la strategia $\varepsilon$-greedy viene utilizzata quando l’ambiente è stocastico e il modello non è noto, in quanto permette di apprendere efficacemente la funzione $Q$ garantendo al tempo stesso una sufficiente esplorazione dello spazio delle azioni.
+
+
+Il Q-learning converge alla Q-function ottima $Q^*$ se sono soddisfatte
+le seguenti condizioni:
+\begin{itemize}
+    \item tutte le coppie stato--azione sono visitate infinite volte;
+    \item il learning rate $\alpha$ decresce in modo appropriato;
+    \item il processo di apprendimento continua sufficientemente a lungo.
+\end{itemize}
+
+In tali condizioni, la policy derivata dalla Q-function approssimata
+converge alla policy ottima:
+\[
+\pi^*(x) = \arg\max_{a \in A} Q^*(x,a).
+\]
+
+\subsection{Esempio: Slot Machine e k-Armed Bandit}
+
+Un esempio classico di One-State Markov Decision Process è il problema
+della slot machine a più leve, noto come \emph{k-armed bandit}.
+In questo scenario, l'agente si trova sempre nello stesso stato $x_0$
+e può scegliere una tra $n$ azioni $A = \{a_1, \dots, a_n\}$,
+ciascuna corrispondente a una leva della slot machine.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.55\textwidth]{k_armed_bandit.png}
+    \caption{Esempio di One-State MDP: slot machine con $n$ leve.
+    Ogni azione produce una ricompensa casuale, mentre lo stato
+    rimane invariato.}
+    \label{fig:k_armed_bandit}
+\end{figure}
+
+Il problema è modellato come un MDP:
+
+\[
+\highlight{
+\mathcal{M} = \langle \{x_0\}, \{a_1, \dots, a_n\}, \delta, r \rangle}
+\]
+
+dove la funzione di transizione è definita come:
+
+\[
+\highlight{
+\delta(x_0, a_i) = x_0, \quad \forall a_i \in A,}
+\]
+
+e la funzione di ricompensa dipende esclusivamente dall'azione:
+
+\[
+\highlight{
+r(x_0, a_i, x_0) = r(a_i).}
+\]
+
+Le ricompense sono in generale non deterministiche e associate a
+distribuzioni di probabilità ignote. L'obiettivo dell'agente è
+determinare l'azione che massimizza il valore atteso della ricompensa,
+bilanciando esplorazione e sfruttamento.
+
+\subsubsection{Q-function nel k-armed bandit}
+
+Nel caso del k-armed bandit, essendo presente un solo stato $s$,
+la funzione valore azione (Q-function) si riduce a una funzione
+dipendente esclusivamente dall’azione:
+
+\[
+\highlight{
+Q(s,a) \equiv Q(a)}
+\]
+
+La Q-function rappresenta il valore atteso della ricompensa ottenuta
+se viene selezionata l’azione $a$:
+
+\[
+\highlight{
+Q(a) = \mathbb{E}[r \mid a]}
+\]
+
+Poiché le distribuzioni di ricompensa associate alle azioni sono
+sconosciute, la Q-function non è nota e deve essere stimata a partire
+dall’esperienza.
+
+\subsection{Problema e concetto di soluzione}
+
+Il problema del k-armed bandit consiste nello stimare la Q-function
+associata a ciascuna azione e nel selezionare una policy che massimizzi
+la ricompensa attesa cumulativa.
+
+Una policy $\pi$ associa a ogni istante temporale un’azione da eseguire.
+Nel caso ideale, la policy ottima seleziona sempre l’azione con valore
+atteso massimo:
+
+\[
+\highlight{
+\pi^* = \arg\max_{a \in \mathcal{A}} Q(a)}
+\]
+
+Tuttavia, poiché i valori $Q(a)$ sono inizialmente ignoti, l’agente deve
+bilanciare:
+\begin{itemize}
+\item \emph{exploration}: selezionare azioni poco esplorate per migliorare
+la stima di $Q(a)$;
+\item \emph{exploitation}: selezionare l’azione che massimizza la stima
+corrente di $Q(a)$.
+\end{itemize}
+
+\subsubsection{Apprendimento della Q-function}
+
+La stima della Q-function può essere aggiornata incrementalmente
+utilizzando una regola di apprendimento di tipo reinforcement learning.
+Dopo aver selezionato l’azione $a_t$ e osservato la ricompensa $r_t$,
+la stima viene aggiornata come:
+\[
+Q_{t+1}(a_t) = Q_t(a_t) + \alpha \big( r_t - Q_t(a_t) \big)
+\]
+dove:
+\begin{itemize}
+\item $\alpha \in (0,1]$ è il learning rate;
+\item $r_t$ è la ricompensa osservata al tempo $t$.
+\end{itemize}
+
+Questa regola rappresenta un caso particolare del Q-learning,
+semplificato dall’assenza di dinamica di stato e di ricompense future.
+
+\section{Altri algoritmi di reinforcement learning}
+
+Oltre al Q-learning, esistono altri algoritmi per l'apprendimento in
+Markov Decision Processes non deterministici. Tra questi:
+\begin{itemize}
+    \item \textbf{SARSA}, un metodo \emph{on-policy} che valuta la policy
+    effettivamente seguita dall'agente;
+    \item \textbf{Temporal Difference} (TD), che combina idee di Monte Carlo
+    e programmazione dinamica;
+    \item approcci \emph{model-based}, che stimano esplicitamente il
+    modello dell'ambiente per pianificare le azioni.
+\end{itemize}
+
+\newpage
+\section*{RIEPILOGO}
+
+\begin{tcolorbox}[
+  colback=green!10!white,
+  colframe=green!50!black,
+  coltitle=white,
+  title=\textbf{Reinforcement Learning – Concetti chiave},
+  fonttitle=\bfseries,
+  breakable
+]
+
+Il \emph{Reinforcement Learning} studia problemi decisionali sequenziali in cui
+un agente apprende interagendo con un ambiente, senza disporre di esempi
+supervisionati, ma solo di segnali di ricompensa.
+
+\medskip
+\textbf{Markov Decision Process (MDP)}
+
+Un problema di reinforcement learning è formalizzato tramite un
+\emph{Markov Decision Process}:
+\[
+\mathcal{M} = \langle \mathcal{S}, \mathcal{A}, p, r, \gamma \rangle
+\]
+dove:
+\begin{itemize}
+\item $\mathcal{S}$ è l’insieme degli stati;
+\item $\mathcal{A}$ è l’insieme delle azioni;
+\item $p(s' \mid s,a)$ è la probabilità di transizione;
+\item $r(s,a)$ è la funzione di ricompensa;
+\item $\gamma \in [0,1)$ è il fattore di sconto.
+\end{itemize}
+
+La proprietà di Markov implica che l’evoluzione futura del sistema dipende
+solo dallo stato corrente e dall’azione selezionata.
+
+\medskip
+\textbf{Policy e funzioni di valore}
+
+Una \emph{policy} $\pi$ definisce il comportamento dell’agente, specificando
+l’azione da eseguire in ciascuno stato.
+Le prestazioni di una policy sono valutate tramite:
+\begin{itemize}
+\item la funzione valore di stato $V^\pi(s)$;
+\item la funzione valore azione $Q^\pi(s,a)$.
+\end{itemize}
+
+La policy ottima $\pi^*$ massimizza il valore atteso cumulativo delle ricompense.
+
+\medskip
+\textbf{Equazioni di Bellman}
+
+Le equazioni di Bellman forniscono una caratterizzazione ricorsiva delle funzioni
+di valore.
+Nel caso ottimo, esse esprimono il principio di ottimalità e costituiscono la base
+per gli algoritmi di apprendimento e pianificazione.
+
+\medskip
+\textbf{Reinforcement Learning senza modello}
+
+Nel reinforcement learning l’agente non conosce né le probabilità di transizione
+né la funzione di ricompensa.
+Gli algoritmi \emph{model-free} apprendono direttamente le funzioni di valore
+a partire dall’esperienza, senza stimare esplicitamente il modello dell’ambiente.
+
+\medskip
+\textbf{Q-learning}
+
+Il Q-learning è un algoritmo model-free che apprende la Q-function ottima
+tramite aggiornamenti incrementali basati sull’errore di Bellman.
+La policy è ottenuta selezionando l’azione che massimizza il valore stimato
+della Q-function.
+
+\medskip
+\textbf{k-Armed Bandit}
+
+Il k-armed bandit è un caso particolare di reinforcement learning
+modellabile come MDP a singolo stato.
+In questo caso la Q-function dipende solo dall’azione:
+\[
+Q(a) = \mathbb{E}[r \mid a]
+\]
+
+Il problema consiste nello stimare i valori attesi delle azioni e nel bilanciare
+\emph{exploration} ed \emph{exploitation} per massimizzare la ricompensa cumulativa.
+
+\medskip
+\textbf{Action selection}
+
+Poiché i valori delle azioni sono inizialmente ignoti, è necessario adottare
+strategie di selezione dell’azione che consentano l’esplorazione dell’ambiente,
+come ad esempio policy $\varepsilon$-greedy.
+
+\medskip
+\textbf{Obiettivo del Reinforcement Learning}
+
+L’obiettivo finale è apprendere una policy ottima che massimizzi la somma
+attesa delle ricompense nel tempo, attraverso l’interazione iterativa
+con l’ambiente e l’aggiornamento delle stime di valore.
+
+\end{tcolorbox}
+
+\newpage
+\section*{GLOSSARIO}
+
+\begin{description}
+    \item[Dataset (insieme di dati)]
+Un \emph{dataset} è un insieme strutturato di istanze utilizzato per
+l’addestramento, la validazione o la valutazione di un modello di Machine Learning.
+Può essere visto come una tabella in cui ogni riga rappresenta un’istanza e ogni
+colonna una feature.
+
+    \item[Instance (istanza, esempio)]
+Un’\emph{instance} è un singolo esempio contenuto nel dataset.
+Rappresenta un caso specifico del problema e costituisce l’unità di base su cui
+il modello effettua una predizione.
+
+    \item[Feature (attributo, caratteristica)]
+Una \emph{feature} è una caratteristica numerica o categoriale che descrive
+un’istanza.
+Ogni istanza è rappresentata da un vettore di feature che ne codifica le
+proprietà rilevanti per il problema di apprendimento.
+
+    \item[Label / Target (etichetta, valore di uscita)]
+La \emph{label} (o \emph{target}) è il valore di output corretto associato a
+un’istanza in un problema di \emph{supervised learning}.
+Rappresenta ciò che il modello deve imparare a predire a partire dalle feature.
+
+Nel caso di:
+\begin{itemize}
+\item \emph{classificazione}, la label appartiene a un insieme finito di classi;
+\item \emph{regressione}, la label è un valore numerico continuo.
+\end{itemize}
+
+    \item[Model (modello)]
+Un \emph{model} è una funzione, parametrica o non parametrica, che associa
+le feature di un’istanza a una predizione dell’output.
+Il modello rappresenta ciò che viene appreso dai dati e viene utilizzato
+per effettuare predizioni su nuove istanze.
+
+    \item[Learning Algorithm (algoritmo di apprendimento)]
+Un \emph{learning algorithm} è la procedura che stima i parametri del modello
+a partire dal dataset di training, ottimizzando una funzione di costo.
+L’algoritmo di apprendimento non effettua predizioni, ma serve esclusivamente
+a costruire o aggiornare il modello.
+
+    \item[Prediction (predizione)]
+Una \emph{prediction} è l’output prodotto dal modello quando viene applicato
+a un’istanza.
+La predizione rappresenta la stima del valore di output e non coincide
+necessariamente con la label corretta.
+
+    \item[Loss Function (funzione di perdita, funzione di costo)]
+Una \emph{loss function} misura l’errore commesso dal modello su una singola
+istanza, confrontando la predizione con la label corretta.
+La loss function fornisce un segnale numerico che guida l’algoritmo di
+apprendimento nel migliorare il modello durante la fase di training.
+
+    \item[Metric (metrica di valutazione)]
+Una \emph{metric} è una misura utilizzata per valutare le prestazioni complessive
+di un modello su un insieme di dati.
+A differenza della loss function, la metrica non viene utilizzata per
+l’apprendimento del modello, ma solo per confrontare modelli o stimarne
+la capacità di generalizzazione.
+
+Esempi comuni di metriche sono l’accuracy, la precision, la recall e l’RMSE.
+
+    \item[Training Set (insieme di addestramento)]
+Il \emph{training set} è la parte del dataset utilizzata per addestrare il modello,
+cioè per stimarne i parametri tramite l’algoritmo di apprendimento.
+Durante il training, il modello minimizza la loss function sui dati di training.
+
+    \item[Test Set (insieme di test)]
+Il \emph{test set} è un insieme di dati separato dal training set e utilizzato
+esclusivamente per valutare le prestazioni del modello su istanze non viste
+durante l’addestramento.
+Il test set fornisce una stima della capacità di generalizzazione del modello.
+
+    \item[Validation Set (insieme di validazione)]
+Il \emph{validation set} è un insieme di dati utilizzato durante lo sviluppo del
+modello per confrontare diverse scelte progettuali, come iperparametri o architetture.
+I dati di validazione non vengono usati per addestrare il modello, ma per guidarne
+la selezione.
+
+    \item[Mean (media)]
+La \emph{mean} è il valore medio di un insieme di dati.
+Rappresenta il “centro” dei dati, cioè il valore attorno al quale le osservazioni
+tendono a concentrarsi.
+
+    \item[Variance (varianza)]
+La \emph{variance} misura quanto i dati sono dispersi attorno alla media.
+Una varianza piccola indica dati molto concentrati, una varianza grande indica
+dati molto sparsi.
+
+    \item[Covariance (covarianza)]
+La \emph{covariance} misura come due variabili variano insieme.
+Se è positiva, le due variabili tendono ad aumentare o diminuire insieme;
+se è negativa, una tende ad aumentare quando l’altra diminuisce;
+se è circa zero, non c’è una relazione lineare evidente.
+
+    \item[Covariance Matrix (matrice di covarianza)]
+La \emph{covariance matrix} raccoglie tutte le covarianze tra le feature di un
+dataset.
+Sulla diagonale contiene le varianze delle singole feature, mentre fuori diagonale
+contiene le covarianze tra coppie di feature.
+Descrive la forma e l’orientamento della distribuzione dei dati.
+
+    \item[Distribution (distribuzione di probabilità)]
+Una \emph{distribution} descrive come i valori di una variabile sono
+distribuiti, cioè quali valori sono più probabili e quali meno.
+In altre parole, una distribuzione assegna una probabilità (o una densità)
+ai possibili valori che una variabile può assumere.
+
+Nel Machine Learning, una distribuzione viene usata per modellare i dati,
+le osservazioni o le incertezze associate a un fenomeno reale.
+
+    \item[Gaussian Distribution / Normal Distribution (distribuzione gaussiana / normale)]
+La \emph{Gaussian distribution} è una distribuzione continua a forma di campana,
+completamente descritta da media e varianza.
+La media indica il centro della distribuzione, la varianza ne controlla la larghezza.
+I termini “gaussiana” e “normale” indicano la stessa distribuzione.
+
+    \item[Discrete Distribution (distribuzione discreta)]
+Una \emph{discrete distribution} è una distribuzione di probabilità definita su un
+insieme finito o numerabile di valori.
+A ciascun valore è associata una probabilità, e la somma di tutte le probabilità
+è pari a uno.
+
+    \item[Observations (osservazioni)]
+Le \emph{observations} sono i dati osservati, cioè i valori effettivamente misurati
+o raccolti dal mondo reale.
+Nel Machine Learning, le osservazioni costituiscono il dataset di training.
+
+    \item[Weights (pesi)]
+I \emph{weights} sono parametri numerici di un modello che determinano l’importanza
+delle feature.
+Pesi grandi indicano feature più influenti, pesi piccoli indicano feature meno
+rilevanti.
+
+    \item[Likelihood (verosimiglianza)]
+La \emph{likelihood} misura quanto è plausibile osservare i dati assumendo fissati
+i parametri di un modello.
+Non è una probabilità dei parametri, ma una misura di quanto bene il modello
+spiega i dati osservati.
+
+    \item[Log-Likelihood (log-verosimiglianza)]
+La \emph{log-likelihood} è il logaritmo della likelihood.
+Viene utilizzata perché semplifica i calcoli, trasforma prodotti in somme e rende
+più stabile l’ottimizzazione numerica.
+Massimizzare la log-likelihood equivale a massimizzare la likelihood.
+
+\end{description}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{c l l}
+\toprule
+\textbf{Simbolo} & \textbf{Nome} & \textbf{Significato / uso} \\
+\midrule
+$\land$ & AND (congiunzione) & vero se entrambi i valori sono veri \\
+$\lor$ & OR (disgiunzione) & vero se almeno uno dei valori è vero \\
+$\lnot$ / $\neg$ & NOT (negazione) & inverte il valore di verità \\
+$\to$ & Implication (implicazione) & $A \to B$: se $A$ allora $B$ \\
+$\leftrightarrow$ & Iff / Biconditional (doppia implicazione) & vero se $A$ e $B$ hanno lo stesso valore \\
+$\oplus$ & XOR (exclusive or) & vero se esattamente uno è vero \\
+$\forall$ & For all (per ogni) & quantificatore universale \\
+$\exists$ & Exists (esiste) & quantificatore esistenziale \\
+$\models$ & Entails (implica logicamente) & $A \models B$: $B$ è vero in ogni modello in cui $A$ lo è \\
+$\vdash$ & Derives (derivabile) & $A \vdash B$: $B$ è deducibile da $A$ \\
+\bottomrule
+\end{tabular}
+\caption{Simboli logici fondamentali}
+\end{table}
 
 
 \end{document}
